@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:poetry_ai/components/colour_palette.dart';
 import 'package:poetry_ai/components/my_button.dart';
 import 'package:poetry_ai/components/my_textfield.dart';
 import 'package:poetry_ai/services/authentication/auth_service.dart';
@@ -20,6 +21,15 @@ class _RegisterPageState extends State<RegisterPage> {
   final confirmPasswordController = TextEditingController();
 
   void signUp() async {
+    //show loading
+    showDialog(
+        context: context,
+        builder: (context) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        });
+
     if (passwordController.text != confirmPasswordController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Password does NOT match!")));
@@ -34,12 +44,14 @@ class _RegisterPageState extends State<RegisterPage> {
             .showSnackBar(SnackBar(content: Text(e.toString())));
       }
     }
+    //pop the loading
+    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      backgroundColor: ColorPalette.background,
       body: SafeArea(
         child: Center(
           child: Padding(
