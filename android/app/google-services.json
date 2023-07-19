@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "733120024623",
+    "project_id": "poetry-editor-ai",
+    "storage_bucket": "poetry-editor-ai.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:733120024623:android:8c977a29489d0c9604f6da",
+        "android_client_info": {
+          "package_name": "com.example.poetry_ai"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "733120024623-2q4ujdfj5ks6se8m2484hb6s1btmicuk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjm3ec6eSTr8mqjGYH_V0s19Vw46UOciY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "733120024623-2q4ujdfj5ks6se8m2484hb6s1btmicuk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
