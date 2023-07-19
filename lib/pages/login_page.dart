@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:poetry_ai/components/colour_palette.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:poetry_ai/components/color_palette.dart';
 import 'package:poetry_ai/components/my_button.dart';
 import 'package:poetry_ai/components/my_textfield.dart';
 import 'package:poetry_ai/services/authentication/auth_service.dart';
@@ -58,8 +59,9 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final globalThemeBox = Hive.box('myThemeBox');
     return Scaffold(
-      backgroundColor: ColorPalette.background,
+      backgroundColor: ColorTheme.background(globalThemeBox.get('theme')),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
