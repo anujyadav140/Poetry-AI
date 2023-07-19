@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:poetry_ai/components/color_palette.dart';
 
 class Template extends StatelessWidget {
   final Color templateBoxColor;
@@ -9,7 +7,6 @@ class Template extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final globalThemeBox = Hive.box('myThemeBox');
     return Padding(
       padding: const EdgeInsets.only(
         top: 8.0,
