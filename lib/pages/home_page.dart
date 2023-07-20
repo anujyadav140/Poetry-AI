@@ -202,75 +202,87 @@ class _HomePageState extends State<HomePage>
                     ),
                 ]),
               ),
-              ClipPath(
-                clipper: MyClipper(),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 400,
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(50.0),
-                      topRight: Radius.circular(50.0),
-                    ),
-                    child: ClipPath(
-                      child: Container(
-                        color:
-                            ColorTheme.secondary(globalThemeBox.get('theme')),
-                        child: isTemplateClicked
-                            ? SizedBox(
-                                width: MediaQuery.of(context).size.width,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 20.0,
-                                        vertical: 10.0,
-                                      ),
-                                      child: Text(
-                                        "Features for ${poetryTypeName.name}:",
-                                        style: const TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: ListView.builder(
-                                        itemCount: features.length,
-                                        itemBuilder: (context, index) {
-                                          return ListTile(
-                                            leading: SizedBox(
-                                              width: 50,
-                                              height: 50,
-                                              child: Lottie.asset(
-                                                  'assets/leaf.json'),
-                                            ),
-                                            title: Text(features[index]),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : Column(
+              SizedBox(
+                width: double.infinity,
+                height: 350,
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(50.0),
+                    topRight: Radius.circular(50.0),
+                  ),
+                  child: ClipPath(
+                    child: Container(
+                      color: ColorTheme.secondary(globalThemeBox.get('theme')),
+                      child: isTemplateClicked
+                          ? SizedBox(
+                              width: MediaQuery.of(context).size.width,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  SizedBox(
-                                    width: MediaQuery.of(context).size.width,
-                                    height: 300,
-                                    child: const RiveAnimation.asset(
-                                        "assets/empty-living-room.riv"),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 20.0,
+                                      vertical: 10.0,
+                                    ),
+                                    child: Text(
+                                      "Features for ${poetryTypeName.name}:",
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   ),
-                                  const Text(
-                                      "You haven't written any poetry yet ..."),
+                                  Expanded(
+                                    child: ListView.builder(
+                                      itemCount: features.length,
+                                      itemBuilder: (context, index) {
+                                        return ListTile(
+                                          leading: SizedBox(
+                                            width: 50,
+                                            height: 50,
+                                            child: Lottie.asset(
+                                                'assets/leaf.json'),
+                                          ),
+                                          title: Text(features[index]),
+                                        );
+                                      },
+                                    ),
+                                  ),
                                 ],
                               ),
-                      ),
+                            )
+                          : Column(
+                              children: [
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width,
+                                  height: 300,
+                                  child: const RiveAnimation.asset(
+                                      "assets/empty-living-room.riv"),
+                                ),
+                                const Text(
+                                    "You haven't written any poetry yet ..."),
+                              ],
+                            ),
                     ),
                   ),
                 ),
               ),
+              AnimatedBuilder(
+                animation: _controller,
+                builder: (context, child) {
+                  return ClipPath(
+                    clipper: DrawClip(_controller.value),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 60,
+                      child: Container(
+                        color:
+                            ColorTheme.secondary(globalThemeBox.get('theme')),
+                      ),
+                    ),
+                  );
+                },
+              )
             ],
           ),
         ),
