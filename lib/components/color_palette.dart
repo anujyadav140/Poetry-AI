@@ -23,8 +23,9 @@ class PurpleColorTheme {
 
 class ClassicColorTheme {
   static const Color text = Color.fromRGBO(0, 0, 0, 1);
-  static const Color background = Color.fromRGBO(255, 255, 255, 1);
-  static const Color secondary = Color.fromRGBO(225, 224, 223, 0.5);
+  static const Color background = Color.fromRGBO(245, 245, 245, 1);
+  static const Color primary = Color.fromRGBO(255, 255, 255, 1);
+  static const Color secondary = Color.fromRGBO(255, 255, 255, 1);
   static const String riveEmptyListAnimation =
       "assets/living_room_scene_b&w.riv";
   static const String lottieLeafAnimation = "assets/leaf-classic.json";
@@ -66,7 +67,7 @@ class ColorTheme {
     } else if (color == "Purple") {
       return PurpleColorTheme.primary;
     } else if (color == "Classic") {
-      return ClassicColorTheme.background;
+      return ClassicColorTheme.primary;
     } else {
       return Colors.blue; // Return a default color if no theme is selected
     }

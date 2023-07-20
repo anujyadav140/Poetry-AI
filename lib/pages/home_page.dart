@@ -193,13 +193,13 @@ class _HomePageState extends State<HomePage>
                   title: Text("Logout"),
                 ),
               ),
-              const PopupMenuItem(
-                value: 'home',
-                child: ListTile(
-                  leading: Icon(Icons.home),
-                  title: Text("Home"),
-                ),
-              ),
+              // const PopupMenuItem(
+              //   value: 'home',
+              //   child: ListTile(
+              //     leading: Icon(Icons.home),
+              //     title: Text("Home"),
+              //   ),
+              // ),
             ],
           )
         ],
@@ -226,66 +226,82 @@ class _HomePageState extends State<HomePage>
               SizedBox(
                 width: double.infinity,
                 height: 350,
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(50.0),
-                    topRight: Radius.circular(50.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(50.0),
+                      topRight: Radius.circular(50.0),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.6),
+                        spreadRadius: 1,
+                        blurRadius: 5,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
                   ),
-                  child: ClipPath(
-                    child: Container(
-                      color: ColorTheme.secondary(themeValue),
-                      child: isTemplateClicked
-                          ? SizedBox(
-                              width: MediaQuery.of(context).size.width,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 20.0,
-                                      vertical: 10.0,
-                                    ),
-                                    child: Text(
-                                      "Features for ${poetryTypeName.name}:",
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(50.0),
+                      topRight: Radius.circular(50.0),
+                    ),
+                    child: ClipPath(
+                      child: Container(
+                        color: ColorTheme.secondary(themeValue),
+                        child: isTemplateClicked
+                            ? SizedBox(
+                                width: MediaQuery.of(context).size.width,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 20.0,
+                                        vertical: 10.0,
+                                      ),
+                                      child: Text(
+                                        "Features for ${poetryTypeName.name}:",
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  Expanded(
-                                    child: ListView.builder(
-                                      itemCount: features.length,
-                                      itemBuilder: (context, index) {
-                                        return ListTile(
-                                          leading: SizedBox(
-                                            width: 50,
-                                            height: 50,
-                                            child: Lottie.asset(
-                                                ColorTheme.lottieLeafAnimation(
-                                                    themeValue)),
-                                          ),
-                                          title: Text(features[index]),
-                                        );
-                                      },
+                                    Expanded(
+                                      child: ListView.builder(
+                                        itemCount: features.length,
+                                        itemBuilder: (context, index) {
+                                          return ListTile(
+                                            leading: SizedBox(
+                                              width: 50,
+                                              height: 50,
+                                              child: Lottie.asset(ColorTheme
+                                                  .lottieLeafAnimation(
+                                                      themeValue)),
+                                            ),
+                                            title: Text(features[index]),
+                                          );
+                                        },
+                                      ),
                                     ),
+                                  ],
+                                ),
+                              )
+                            : Column(
+                                children: [
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.width,
+                                    height: 300,
+                                    child: RiveAnimation.asset(
+                                        ColorTheme.riveEmptyListAnimation(
+                                            themeValue)),
                                   ),
+                                  const Text(
+                                      "You haven't written any poetry yet ..."),
                                 ],
                               ),
-                            )
-                          : Column(
-                              children: [
-                                SizedBox(
-                                  width: MediaQuery.of(context).size.width,
-                                  height: 300,
-                                  child: RiveAnimation.asset(
-                                      ColorTheme.riveEmptyListAnimation(
-                                          themeValue)),
-                                ),
-                                const Text(
-                                    "You haven't written any poetry yet ..."),
-                              ],
-                            ),
+                      ),
                     ),
                   ),
                 ),
