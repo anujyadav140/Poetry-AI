@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:poetry_ai/home_page.dart';
+import 'package:poetry_ai/pages/home_page.dart';
 import 'package:poetry_ai/services/authentication/login_or_register.dart';
 
 class AuthGate extends StatelessWidget {

@@ -2,7 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:poetry_ai/firebase_options.dart';
-import 'package:poetry_ai/home_page.dart';
+import 'package:poetry_ai/pages/home_page.dart';
 import 'package:poetry_ai/services/authentication/auth_gate.dart';
 import 'package:poetry_ai/services/authentication/auth_service.dart';
 import 'package:provider/provider.dart';
@@ -13,6 +13,7 @@ void main() async {
   //open hive box
   var box = await Hive.openBox('myBox');
   var themeBox = await Hive.openBox('myThemeBox');
+  var templateBoolBox = await Hive.openBox('myIsTemplateClickedBox');
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(ChangeNotifierProvider(
@@ -44,7 +45,7 @@ class MyApp extends StatelessWidget {
         //     900: Color(0xFF6F2EDF),
         //   },
         // ),
-        primarySwatch: Colors.green,
+        // primarySwatch: Colors.green,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: const AuthGate(),
