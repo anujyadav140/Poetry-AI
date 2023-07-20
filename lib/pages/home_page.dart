@@ -3,6 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:poetry_ai/components/color_palette.dart';
 import 'package:poetry_ai/components/template_card.dart';
+import 'package:poetry_ai/pages/home.dart';
 import 'package:poetry_ai/services/authentication/auth_service.dart';
 import 'package:rive/rive.dart';
 import 'dart:math' as math;
@@ -29,7 +30,7 @@ class _HomePageState extends State<HomePage>
     super.initState();
     _controller = AnimationController(
       value: 0.0,
-      duration: const Duration(seconds: 25),
+      duration: const Duration(seconds: 10),
       upperBound: 1,
       lowerBound: -1,
       vsync: this,
@@ -160,6 +161,9 @@ class _HomePageState extends State<HomePage>
                 showThemeDialog(context); // Show the theme dialog
               } else if (value == 'logout') {
                 logout();
+              } else if (value == 'home') {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const Home()));
               }
             },
             itemBuilder: (context) => [
@@ -175,6 +179,13 @@ class _HomePageState extends State<HomePage>
                 child: ListTile(
                   leading: Icon(Icons.logout),
                   title: Text("Logout"),
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'home',
+                child: ListTile(
+                  leading: Icon(Icons.home),
+                  title: Text("Home"),
                 ),
               ),
             ],
