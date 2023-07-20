@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:lottie/lottie.dart';
 import 'package:poetry_ai/components/color_palette.dart';
 import 'package:poetry_ai/components/template_card.dart';
 import 'package:poetry_ai/services/authentication/auth_service.dart';
 import 'package:rive/rive.dart';
+import 'dart:math' as math;
 
 class HomePage extends StatefulWidget {
-  HomePage({super.key});
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
   final _myBox = Hive.box('myBox');
   final globalThemeBox = Hive.box('myThemeBox');
   PoetryType poetryTypeName = PoetryType("", "", [""]);
@@ -24,6 +27,20 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     globalThemeBox.get('theme');
     super.initState();
+    _controller = AnimationController(
+      value: 0.0,
+      duration: const Duration(seconds: 25),
+      upperBound: 1,
+      lowerBound: -1,
+      vsync: this,
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+
+    super.dispose();
   }
 
   void writeData() {
@@ -185,73 +202,75 @@ class _HomePageState extends State<HomePage> {
                     ),
                 ]),
               ),
-              Expanded(
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(50.0),
-                    topRight: Radius.circular(50.0),
-                  ),
-                  child: ClipPath(
-                    child: Container(
-                      color: ColorTheme.secondary(globalThemeBox.get('theme')),
-                      child: isTemplateClicked
-                          ? SizedBox(
-                              width: MediaQuery.of(context).size.width,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 20.0,
-                                      vertical: 10.0,
-                                    ),
-                                    child: Text(
-                                      "Features for ${poetryTypeName.name}:",
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
+              ClipPath(
+                clipper: MyClipper(),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 400,
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(50.0),
+                      topRight: Radius.circular(50.0),
+                    ),
+                    child: ClipPath(
+                      child: Container(
+                        color:
+                            ColorTheme.secondary(globalThemeBox.get('theme')),
+                        child: isTemplateClicked
+                            ? SizedBox(
+                                width: MediaQuery.of(context).size.width,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 20.0,
+                                        vertical: 10.0,
+                                      ),
+                                      child: Text(
+                                        "Features for ${poetryTypeName.name}:",
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  Expanded(
-                                    child: ListView.builder(
-                                      itemCount: features.length,
-                                      itemBuilder: (context, index) {
-                                        return ListTile(
-                                          leading: const Icon(
-                                              Icons.fiber_manual_record),
-                                          title: Text(features[index]),
-                                        );
-                                      },
+                                    Expanded(
+                                      child: ListView.builder(
+                                        itemCount: features.length,
+                                        itemBuilder: (context, index) {
+                                          return ListTile(
+                                            leading: SizedBox(
+                                              width: 50,
+                                              height: 50,
+                                              child: Lottie.asset(
+                                                  'assets/leaf.json'),
+                                            ),
+                                            title: Text(features[index]),
+                                          );
+                                        },
+                                      ),
                                     ),
+                                  ],
+                                ),
+                              )
+                            : Column(
+                                children: [
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.width,
+                                    height: 300,
+                                    child: const RiveAnimation.asset(
+                                        "assets/empty-living-room.riv"),
                                   ),
+                                  const Text(
+                                      "You haven't written any poetry yet ..."),
                                 ],
                               ),
-                            )
-                          : Column(
-                              children: [
-                                SizedBox(
-                                  width: MediaQuery.of(context).size.width,
-                                  height: 300,
-                                  child: const RiveAnimation.asset(
-                                      "assets/empty-living-room.riv"),
-                                ),
-                                const Text(
-                                    "You haven't written any poetry yet ..."),
-                              ],
-                            ),
+                      ),
                     ),
                   ),
                 ),
               ),
-              // ClipPath(
-              //   clipper: MyClipper(),
-              //   child: Container(
-              //     width: double.infinity,
-              //     height: 50,
-              //     color: Colors.black,
-              //   ),
-              // )
             ],
           ),
         ),
@@ -265,6 +284,29 @@ class _HomePageState extends State<HomePage> {
         child: const Icon(Icons.add),
       ),
     );
+  }
+}
+
+class DrawClip extends CustomClipper<Path> {
+  double move = 0;
+  double slice = math.pi;
+  DrawClip(this.move);
+  @override
+  Path getClip(Size size) {
+    Path path = Path();
+    path.lineTo(0, size.height * 0.8);
+    double xCenter =
+        size.width * 0.5 + (size.width * 0.6 + 1) * math.sin(move * slice);
+    double yCenter = size.height * 0.8 + 69 * math.cos(move * slice);
+    path.quadraticBezierTo(xCenter, yCenter, size.width, size.height * 0.8);
+
+    path.lineTo(size.width, 0);
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    return true;
   }
 }
 
