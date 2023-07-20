@@ -68,6 +68,7 @@ class _HomePageState extends State<HomePage>
   }
 
   List<String> themeList = [
+    "Classic",
     "Green",
     "Purple",
   ];
@@ -98,6 +99,12 @@ class _HomePageState extends State<HomePage>
                         // ColorTheme.selectedColor = "Green";
                       });
                       print("Green Theme Selected");
+                    } else if (theme == "Classic") {
+                      setState(() {
+                        setGlobalTheme(theme);
+                        // ColorTheme.selectedColor = "Green";
+                      });
+                      print("Classic Theme Selected");
                     }
                     Navigator.pop(context); // Close the dialog
                   },
@@ -156,6 +163,10 @@ class _HomePageState extends State<HomePage>
         elevation: 0.0,
         actions: [
           PopupMenuButton(
+            icon: Icon(
+              Icons.menu,
+              color: ColorTheme.text(themeValue),
+            ),
             onSelected: (value) {
               if (value == 'themes') {
                 showThemeDialog(context); // Show the theme dialog
@@ -251,7 +262,8 @@ class _HomePageState extends State<HomePage>
                                             width: 50,
                                             height: 50,
                                             child: Lottie.asset(
-                                                'assets/leaf.json'),
+                                                ColorTheme.lottieLeafAnimation(
+                                                    themeValue)),
                                           ),
                                           title: Text(features[index]),
                                         );
@@ -266,8 +278,9 @@ class _HomePageState extends State<HomePage>
                                 SizedBox(
                                   width: MediaQuery.of(context).size.width,
                                   height: 300,
-                                  child: const RiveAnimation.asset(
-                                      "assets/empty-living-room.riv"),
+                                  child: RiveAnimation.asset(
+                                      ColorTheme.riveEmptyListAnimation(
+                                          themeValue)),
                                 ),
                                 const Text(
                                     "You haven't written any poetry yet ..."),
@@ -286,8 +299,7 @@ class _HomePageState extends State<HomePage>
                       width: double.infinity,
                       height: 60,
                       child: Container(
-                        color:
-                            ColorTheme.secondary(themeValue),
+                        color: ColorTheme.secondary(themeValue),
                       ),
                     ),
                   );
@@ -303,7 +315,10 @@ class _HomePageState extends State<HomePage>
           // Handle the action when the button is pressed
           // Add your logic here
         },
-        child: const Icon(Icons.add),
+        child: Icon(
+          Icons.add,
+          color: ColorTheme.text(themeValue),
+        ),
       ),
     );
   }

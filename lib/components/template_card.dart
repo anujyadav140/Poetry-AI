@@ -123,7 +123,7 @@ class Template extends StatelessWidget {
             borderRadius: BorderRadius.circular(20.0),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.35),
+                color: Colors.black.withOpacity(0.30),
                 spreadRadius: 1,
                 blurRadius: 5,
                 offset: const Offset(0, 3),
