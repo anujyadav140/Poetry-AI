@@ -3,7 +3,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:poetry_ai/components/color_palette.dart';
 import 'package:poetry_ai/components/template_card.dart';
-import 'package:poetry_ai/pages/home.dart';
 import 'package:poetry_ai/services/authentication/auth_service.dart';
 import 'package:rive/rive.dart';
 import 'dart:math' as math;
@@ -113,6 +112,7 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
+    final themeValue = globalThemeBox.get('theme') ?? 'Green';
     void logout() async {
       //show loading
       showDialog(
@@ -150,7 +150,7 @@ class _HomePageState extends State<HomePage>
       appBar: AppBar(
         title: Text(
           "Welcome back!",
-          style: TextStyle(color: ColorTheme.text(globalThemeBox.get('theme'))),
+          style: TextStyle(color: ColorTheme.text(themeValue)),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0.0,
@@ -161,9 +161,10 @@ class _HomePageState extends State<HomePage>
                 showThemeDialog(context); // Show the theme dialog
               } else if (value == 'logout') {
                 logout();
-              } else if (value == 'home') {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const Home()));
+                // } else if (value == 'home') {
+                //   Navigator.push(context,
+                //       MaterialPageRoute(builder: (context) => const Home()));
+                // }
               }
             },
             itemBuilder: (context) => [
@@ -192,7 +193,7 @@ class _HomePageState extends State<HomePage>
           )
         ],
       ),
-      backgroundColor: ColorTheme.accent(globalThemeBox.get('theme')),
+      backgroundColor: ColorTheme.accent(themeValue),
       body: SafeArea(
         child: Center(
           child: Column(
@@ -202,10 +203,8 @@ class _HomePageState extends State<HomePage>
                 child: Row(children: [
                   for (int i = 0; i < PoetryTypesData.poetryTypes.length; i++)
                     Template(
-                      templateBoxColor:
-                          ColorTheme.primary(globalThemeBox.get('theme')),
-                      templateSplashColor:
-                          ColorTheme.secondary(globalThemeBox.get('theme')),
+                      templateBoxColor: ColorTheme.primary(themeValue),
+                      templateSplashColor: ColorTheme.secondary(themeValue),
                       name: PoetryTypesData.poetryTypes[i].name,
                       description: PoetryTypesData.poetryTypes[i].description,
                       onTap: () => onTapTemplate(i),
@@ -223,7 +222,7 @@ class _HomePageState extends State<HomePage>
                   ),
                   child: ClipPath(
                     child: Container(
-                      color: ColorTheme.secondary(globalThemeBox.get('theme')),
+                      color: ColorTheme.secondary(themeValue),
                       child: isTemplateClicked
                           ? SizedBox(
                               width: MediaQuery.of(context).size.width,
@@ -288,7 +287,7 @@ class _HomePageState extends State<HomePage>
                       height: 60,
                       child: Container(
                         color:
-                            ColorTheme.secondary(globalThemeBox.get('theme')),
+                            ColorTheme.secondary(themeValue),
                       ),
                     ),
                   );
@@ -299,7 +298,7 @@ class _HomePageState extends State<HomePage>
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: ColorTheme.accent(globalThemeBox.get('theme')),
+        backgroundColor: ColorTheme.accent(themeValue),
         onPressed: () {
           // Handle the action when the button is pressed
           // Add your logic here

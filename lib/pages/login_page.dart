@@ -61,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     final globalThemeBox = Hive.box('myThemeBox');
     return Scaffold(
-      backgroundColor: ColorTheme.background(globalThemeBox.get('theme')),
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
