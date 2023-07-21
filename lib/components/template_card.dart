@@ -87,6 +87,8 @@ class PoetryTypesData {
 class Template extends StatelessWidget {
   final Color templateBoxColor;
   final Color templateSplashColor;
+  final Color templateUnderlineColor;
+  final Color templateFontColor;
   final String name;
   final bool isSelected;
   final String description;
@@ -96,6 +98,8 @@ class Template extends StatelessWidget {
     super.key,
     required this.templateBoxColor,
     required this.templateSplashColor,
+    required this.templateFontColor,
+    required this.templateUnderlineColor,
     required this.name,
     required this.description,
     required this.onTap,
@@ -131,12 +135,29 @@ class Template extends StatelessWidget {
             ],
           ),
           child: SizedBox(
-            height: 200,
-            width: MediaQuery.of(context).size.width * 0.8,
+            height: 50,
+            width: MediaQuery.of(context).size.width * 0.5,
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(name),
-                Text(description),
+                Stack(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 15.0),
+                      child: Container(
+                        height: 15,
+                        width: calculateContainerWidth(name, context),
+                        color: templateUnderlineColor,
+                      ),
+                    ),
+                    Text(
+                      name,
+                      style: TextStyle(fontSize: 21, color: templateFontColor),
+                    ),
+                  ],
+                ),
+                // Text(description),
               ],
             ),
           ),
@@ -144,4 +165,17 @@ class Template extends StatelessWidget {
       ),
     );
   }
+}
+
+double calculateContainerWidth(String text, BuildContext context) {
+  final textSpan = TextSpan(text: text, style: const TextStyle(fontSize: 21));
+  final textPainter = TextPainter(
+    text: textSpan,
+    textDirection: TextDirection.ltr,
+  );
+  textPainter.layout();
+  final textWidth = textPainter.width;
+  final screenWidth = MediaQuery.of(context).size.width;
+  return textWidth +
+      screenWidth * 0.11; // You can adjust the multiplier as needed
 }

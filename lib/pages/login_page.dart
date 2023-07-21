@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:poetry_ai/components/color_palette.dart';
 import 'package:poetry_ai/components/my_button.dart';
 import 'package:poetry_ai/components/my_textfield.dart';
 import 'package:poetry_ai/services/authentication/auth_service.dart';

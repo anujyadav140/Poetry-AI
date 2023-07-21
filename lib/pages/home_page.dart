@@ -216,6 +216,8 @@ class _HomePageState extends State<HomePage>
                     Template(
                       templateBoxColor: ColorTheme.primary(themeValue),
                       templateSplashColor: ColorTheme.secondary(themeValue),
+                      templateUnderlineColor: ColorTheme.accent(themeValue),
+                      templateFontColor: ColorTheme.text(themeValue),
                       name: PoetryTypesData.poetryTypes[i].name,
                       description: PoetryTypesData.poetryTypes[i].description,
                       onTap: () => onTapTemplate(i),
@@ -225,7 +227,7 @@ class _HomePageState extends State<HomePage>
               ),
               SizedBox(
                 width: double.infinity,
-                height: 350,
+                height: 500,
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.only(

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class GreenColorTheme {
-  static const Color text = Color.fromRGBO(27, 8, 25, 1);
+  static const Color text = Color.fromRGBO(255, 255, 255, 1);
   static const Color background = Color.fromRGBO(248, 232, 246, 1);
   static const Color primary = Color.fromRGBO(150, 223, 158, 1);
   static const Color secondary = Color.fromRGBO(177, 225, 231, 1);
@@ -12,7 +12,7 @@ class GreenColorTheme {
 }
 
 class PurpleColorTheme {
-  static const Color text = Color.fromRGBO(0, 0, 0, 1);
+  static const Color text = Color.fromRGBO(255, 255, 255, 1);
   static const Color background = Color.fromRGBO(75, 73, 219, 1);
   static const Color primary = Color.fromRGBO(169, 126, 169, 1);
   static const Color secondary = Color.fromRGBO(235, 224, 230, 1);
@@ -43,7 +43,7 @@ class ColorTheme {
     } else if (color == "Classic") {
       return ClassicColorTheme.text;
     } else {
-      return Colors.black; // Return a default color if no theme is selected
+      return Colors.black; 
     }
   }
 
@@ -56,7 +56,7 @@ class ColorTheme {
     } else if (color == "Classic") {
       return ClassicColorTheme.background;
     } else {
-      return Colors.white; // Return a default color if no theme is selected
+      return Colors.white; 
     }
   }
 
@@ -69,7 +69,7 @@ class ColorTheme {
     } else if (color == "Classic") {
       return ClassicColorTheme.primary;
     } else {
-      return Colors.blue; // Return a default color if no theme is selected
+      return Colors.blue;
     }
   }
 
@@ -82,7 +82,7 @@ class ColorTheme {
     } else if (color == "Classic") {
       return ClassicColorTheme.secondary;
     } else {
-      return Colors.red; // Return a default color if no theme is selected
+      return Colors.red; 
     }
   }
 
@@ -95,7 +95,7 @@ class ColorTheme {
     } else if (color == "Classic") {
       return ClassicColorTheme.background;
     } else {
-      return Colors.indigo; // Return a default color if no theme is selected
+      return Colors.indigo; 
     }
   }
 

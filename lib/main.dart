@@ -2,7 +2,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:poetry_ai/firebase_options.dart';
-import 'package:poetry_ai/pages/home_page.dart';
 import 'package:poetry_ai/services/authentication/auth_gate.dart';
 import 'package:poetry_ai/services/authentication/auth_service.dart';
 import 'package:provider/provider.dart';
