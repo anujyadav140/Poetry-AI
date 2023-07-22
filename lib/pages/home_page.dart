@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:lottie/lottie.dart';
 import 'package:poetry_ai/components/color_palette.dart';
 import 'package:poetry_ai/components/template_card.dart';
 import 'package:poetry_ai/services/authentication/auth_service.dart';
@@ -19,9 +19,10 @@ class _HomePageState extends State<HomePage>
   late AnimationController _controller;
   final _myBox = Hive.box('myBox');
   final globalThemeBox = Hive.box('myThemeBox');
-  PoetryType poetryTypeName = PoetryType("", "", [""]);
+  PoetryType poetryTypeName = PoetryType("", "", [""], [""]);
   bool isTemplateClicked = false;
   List<String> features = [""];
+  List<String> icons = [""];
   int selectedTemplateIndex = -1;
   @override
   void initState() {
@@ -148,7 +149,9 @@ class _HomePageState extends State<HomePage>
           poetryTypeName = PoetryTypesData.getPoetryTypeByName(
               PoetryTypesData.poetryTypes[index].name);
           features = PoetryTypesData.getFeaturesByName(poetryTypeName.name);
+          icons = PoetryTypesData.getIconsByName(poetryTypeName.name);
           print(features);
+          print(icons);
         }
       });
     }
@@ -157,7 +160,12 @@ class _HomePageState extends State<HomePage>
       appBar: AppBar(
         title: Text(
           "Welcome back!",
-          style: TextStyle(color: ColorTheme.text(themeValue)),
+          style: GoogleFonts.ebGaramond(
+            textStyle: TextStyle(
+                color: ColorTheme.text(themeValue),
+                letterSpacing: .5,
+                fontSize: 28),
+          ),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0.0,
@@ -262,27 +270,67 @@ class _HomePageState extends State<HomePage>
                                         horizontal: 20.0,
                                         vertical: 10.0,
                                       ),
-                                      child: Text(
-                                        "Features for ${poetryTypeName.name}:",
-                                        style: const TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                      child: Column(
+                                        children: [
+                                          Text(
+                                            poetryTypeName.description,
+                                            style: GoogleFonts.ebGaramond(
+                                              textStyle: TextStyle(
+                                                color:
+                                                    ColorTheme.text(themeValue),
+                                                letterSpacing: .5,
+                                                fontSize: 18,
+                                              ),
+                                            ),
+                                          ),
+                                          Text(
+                                            "Features for ${poetryTypeName.name}:",
+                                            style: GoogleFonts.ebGaramond(
+                                              textStyle: TextStyle(
+                                                color:
+                                                    ColorTheme.text(themeValue),
+                                                letterSpacing: .5,
+                                                fontSize: 21,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                     Expanded(
                                       child: ListView.builder(
                                         itemCount: features.length,
                                         itemBuilder: (context, index) {
-                                          return ListTile(
-                                            leading: SizedBox(
-                                              width: 50,
-                                              height: 50,
-                                              child: Lottie.asset(ColorTheme
-                                                  .lottieLeafAnimation(
-                                                      themeValue)),
-                                            ),
-                                            title: Text(features[index]),
+                                          return Column(
+                                            children: [
+                                              ListTile(
+                                                leading: SizedBox(
+                                                  width: 50,
+                                                  height: 50,
+                                                  child:
+                                                      Image.asset(icons[index]),
+                                                ),
+                                                title: Text(
+                                                  features[index],
+                                                  style: GoogleFonts.ebGaramond(
+                                                    textStyle: TextStyle(
+                                                      color: ColorTheme.text(
+                                                          themeValue),
+                                                      letterSpacing: .5,
+                                                      fontSize: 18,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              if (index != features.length - 1)
+                                                const Divider(
+                                                  height:
+                                                      1, // Adjust the height of the divider as needed
+                                                  color: Colors
+                                                      .grey, // You can change the color of the divider here
+                                                ),
+                                            ],
                                           );
                                         },
                                       ),
@@ -299,8 +347,15 @@ class _HomePageState extends State<HomePage>
                                         ColorTheme.riveEmptyListAnimation(
                                             themeValue)),
                                   ),
-                                  const Text(
-                                      "You haven't written any poetry yet ..."),
+                                  Text(
+                                    "You haven't written any poetry yet ...",
+                                    style: GoogleFonts.ebGaramond(
+                                      textStyle: TextStyle(
+                                          color: ColorTheme.text(themeValue),
+                                          letterSpacing: .5,
+                                          fontSize: 18),
+                                    ),
+                                  ),
                                 ],
                               ),
                       ),

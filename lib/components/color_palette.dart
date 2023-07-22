@@ -8,7 +8,6 @@ class GreenColorTheme {
   static const Color secondary = Color.fromRGBO(177, 225, 231, 1);
   static const Color accent = Color.fromRGBO(48, 156, 61, 1);
   static const String riveEmptyListAnimation = "assets/empty-living-room.riv";
-  static const String lottieLeafAnimation = "assets/leaf-green.json";
 }
 
 class PurpleColorTheme {
@@ -18,24 +17,21 @@ class PurpleColorTheme {
   static const Color secondary = Color.fromRGBO(235, 224, 230, 1);
   static const Color accent = Color.fromRGBO(127, 102, 153, 1);
   static const String riveEmptyListAnimation = "assets/empty-living-room.riv";
-  static const String lottieLeafAnimation = "assets/leaf-purple.json";
 }
 
 class ClassicColorTheme {
   static const Color text = Color.fromRGBO(0, 0, 0, 1);
-  static const Color background = Color.fromRGBO(245, 245, 245, 1);
+  static const Color background = Color.fromRGBO(215, 215, 215, 1);
   static const Color primary = Color.fromRGBO(255, 255, 255, 1);
   static const Color secondary = Color.fromRGBO(255, 255, 255, 1);
   static const String riveEmptyListAnimation =
       "assets/living_room_scene_b&w.riv";
-  static const String lottieLeafAnimation = "assets/leaf-classic.json";
 }
 
 class ColorTheme {
   final globalThemeBox = Hive.box('myThemeBox');
 
   static Color text(String color) {
-    // Return different color based on the selected theme
     if (color == "Green") {
       return GreenColorTheme.text;
     } else if (color == "Purple") {
@@ -43,12 +39,11 @@ class ColorTheme {
     } else if (color == "Classic") {
       return ClassicColorTheme.text;
     } else {
-      return Colors.black; 
+      return Colors.black;
     }
   }
 
   static Color background(String color) {
-    // Return different color based on the selected theme
     if (color == "Green") {
       return Colors.green.shade100;
     } else if (color == "Purple") {
@@ -56,12 +51,11 @@ class ColorTheme {
     } else if (color == "Classic") {
       return ClassicColorTheme.background;
     } else {
-      return Colors.white; 
+      return Colors.white;
     }
   }
 
   static Color primary(String color) {
-    // Return different color based on the selected theme
     if (color == "Green") {
       return GreenColorTheme.primary;
     } else if (color == "Purple") {
@@ -74,7 +68,6 @@ class ColorTheme {
   }
 
   static Color secondary(String color) {
-    // Return different color based on the selected theme
     if (color == "Green") {
       return GreenColorTheme.secondary;
     } else if (color == "Purple") {
@@ -82,12 +75,11 @@ class ColorTheme {
     } else if (color == "Classic") {
       return ClassicColorTheme.secondary;
     } else {
-      return Colors.red; 
+      return Colors.red;
     }
   }
 
   static Color accent(String color) {
-    // Return different color based on the selected theme
     if (color == "Green") {
       return GreenColorTheme.accent;
     } else if (color == "Purple") {
@@ -95,12 +87,11 @@ class ColorTheme {
     } else if (color == "Classic") {
       return ClassicColorTheme.background;
     } else {
-      return Colors.indigo; 
+      return Colors.indigo;
     }
   }
 
   static String riveEmptyListAnimation(String rive) {
-    // Return different color based on the selected theme
     if (rive == "Green") {
       return GreenColorTheme.riveEmptyListAnimation;
     } else if (rive == "Purple") {
@@ -109,19 +100,6 @@ class ColorTheme {
       return ClassicColorTheme.riveEmptyListAnimation;
     } else {
       return GreenColorTheme.riveEmptyListAnimation;
-    }
-  }
-
-  static String lottieLeafAnimation(String lottie) {
-    // Return different color based on the selected theme
-    if (lottie == "Green") {
-      return GreenColorTheme.lottieLeafAnimation;
-    } else if (lottie == "Purple") {
-      return PurpleColorTheme.lottieLeafAnimation;
-    } else if (lottie == "Classic") {
-      return ClassicColorTheme.lottieLeafAnimation;
-    } else {
-      return GreenColorTheme.lottieLeafAnimation;
     }
   }
 }
