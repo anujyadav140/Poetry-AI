@@ -218,7 +218,7 @@ class Template extends StatelessWidget {
                         textStyle: TextStyle(
                             color: templateFontColor,
                             letterSpacing: .5,
-                            fontSize: 24),
+                            fontSize: 19),
                       ),
                     ),
                   ],

@@ -48,7 +48,10 @@ dependencies:
   animated_text_kit: ^4.2.2
   lottie: ^2.5.0
   google_fonts: ^4.0.4
-
+  auto_size_text: ^3.0.0
+  english_words: ^4.0.0
+  flutter_quill: ^7.2.18
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -11,7 +11,7 @@ class GreenColorTheme {
 }
 
 class PurpleColorTheme {
-  static const Color text = Color.fromRGBO(255, 255, 255, 1);
+  static const Color text = Color.fromRGBO(0, 0, 0, 1);
   static const Color background = Color.fromRGBO(75, 73, 219, 1);
   static const Color primary = Color.fromRGBO(169, 126, 169, 1);
   static const Color secondary = Color.fromRGBO(235, 224, 230, 1);

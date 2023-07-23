@@ -1,8 +1,12 @@
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:poetry_ai/components/color_palette.dart';
 import 'package:poetry_ai/components/template_card.dart';
+import 'package:poetry_ai/pages/editor.dart';
 import 'package:poetry_ai/services/authentication/auth_service.dart';
 import 'package:rive/rive.dart';
 import 'dart:math' as math;
@@ -17,6 +21,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
+  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  String user = "";
   final _myBox = Hive.box('myBox');
   final globalThemeBox = Hive.box('myThemeBox');
   PoetryType poetryTypeName = PoetryType("", "", [""], [""]);
@@ -26,6 +32,16 @@ class _HomePageState extends State<HomePage>
   int selectedTemplateIndex = -1;
   @override
   void initState() {
+    if (firebaseAuth.currentUser?.displayName != null) {
+      user = firebaseAuth.currentUser!.displayName!;
+    } else {
+      user = firebaseAuth.currentUser!.email!;
+      String email = user;
+      RegExp regex = RegExp(r"^(.+)@.*$");
+      String username = regex.firstMatch(email)?.group(1) ?? email;
+      user = username;
+      print(username);
+    }
     globalThemeBox.get('theme');
     super.initState();
     _controller = AnimationController(
@@ -158,13 +174,15 @@ class _HomePageState extends State<HomePage>
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          "Welcome back!",
+        title: AutoSizeText(
+          "Welcome, $user!",
+          minFontSize: 8,
+          maxLines: 4,
           style: GoogleFonts.ebGaramond(
             textStyle: TextStyle(
                 color: ColorTheme.text(themeValue),
                 letterSpacing: .5,
-                fontSize: 28),
+                fontSize: 20),
           ),
         ),
         backgroundColor: Colors.transparent,
@@ -235,7 +253,7 @@ class _HomePageState extends State<HomePage>
               ),
               SizedBox(
                 width: double.infinity,
-                height: 500,
+                height: MediaQuery.of(context).size.height * 0.7,
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.only(
@@ -253,8 +271,8 @@ class _HomePageState extends State<HomePage>
                   ),
                   child: ClipRRect(
                     borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(50.0),
-                      topRight: Radius.circular(50.0),
+                      topLeft: Radius.circular(25.0),
+                      topRight: Radius.circular(25.0),
                     ),
                     child: ClipPath(
                       child: Container(
@@ -279,9 +297,12 @@ class _HomePageState extends State<HomePage>
                                                 color:
                                                     ColorTheme.text(themeValue),
                                                 letterSpacing: .5,
-                                                fontSize: 18,
+                                                fontSize: 15,
                                               ),
                                             ),
+                                          ),
+                                          const SizedBox(
+                                            height: 20,
                                           ),
                                           Text(
                                             "Features for ${poetryTypeName.name}:",
@@ -290,7 +311,7 @@ class _HomePageState extends State<HomePage>
                                                 color:
                                                     ColorTheme.text(themeValue),
                                                 letterSpacing: .5,
-                                                fontSize: 21,
+                                                fontSize: 17,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
@@ -318,7 +339,7 @@ class _HomePageState extends State<HomePage>
                                                       color: ColorTheme.text(
                                                           themeValue),
                                                       letterSpacing: .5,
-                                                      fontSize: 18,
+                                                      fontSize: 15,
                                                     ),
                                                   ),
                                                 ),
@@ -385,8 +406,8 @@ class _HomePageState extends State<HomePage>
       floatingActionButton: FloatingActionButton(
         backgroundColor: ColorTheme.accent(themeValue),
         onPressed: () {
-          // Handle the action when the button is pressed
-          // Add your logic here
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const PoetryEditor()));
         },
         child: Icon(
           Icons.add,
