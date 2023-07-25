@@ -15,14 +15,20 @@ class _PoetryEditorState extends State<PoetryEditor> {
     keepStyleOnNewLine: true,
     selection: const TextSelection.collapsed(offset: 0),
   );
-  final List<String> _googleFonts = [
-    GoogleFonts.ebGaramond().fontFamily!,
-    GoogleFonts.roboto().fontFamily!,
-    GoogleFonts.lato().fontFamily!,
-    GoogleFonts.oswald().fontFamily!,
-    GoogleFonts.zhiMangXing().fontFamily!,
-    GoogleFonts.zenTokyoZoo().fontFamily!,
+  final List<dynamic> _googleFonts = [
+    ["ebGaramond", GoogleFonts.ebGaramond().fontFamily!],
+    ["monofett", GoogleFonts.monofett().fontFamily!],
+    ["k2d", GoogleFonts.k2d().fontFamily!],
+    ["oswald", GoogleFonts.oswald().fontFamily!],
+    ["zhiMangXing", GoogleFonts.zhiMangXing().fontFamily!],
+    ["zenTokyoZoo", GoogleFonts.zenTokyoZoo().fontFamily!],
   ];
+  // GoogleFonts.monofett().fontFamily!,
+  //   GoogleFonts.k2d().fontFamily!,
+  //   GoogleFonts.oswald().fontFamily!,
+  //   GoogleFonts.zhiMangXing().fontFamily!,
+  //   GoogleFonts.zenTokyoZoo().fontFamily!,
+
   FocusNode focusNode = FocusNode();
   ScrollController scrollController = ScrollController();
 
@@ -76,7 +82,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
             'Large': '38',
           },
           fontFamilyValues: {
-            for (var fontFamily in _googleFonts) fontFamily: fontFamily
+            for (var fontFamily in _googleFonts) fontFamily[0]: fontFamily[1]
           },
         ),
         LayoutBuilder(
