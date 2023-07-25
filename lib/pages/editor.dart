@@ -10,7 +10,11 @@ class PoetryEditor extends StatefulWidget {
 }
 
 class _PoetryEditorState extends State<PoetryEditor> {
-  quill.QuillController controller = quill.QuillController.basic();
+  quill.QuillController controller = quill.QuillController(
+    document: quill.Document(),
+    keepStyleOnNewLine: true,
+    selection: const TextSelection.collapsed(offset: 0),
+  );
   final List<String> _googleFonts = [
     GoogleFonts.ebGaramond().fontFamily!,
     GoogleFonts.roboto().fontFamily!,
@@ -21,6 +25,21 @@ class _PoetryEditorState extends State<PoetryEditor> {
   ];
   FocusNode focusNode = FocusNode();
   ScrollController scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    controller.addListener(_onTextChanged);
+  }
+
+  @override
+  void dispose() {
+    controller.removeListener(_onTextChanged);
+    super.dispose();
+  }
+
+  void _onTextChanged() {}
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -50,6 +69,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
           showSearchButton: false,
           showLink: false,
           showFontSize: true,
+          showFontFamily: true,
           fontSizeValues: const {
             'Small': '26',
             'Medium': '32',
@@ -65,10 +85,21 @@ class _PoetryEditorState extends State<PoetryEditor> {
               width: screenWidth,
               height: screenHeight,
               child: quill.QuillEditor(
+                placeholder: "Write your poetry here ...",
                 controller: controller,
                 focusNode: focusNode,
                 scrollController: scrollController,
                 scrollable: true,
+                customStyles: quill.DefaultStyles(
+                  paragraph: quill.DefaultTextBlockStyle(
+                      GoogleFonts.ebGaramond(
+                          fontSize: 26,
+                          fontWeight: FontWeight.w300,
+                          color: Colors.black),
+                      const quill.VerticalSpacing(0, 6),
+                      const quill.VerticalSpacing(0, 6),
+                      null),
+                ),
                 padding: const EdgeInsets.all(15.0),
                 autoFocus: true,
                 readOnly: false,
