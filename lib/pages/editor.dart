@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rive/rive.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'dart:async';
 
 class PoetryEditor extends StatefulWidget {
   final Color editorAppbarColor;
@@ -22,6 +24,8 @@ class _PoetryEditorState extends State<PoetryEditor> {
     selection: const TextSelection.collapsed(offset: 0),
   );
   bool _isRhymeLines = false;
+  bool _isKeyboardVisible = false;
+  late StreamSubscription<bool> keyboardSubscription;
   final List<dynamic> _googleFonts = [
     ["ebGaramond", GoogleFonts.ebGaramond().fontFamily!],
     ["monofett", GoogleFonts.monofett().fontFamily!],
@@ -52,11 +56,26 @@ class _PoetryEditorState extends State<PoetryEditor> {
   void initState() {
     super.initState();
     controller.addListener(_onTextChanged);
+
+    var keyboardVisibilityController = KeyboardVisibilityController();
+    // Query
+    print(
+        'Keyboard visibility direct query: ${keyboardVisibilityController.isVisible}');
+
+    // Subscribe
+    keyboardSubscription =
+        keyboardVisibilityController.onChange.listen((bool visible) {
+      print('Keyboard visibility update. Is visible: $visible');
+      setState(() {
+        _isKeyboardVisible = visible;
+      });
+    });
   }
 
   @override
   void dispose() {
     controller.removeListener(_onTextChanged);
+    keyboardSubscription.cancel();
     super.dispose();
   }
 
@@ -127,7 +146,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
               Icons.cloud,
               color: widget.editorFontColor,
             ),
-          )
+          ),
         ],
       ),
       body: SafeArea(
@@ -148,6 +167,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
               showInlineCode: false,
               showSearchButton: false,
               showLink: false,
+              color: Colors.grey,
               showFontSize: true,
               showFontFamily: true,
               fontSizeValues: const {
@@ -193,20 +213,28 @@ class _PoetryEditorState extends State<PoetryEditor> {
           ]),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: widget.editorAppbarColor,
-        child: SizedBox(
-          width: 40,
-          height: 40,
-          child: Image.asset(_aiTools[0][0]),
+      floatingActionButton: Padding(
+        padding: !_isKeyboardVisible
+            ? const EdgeInsets.only(top: 0)
+            : EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.15),
+        child: FloatingActionButton(
+          backgroundColor: widget.editorAppbarColor,
+          child: SizedBox(
+            width: 40,
+            height: 40,
+            child: Image.asset(_aiTools[0][0]),
+          ),
+          onPressed: () {
+            showModalBottomSheet(
+                backgroundColor: Colors.transparent,
+                context: context,
+                builder: (builder) => bottomSheet());
+          },
         ),
-        onPressed: () {
-          showModalBottomSheet(
-              backgroundColor: Colors.transparent,
-              context: context,
-              builder: (builder) => bottomSheet());
-        },
       ),
+      floatingActionButtonLocation: !_isKeyboardVisible
+          ? FloatingActionButtonLocation.endFloat
+          : FloatingActionButtonLocation.endTop,
     );
   }
 
