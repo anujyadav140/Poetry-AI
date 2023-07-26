@@ -4,7 +4,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:rive/rive.dart';
 
 class PoetryEditor extends StatefulWidget {
-  const PoetryEditor({super.key});
+  final Color editorAppbarColor;
+  final Color editorFontColor;
+  const PoetryEditor(
+      {super.key,
+      required this.editorAppbarColor,
+      required this.editorFontColor});
 
   @override
   State<PoetryEditor> createState() => _PoetryEditorState();
@@ -96,7 +101,16 @@ class _PoetryEditorState extends State<PoetryEditor> {
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Editor"),
+        title: Text(
+          "Editor",
+          style: TextStyle(
+            color: widget.editorFontColor,
+          ),
+        ),
+        iconTheme: IconThemeData(
+          color: widget.editorFontColor, // Set the custom color here
+        ),
+        backgroundColor: widget.editorAppbarColor,
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(
           bottom: Radius.circular(25),
@@ -109,7 +123,10 @@ class _PoetryEditorState extends State<PoetryEditor> {
                 _isRhymeLines = !_isRhymeLines;
               });
             },
-            icon: const Icon(Icons.cloud),
+            icon: Icon(
+              Icons.cloud,
+              color: widget.editorFontColor,
+            ),
           )
         ],
       ),
@@ -177,6 +194,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: widget.editorAppbarColor,
         child: SizedBox(
           width: 40,
           height: 40,
@@ -213,7 +231,8 @@ class _PoetryEditorState extends State<PoetryEditor> {
                       // Handle the click event here
                       print('Clicked on ${_aiTools[index][1]}');
                     },
-                    splashColor: Colors.blue, // Customize the splash color
+                    splashColor:
+                        widget.editorAppbarColor, // Customize the splash color
                     highlightColor: Colors.transparent, // No highlight color
                     child: Column(
                       children: [
@@ -226,8 +245,8 @@ class _PoetryEditorState extends State<PoetryEditor> {
                           title: Text(
                             _aiTools[index][1],
                             style: GoogleFonts.ebGaramond(
-                              textStyle: const TextStyle(
-                                color: Colors.black,
+                              textStyle: TextStyle(
+                                color: widget.editorFontColor,
                                 letterSpacing: .5,
                                 fontSize: 15,
                               ),
@@ -263,7 +282,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
               icons,
               // semanticLabel: "Help",
               size: 29,
-              color: Colors.white,
+              color: widget.editorFontColor,
             ),
           ),
           const SizedBox(

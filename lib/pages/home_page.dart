@@ -231,185 +231,192 @@ class _HomePageState extends State<HomePage>
       ),
       backgroundColor: ColorTheme.accent(themeValue),
       body: SafeArea(
-        child: Center(
-          child: Column(
-            children: [
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(children: [
-                  for (int i = 0; i < PoetryTypesData.poetryTypes.length; i++)
-                    Template(
-                      templateBoxColor: ColorTheme.primary(themeValue),
-                      templateSplashColor: ColorTheme.secondary(themeValue),
-                      templateUnderlineColor: ColorTheme.accent(themeValue),
-                      templateFontColor: ColorTheme.text(themeValue),
-                      name: PoetryTypesData.poetryTypes[i].name,
-                      description: PoetryTypesData.poetryTypes[i].description,
-                      onTap: () => onTapTemplate(i),
-                      isSelected: selectedTemplateIndex == i,
-                    ),
-                ]),
-              ),
-              SizedBox(
-                width: double.infinity,
-                height: MediaQuery.of(context).size.height * 0.7,
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(50.0),
-                      topRight: Radius.circular(50.0),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.6),
-                        spreadRadius: 1,
-                        blurRadius: 5,
-                        offset: const Offset(0, 3),
+        child: SingleChildScrollView(
+          child: Center(
+            child: Column(
+              children: [
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(children: [
+                    for (int i = 0; i < PoetryTypesData.poetryTypes.length; i++)
+                      Template(
+                        templateBoxColor: ColorTheme.primary(themeValue),
+                        templateSplashColor: ColorTheme.secondary(themeValue),
+                        templateUnderlineColor: ColorTheme.accent(themeValue),
+                        templateFontColor: ColorTheme.text(themeValue),
+                        name: PoetryTypesData.poetryTypes[i].name,
+                        description: PoetryTypesData.poetryTypes[i].description,
+                        onTap: () => onTapTemplate(i),
+                        isSelected: selectedTemplateIndex == i,
                       ),
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(25.0),
-                      topRight: Radius.circular(25.0),
+                  ]),
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  height: MediaQuery.of(context).size.height * 0.7,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(50.0),
+                        topRight: Radius.circular(50.0),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.6),
+                          spreadRadius: 1,
+                          blurRadius: 5,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
                     ),
-                    child: ClipPath(
-                      child: Container(
-                        color: ColorTheme.secondary(themeValue),
-                        child: isTemplateClicked
-                            ? SizedBox(
-                                width: MediaQuery.of(context).size.width,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 20.0,
-                                        vertical: 10.0,
-                                      ),
-                                      child: Column(
-                                        children: [
-                                          Text(
-                                            poetryTypeName.description,
-                                            style: GoogleFonts.ebGaramond(
-                                              textStyle: TextStyle(
-                                                color:
-                                                    ColorTheme.text(themeValue),
-                                                letterSpacing: .5,
-                                                fontSize: 15,
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(25.0),
+                        topRight: Radius.circular(25.0),
+                      ),
+                      child: ClipPath(
+                        child: Container(
+                          color: ColorTheme.secondary(themeValue),
+                          child: isTemplateClicked
+                              ? SizedBox(
+                                  width: MediaQuery.of(context).size.width,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 20.0,
+                                          vertical: 10.0,
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              poetryTypeName.description,
+                                              style: GoogleFonts.ebGaramond(
+                                                textStyle: TextStyle(
+                                                  color:
+                                                      ColorTheme.text(themeValue),
+                                                  letterSpacing: .5,
+                                                  fontSize: 15,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          const SizedBox(
-                                            height: 20,
-                                          ),
-                                          Text(
-                                            "Features for ${poetryTypeName.name}:",
-                                            style: GoogleFonts.ebGaramond(
-                                              textStyle: TextStyle(
-                                                color:
-                                                    ColorTheme.text(themeValue),
-                                                letterSpacing: .5,
-                                                fontSize: 17,
-                                                fontWeight: FontWeight.bold,
+                                            const SizedBox(
+                                              height: 20,
+                                            ),
+                                            Text(
+                                              "Features for ${poetryTypeName.name}:",
+                                              style: GoogleFonts.ebGaramond(
+                                                textStyle: TextStyle(
+                                                  color:
+                                                      ColorTheme.text(themeValue),
+                                                  letterSpacing: .5,
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    Expanded(
-                                      child: Scrollbar(
-                                        thumbVisibility: true,
-                                        child: ListView.builder(
-                                          itemCount: features.length,
-                                          itemBuilder: (context, index) {
-                                            return Column(
-                                              children: [
-                                                ListTile(
-                                                  leading: SizedBox(
-                                                    width: 50,
-                                                    height: 50,
-                                                    child: Image.asset(
-                                                        icons[index]),
-                                                  ),
-                                                  title: Text(
-                                                    features[index],
-                                                    style:
-                                                        GoogleFonts.ebGaramond(
-                                                      textStyle: TextStyle(
-                                                        color: ColorTheme.text(
-                                                            themeValue),
-                                                        letterSpacing: .5,
-                                                        fontSize: 15,
+                                      Expanded(
+                                        child: Scrollbar(
+                                          thumbVisibility: true,
+                                          child: ListView.builder(
+                                            itemCount: features.length,
+                                            itemBuilder: (context, index) {
+                                              return Column(
+                                                children: [
+                                                  ListTile(
+                                                    leading: SizedBox(
+                                                      width: 50,
+                                                      height: 50,
+                                                      child: Image.asset(
+                                                          icons[index]),
+                                                    ),
+                                                    title: Text(
+                                                      features[index],
+                                                      style:
+                                                          GoogleFonts.ebGaramond(
+                                                        textStyle: TextStyle(
+                                                          color: ColorTheme.text(
+                                                              themeValue),
+                                                          letterSpacing: .5,
+                                                          fontSize: 15,
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
-                                                ),
-                                                if (index !=
-                                                    features.length - 1)
-                                                  const Divider(
-                                                    height: 1,
-                                                    color: Colors.grey,
-                                                  ),
-                                              ],
-                                            );
-                                          },
+                                                  if (index !=
+                                                      features.length - 1)
+                                                    const Divider(
+                                                      height: 1,
+                                                      color: Colors.grey,
+                                                    ),
+                                                ],
+                                              );
+                                            },
+                                          ),
                                         ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : Column(
+                                  children: [
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width,
+                                      height: 300,
+                                      child: RiveAnimation.asset(
+                                          ColorTheme.riveEmptyListAnimation(
+                                              themeValue)),
+                                    ),
+                                    Text(
+                                      "You haven't written any poetry yet ...",
+                                      style: GoogleFonts.ebGaramond(
+                                        textStyle: TextStyle(
+                                            color: ColorTheme.text(themeValue),
+                                            letterSpacing: .5,
+                                            fontSize: 18),
                                       ),
                                     ),
                                   ],
                                 ),
-                              )
-                            : Column(
-                                children: [
-                                  SizedBox(
-                                    width: MediaQuery.of(context).size.width,
-                                    height: 300,
-                                    child: RiveAnimation.asset(
-                                        ColorTheme.riveEmptyListAnimation(
-                                            themeValue)),
-                                  ),
-                                  Text(
-                                    "You haven't written any poetry yet ...",
-                                    style: GoogleFonts.ebGaramond(
-                                      textStyle: TextStyle(
-                                          color: ColorTheme.text(themeValue),
-                                          letterSpacing: .5,
-                                          fontSize: 18),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              AnimatedBuilder(
-                animation: _controller,
-                builder: (context, child) {
-                  return ClipPath(
-                    clipper: DrawClip(_controller.value),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 60,
-                      child: Container(
-                        color: ColorTheme.secondary(themeValue),
+                AnimatedBuilder(
+                  animation: _controller,
+                  builder: (context, child) {
+                    return ClipPath(
+                      clipper: DrawClip(_controller.value),
+                      child: SizedBox(
+                        width: double.infinity,
+                        height: 60,
+                        child: Container(
+                          color: ColorTheme.secondary(themeValue),
+                        ),
                       ),
-                    ),
-                  );
-                },
-              )
-            ],
+                    );
+                  },
+                )
+              ],
+            ),
           ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: ColorTheme.accent(themeValue),
         onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const PoetryEditor()));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => PoetryEditor(
+                        editorAppbarColor: ColorTheme.accent(themeValue),
+                        editorFontColor: ColorTheme.text(themeValue),
+                      )));
         },
         child: Icon(
           Icons.add,
