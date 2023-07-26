@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rive/rive.dart';
 
 class PoetryEditor extends StatefulWidget {
   const PoetryEditor({super.key});
@@ -25,15 +26,18 @@ class _PoetryEditorState extends State<PoetryEditor> {
     ["zenTokyoZoo", GoogleFonts.zenTokyoZoo().fontFamily!],
   ];
 
-  final List<String> _aiTools = [
-    "RHYME SELECTED LINES",
-    "RHYME WHOLE POEM",
-    "SHOW / FIND THE METER OF THE WHOLE POEM",
-    "THE RHYME SCHEME OF THE WHOLE POEM",
-    "THE GENERATE FEW LINES (REMAINING LINES) FOR INSPIRATION",
-    "INSPIRATION ",
-    "THEME GENERATOR",
-    "WHAT TO WRITE ABOUT NEXT?"
+  final List<dynamic> _aiTools = [
+    ["images/rhyme.png", "RHYME SELECTED LINES"],
+    ["images/rhyme.png", "RHYME WHOLE POEM"],
+    ["images/meter.png", "SHOW / FIND THE METER OF THE WHOLE POEM"],
+    ["images/rhyme.png", "THE RHYME SCHEME OF THE WHOLE POEM"],
+    [
+      "images/poetry.png",
+      "THE GENERATE FEW LINES (REMAINING LINES) FOR INSPIRATION"
+    ],
+    ["images/dante.png", "INSPIRATION"],
+    ["images/lines.png", "THEME GENERATOR"],
+    ["images/book.png", "WHAT TO WRITE ABOUT NEXT?"]
   ];
 
   FocusNode focusNode = FocusNode();
@@ -91,16 +95,24 @@ class _PoetryEditorState extends State<PoetryEditor> {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(title: const Text("Editor"), actions: [
-        IconButton(
+      appBar: AppBar(
+        title: const Text("Editor"),
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+          bottom: Radius.circular(25),
+        )),
+        actions: [
+          IconButton(
             onPressed: () {
               print("check!000");
               setState(() {
                 _isRhymeLines = !_isRhymeLines;
               });
             },
-            icon: const Icon(Icons.back_hand))
-      ]),
+            icon: const Icon(Icons.cloud),
+          )
+        ],
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(children: [
@@ -165,6 +177,11 @@ class _PoetryEditorState extends State<PoetryEditor> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        child: SizedBox(
+          width: 40,
+          height: 40,
+          child: Image.asset(_aiTools[0][0]),
+        ),
         onPressed: () {
           showModalBottomSheet(
               backgroundColor: Colors.transparent,
@@ -177,50 +194,61 @@ class _PoetryEditorState extends State<PoetryEditor> {
 
   Widget bottomSheet() {
     return SizedBox(
-        height: 278,
-        width: MediaQuery.of(context).size.width,
-        child: Card(
-          margin: const EdgeInsets.all(18.0),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+      height: 278,
+      width: MediaQuery.of(context).size.width,
+      child: Card(
+        margin: const EdgeInsets.all(18.0),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+          child: Scrollbar(
+            thumbVisibility: true,
             child: Scrollbar(
               thumbVisibility: true,
               child: ListView.builder(
                 itemCount: _aiTools.length,
                 itemBuilder: (context, index) {
-                  return Column(
-                    children: [
-                      ListTile(
-                        leading: const SizedBox(
-                          width: 50,
-                          height: 50,
-                          child: Icon(Icons.abc),
-                        ),
-                        title: Text(
-                          _aiTools[index],
-                          style: GoogleFonts.ebGaramond(
-                            textStyle: const TextStyle(
-                              color: Colors.black,
-                              letterSpacing: .5,
-                              fontSize: 15,
+                  return InkWell(
+                    onTap: () {
+                      // Handle the click event here
+                      print('Clicked on ${_aiTools[index][1]}');
+                    },
+                    splashColor: Colors.blue, // Customize the splash color
+                    highlightColor: Colors.transparent, // No highlight color
+                    child: Column(
+                      children: [
+                        ListTile(
+                          leading: SizedBox(
+                            width: 50,
+                            height: 50,
+                            child: Image.asset(_aiTools[index][0]),
+                          ),
+                          title: Text(
+                            _aiTools[index][1],
+                            style: GoogleFonts.ebGaramond(
+                              textStyle: const TextStyle(
+                                color: Colors.black,
+                                letterSpacing: .5,
+                                fontSize: 15,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      if (index != _aiTools.length - 1)
-                        const Divider(
-                          height: 1,
-                          color: Colors.grey,
-                        ),
-                    ],
+                        if (index != _aiTools.length - 1)
+                          const Divider(
+                            height: 1,
+                            color: Colors.grey,
+                          ),
+                      ],
+                    ),
                   );
                 },
               ),
             ),
           ),
-        ));
+        ),
+      ),
+    );
   }
 
   Widget iconCreation(IconData icons, Color color, String text) {
