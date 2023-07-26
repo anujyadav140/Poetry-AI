@@ -319,40 +319,43 @@ class _HomePageState extends State<HomePage>
                                       ),
                                     ),
                                     Expanded(
-                                      child: ListView.builder(
-                                        itemCount: features.length,
-                                        itemBuilder: (context, index) {
-                                          return Column(
-                                            children: [
-                                              ListTile(
-                                                leading: SizedBox(
-                                                  width: 50,
-                                                  height: 50,
-                                                  child:
-                                                      Image.asset(icons[index]),
-                                                ),
-                                                title: Text(
-                                                  features[index],
-                                                  style: GoogleFonts.ebGaramond(
-                                                    textStyle: TextStyle(
-                                                      color: ColorTheme.text(
-                                                          themeValue),
-                                                      letterSpacing: .5,
-                                                      fontSize: 15,
+                                      child: Scrollbar(
+                                        thumbVisibility: true,
+                                        child: ListView.builder(
+                                          itemCount: features.length,
+                                          itemBuilder: (context, index) {
+                                            return Column(
+                                              children: [
+                                                ListTile(
+                                                  leading: SizedBox(
+                                                    width: 50,
+                                                    height: 50,
+                                                    child: Image.asset(
+                                                        icons[index]),
+                                                  ),
+                                                  title: Text(
+                                                    features[index],
+                                                    style:
+                                                        GoogleFonts.ebGaramond(
+                                                      textStyle: TextStyle(
+                                                        color: ColorTheme.text(
+                                                            themeValue),
+                                                        letterSpacing: .5,
+                                                        fontSize: 15,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
-                                              ),
-                                              if (index != features.length - 1)
-                                                const Divider(
-                                                  height:
-                                                      1, // Adjust the height of the divider as needed
-                                                  color: Colors
-                                                      .grey, // You can change the color of the divider here
-                                                ),
-                                            ],
-                                          );
-                                        },
+                                                if (index !=
+                                                    features.length - 1)
+                                                  const Divider(
+                                                    height: 1,
+                                                    color: Colors.grey,
+                                                  ),
+                                              ],
+                                            );
+                                          },
+                                        ),
                                       ),
                                     ),
                                   ],
