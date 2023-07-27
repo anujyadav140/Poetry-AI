@@ -22,7 +22,7 @@ class _HomePageState extends State<HomePage>
   late AnimationController _controller;
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   String user = "";
-  final _myBox = Hive.box('myBox');
+  ScrollController scrollController = ScrollController();
   final globalThemeBox = Hive.box('myThemeBox');
   PoetryType poetryTypeName = PoetryType("", "", [""], [""]);
   bool isTemplateClicked = false;
@@ -39,7 +39,6 @@ class _HomePageState extends State<HomePage>
       RegExp regex = RegExp(r"^(.+)@.*$");
       String username = regex.firstMatch(email)?.group(1) ?? email;
       user = username;
-      print(username);
     }
     globalThemeBox.get('theme');
     super.initState();
@@ -55,22 +54,7 @@ class _HomePageState extends State<HomePage>
   @override
   void dispose() {
     _controller.dispose();
-
     super.dispose();
-  }
-
-  void writeData() {
-    _myBox.put(1, "anuj");
-  }
-
-  void readData() {
-    _myBox.get(1);
-    print(_myBox.get(1));
-  }
-
-  void deleteData() {
-    _myBox.delete(1);
-    print("data deleted!");
   }
 
   void setGlobalTheme(String theme) {
@@ -89,8 +73,6 @@ class _HomePageState extends State<HomePage>
     "Purple",
   ];
 
-  // String selectedColor = "Green";
-  // Default color
   void showThemeDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -106,23 +88,20 @@ class _HomePageState extends State<HomePage>
                     if (theme == "Purple") {
                       setState(() {
                         setGlobalTheme(theme);
-                        // ColorTheme.selectedColor = "Purple";
                       });
                       print("Purple Theme Selected");
                     } else if (theme == "Green") {
                       setState(() {
                         setGlobalTheme(theme);
-                        // ColorTheme.selectedColor = "Green";
                       });
                       print("Green Theme Selected");
                     } else if (theme == "Classic") {
                       setState(() {
                         setGlobalTheme(theme);
-                        // ColorTheme.selectedColor = "Green";
                       });
                       print("Classic Theme Selected");
                     }
-                    Navigator.pop(context); // Close the dialog
+                    Navigator.pop(context);
                   },
                 );
               }).toList(),
@@ -135,6 +114,13 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
+    Navigator.of(context).didPop = () {
+      setState(() {
+        // Reset the isTemplateClicked flag to false
+        isTemplateClicked = false;
+      });
+      return Future.value(true);
+    };
     final themeValue = globalThemeBox.get('theme') ?? 'Green';
     void logout() async {
       //show loading
@@ -154,13 +140,12 @@ class _HomePageState extends State<HomePage>
     void onTapTemplate(int index) {
       setState(() {
         if (selectedTemplateIndex == index) {
-          // If the same template is tapped again, unselect it and set isTemplateClicked to false
           selectedTemplateIndex = -1;
           isTemplateClicked = false;
         } else {
-          // Otherwise, select the template and set isTemplateClicked to true
           selectedTemplateIndex = index;
           isTemplateClicked = true;
+          print("template clicked!");
           poetryTypeName = PoetryTypesData.getPoetryTypeByName(
               PoetryTypesData.poetryTypes[index].name);
           features = PoetryTypesData.getFeaturesByName(poetryTypeName.name);
@@ -194,13 +179,9 @@ class _HomePageState extends State<HomePage>
             ),
             onSelected: (value) {
               if (value == 'themes') {
-                showThemeDialog(context); // Show the theme dialog
+                showThemeDialog(context);
               } else if (value == 'logout') {
                 logout();
-                // } else if (value == 'home') {
-                //   Navigator.push(context,
-                //       MaterialPageRoute(builder: (context) => const Home()));
-                // }
               }
             },
             itemBuilder: (context) => [
@@ -218,13 +199,6 @@ class _HomePageState extends State<HomePage>
                   title: Text("Logout"),
                 ),
               ),
-              // const PopupMenuItem(
-              //   value: 'home',
-              //   child: ListTile(
-              //     leading: Icon(Icons.home),
-              //     title: Text("Home"),
-              //   ),
-              // ),
             ],
           )
         ],
@@ -281,7 +255,8 @@ class _HomePageState extends State<HomePage>
                               ? SizedBox(
                                   width: MediaQuery.of(context).size.width,
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Padding(
                                         padding: const EdgeInsets.symmetric(
@@ -294,8 +269,8 @@ class _HomePageState extends State<HomePage>
                                               poetryTypeName.description,
                                               style: GoogleFonts.ebGaramond(
                                                 textStyle: TextStyle(
-                                                  color:
-                                                      ColorTheme.text(themeValue),
+                                                  color: ColorTheme.text(
+                                                      themeValue),
                                                   letterSpacing: .5,
                                                   fontSize: 15,
                                                 ),
@@ -308,8 +283,8 @@ class _HomePageState extends State<HomePage>
                                               "Features for ${poetryTypeName.name}:",
                                               style: GoogleFonts.ebGaramond(
                                                 textStyle: TextStyle(
-                                                  color:
-                                                      ColorTheme.text(themeValue),
+                                                  color: ColorTheme.text(
+                                                      themeValue),
                                                   letterSpacing: .5,
                                                   fontSize: 17,
                                                   fontWeight: FontWeight.bold,
@@ -321,8 +296,10 @@ class _HomePageState extends State<HomePage>
                                       ),
                                       Expanded(
                                         child: Scrollbar(
+                                          controller: scrollController,
                                           thumbVisibility: true,
                                           child: ListView.builder(
+                                            controller: scrollController,
                                             itemCount: features.length,
                                             itemBuilder: (context, index) {
                                               return Column(
@@ -336,11 +313,12 @@ class _HomePageState extends State<HomePage>
                                                     ),
                                                     title: Text(
                                                       features[index],
-                                                      style:
-                                                          GoogleFonts.ebGaramond(
+                                                      style: GoogleFonts
+                                                          .ebGaramond(
                                                         textStyle: TextStyle(
-                                                          color: ColorTheme.text(
-                                                              themeValue),
+                                                          color:
+                                                              ColorTheme.text(
+                                                                  themeValue),
                                                           letterSpacing: .5,
                                                           fontSize: 15,
                                                         ),

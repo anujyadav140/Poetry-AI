@@ -52,6 +52,7 @@ dependencies:
   english_words: ^4.0.0
   flutter_quill: ^7.2.18
   flutter_keyboard_visibility: ^5.4.1
+  flutter_slidable: ^3.0.0
   
 dev_dependencies:
   flutter_test:
