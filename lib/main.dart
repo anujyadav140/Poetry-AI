@@ -10,9 +10,10 @@ void main() async {
   //initialize hive
   await Hive.initFlutter();
   //open hive box
-  var box = await Hive.openBox('myBox');
   var themeBox = await Hive.openBox('myThemeBox');
   var templateBoolBox = await Hive.openBox('myIsTemplateClickedBox');
+  var poemListBox = await Hive.openBox('myPoemBox');
+  var poemListIndexBox = await Hive.openBox('myPoemListIndexBox');
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(ChangeNotifierProvider(

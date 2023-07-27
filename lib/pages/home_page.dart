@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:poetry_ai/components/color_palette.dart';
@@ -17,18 +18,31 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
+class Poem {
+  int index;
+  String title;
+  String form;
+
+  Poem(this.index, this.title, this.form);
+}
+
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   String user = "";
+  String setPoemForm = "";
   ScrollController scrollController = ScrollController();
   final globalThemeBox = Hive.box('myThemeBox');
+  final poemListBox = Hive.box('myPoemBox');
+  final poemListIndexBox = Hive.box('myPoemListIndexBox');
   PoetryType poetryTypeName = PoetryType("", "", [""], [""]);
   bool isTemplateClicked = false;
+  bool isPoemListNotEmpty = true;
   List<String> features = [""];
   List<String> icons = [""];
   int selectedTemplateIndex = -1;
+  List<dynamic>? existingPoemList = [];
   @override
   void initState() {
     if (firebaseAuth.currentUser?.displayName != null) {
@@ -72,6 +86,18 @@ class _HomePageState extends State<HomePage>
     "Green",
     "Purple",
   ];
+
+  void setPoemList(int poemIndex, String poemTitle, String poemForm) {
+    var poem = Poem(poemIndex, poemTitle, poemForm);
+
+    poemListBox.add({
+      'index': poem.index,
+      'title': poem.title,
+      'form': poem.form,
+    });
+
+    print("${poemListBox.get(3)} SEXESS");
+  }
 
   void showThemeDialog(BuildContext context) {
     showDialog(
@@ -138,13 +164,14 @@ class _HomePageState extends State<HomePage>
         } else {
           selectedTemplateIndex = index;
           isTemplateClicked = true;
-          print("template clicked!");
           poetryTypeName = PoetryTypesData.getPoetryTypeByName(
               PoetryTypesData.poetryTypes[index].name);
+          setPoemForm = PoetryTypesData.poetryTypes[index].name;
           features = PoetryTypesData.getFeaturesByName(poetryTypeName.name);
           icons = PoetryTypesData.getIconsByName(poetryTypeName.name);
-          print(features);
-          print(icons);
+          print(setPoemForm);
+          // print(features);
+          // print(icons);
         }
       });
     }
@@ -199,195 +226,283 @@ class _HomePageState extends State<HomePage>
       backgroundColor: ColorTheme.accent(themeValue),
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Center(
-            child: Column(
-              children: [
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(children: [
-                    for (int i = 0; i < PoetryTypesData.poetryTypes.length; i++)
-                      Template(
-                        templateBoxColor: ColorTheme.primary(themeValue),
-                        templateSplashColor: ColorTheme.secondary(themeValue),
-                        templateUnderlineColor: ColorTheme.accent(themeValue),
-                        templateFontColor: ColorTheme.text(themeValue),
-                        name: PoetryTypesData.poetryTypes[i].name,
-                        description: PoetryTypesData.poetryTypes[i].description,
-                        onTap: () => onTapTemplate(i),
-                        isSelected: selectedTemplateIndex == i,
-                      ),
-                  ]),
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  height: MediaQuery.of(context).size.height * 0.7,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(50.0),
-                        topRight: Radius.circular(50.0),
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.6),
-                          spreadRadius: 1,
-                          blurRadius: 5,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
+          child: Column(
+            children: [
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(children: [
+                  for (int i = 0; i < PoetryTypesData.poetryTypes.length; i++)
+                    Template(
+                      templateBoxColor: ColorTheme.primary(themeValue),
+                      templateSplashColor: ColorTheme.secondary(themeValue),
+                      templateUnderlineColor: ColorTheme.accent(themeValue),
+                      templateFontColor: ColorTheme.text(themeValue),
+                      name: PoetryTypesData.poetryTypes[i].name,
+                      description: PoetryTypesData.poetryTypes[i].description,
+                      onTap: () => onTapTemplate(i),
+                      isSelected: selectedTemplateIndex == i,
                     ),
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(25.0),
-                        topRight: Radius.circular(25.0),
+                ]),
+              ),
+              SizedBox(
+                width: double.infinity,
+                height: MediaQuery.of(context).size.height * 0.7,
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(50.0),
+                      topRight: Radius.circular(50.0),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.6),
+                        spreadRadius: 1,
+                        blurRadius: 5,
+                        offset: const Offset(0, 3),
                       ),
-                      child: ClipPath(
-                        child: Container(
-                          color: ColorTheme.secondary(themeValue),
-                          child: isTemplateClicked
-                              ? SizedBox(
-                                  width: MediaQuery.of(context).size.width,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 20.0,
-                                          vertical: 10.0,
-                                        ),
-                                        child: Column(
-                                          children: [
-                                            Text(
-                                              poetryTypeName.description,
-                                              style: GoogleFonts.ebGaramond(
-                                                textStyle: TextStyle(
-                                                  color: ColorTheme.text(
-                                                      themeValue),
-                                                  letterSpacing: .5,
-                                                  fontSize: 15,
-                                                ),
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              height: 20,
-                                            ),
-                                            Text(
-                                              "Features for ${poetryTypeName.name}:",
-                                              style: GoogleFonts.ebGaramond(
-                                                textStyle: TextStyle(
-                                                  color: ColorTheme.text(
-                                                      themeValue),
-                                                  letterSpacing: .5,
-                                                  fontSize: 17,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(25.0),
+                      topRight: Radius.circular(25.0),
+                    ),
+                    child: ClipPath(
+                      child: Container(
+                        color: ColorTheme.secondary(themeValue),
+                        child: isTemplateClicked
+                            ? SizedBox(
+                                width: MediaQuery.of(context).size.width,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 20.0,
+                                        vertical: 10.0,
                                       ),
-                                      Expanded(
-                                        child: Scrollbar(
+                                      child: Column(
+                                        children: [
+                                          Text(
+                                            poetryTypeName.description,
+                                            style: GoogleFonts.ebGaramond(
+                                              textStyle: TextStyle(
+                                                color:
+                                                    ColorTheme.text(themeValue),
+                                                letterSpacing: .5,
+                                                fontSize: 15,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 20,
+                                          ),
+                                          Text(
+                                            "Features for ${poetryTypeName.name}:",
+                                            style: GoogleFonts.ebGaramond(
+                                              textStyle: TextStyle(
+                                                color:
+                                                    ColorTheme.text(themeValue),
+                                                letterSpacing: .5,
+                                                fontSize: 17,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Scrollbar(
+                                        controller: scrollController,
+                                        thumbVisibility: true,
+                                        child: ListView.builder(
                                           controller: scrollController,
-                                          thumbVisibility: true,
-                                          child: ListView.builder(
-                                            controller: scrollController,
-                                            itemCount: features.length,
-                                            itemBuilder: (context, index) {
-                                              return Column(
-                                                children: [
-                                                  ListTile(
-                                                    leading: SizedBox(
-                                                      width: 50,
-                                                      height: 50,
-                                                      child: Image.asset(
-                                                          icons[index]),
-                                                    ),
-                                                    title: Text(
-                                                      features[index],
-                                                      style: GoogleFonts
-                                                          .ebGaramond(
-                                                        textStyle: TextStyle(
-                                                          color:
-                                                              ColorTheme.text(
-                                                                  themeValue),
-                                                          letterSpacing: .5,
-                                                          fontSize: 15,
-                                                        ),
+                                          itemCount: features.length,
+                                          itemBuilder: (context, index) {
+                                            return Column(
+                                              children: [
+                                                ListTile(
+                                                  leading: SizedBox(
+                                                    width: 50,
+                                                    height: 50,
+                                                    child: Image.asset(
+                                                        icons[index]),
+                                                  ),
+                                                  title: Text(
+                                                    features[index],
+                                                    style:
+                                                        GoogleFonts.ebGaramond(
+                                                      textStyle: TextStyle(
+                                                        color: ColorTheme.text(
+                                                            themeValue),
+                                                        letterSpacing: .5,
+                                                        fontSize: 15,
                                                       ),
                                                     ),
                                                   ),
-                                                  if (index !=
-                                                      features.length - 1)
-                                                    const Divider(
-                                                      height: 1,
-                                                      color: Colors.grey,
-                                                    ),
-                                                ],
-                                              );
-                                            },
-                                          ),
+                                                ),
+                                                if (index !=
+                                                    features.length - 1)
+                                                  const Divider(
+                                                    height: 1,
+                                                    color: Colors.grey,
+                                                  ),
+                                              ],
+                                            );
+                                          },
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              : Column(
-                                  children: [
-                                    SizedBox(
-                                      width: MediaQuery.of(context).size.width,
-                                      height: 300,
-                                      child: RiveAnimation.asset(
-                                          ColorTheme.riveEmptyListAnimation(
-                                              themeValue)),
-                                    ),
-                                    Text(
-                                      "You haven't written any poetry yet ...",
-                                      style: GoogleFonts.ebGaramond(
-                                        textStyle: TextStyle(
-                                            color: ColorTheme.text(themeValue),
-                                            letterSpacing: .5,
-                                            fontSize: 18),
                                       ),
                                     ),
                                   ],
                                 ),
-                        ),
+                              )
+                            : poemListBox.isNotEmpty
+                                ? Scrollbar(
+                                    controller: scrollController,
+                                    thumbVisibility: true,
+                                    thickness: 5.0,
+                                    child: ListView.builder(
+                                      controller: scrollController,
+                                      itemCount: poemListBox.length,
+                                      itemBuilder: (context, index) {
+                                        var poemData = poemListBox.getAt(index)
+                                            as Map<dynamic, dynamic>;
+                                        int poemIndex =
+                                            poemData['index'] as int;
+                                        String poemTitle =
+                                            poemData['title'] as String;
+                                        String poemForm =
+                                            poemData['form'] as String;
+
+                                        return Dismissible(
+                                          key: UniqueKey(),
+                                          background: Container(
+                                            color: Colors.red,
+                                            alignment: Alignment.centerRight,
+                                            padding: const EdgeInsets.only(
+                                                right: 20.0),
+                                            child: const Icon(
+                                              Icons.delete,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          onDismissed: (direction) {
+                                            setState(() {
+                                              // Delete the item from the poemListBox when dismissed
+                                              poemListBox.deleteAt(index);
+                                            });
+
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              SnackBar(
+                                                content:
+                                                    Text('$poemTitle deleted.'),
+                                                action: SnackBarAction(
+                                                  label: 'Undo',
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      // Reinsert the item back to the poemListBox if "Undo" is clicked
+                                                      poemListBox.put(
+                                                          index, poemData);
+                                                    });
+                                                  },
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          child: Column(
+                                            children: [
+                                              Material(
+                                                child: ListTile(
+                                                  title: Text(poemTitle),
+                                                  onTap: () {
+                                                    print(poemIndex);
+                                                  },
+                                                  splashColor:
+                                                      ColorTheme.accent(
+                                                          themeValue),
+                                                ),
+                                              ),
+                                              if (index !=
+                                                  poemListBox.length - 1)
+                                                const Divider(
+                                                  height: 1,
+                                                  color: Colors.grey,
+                                                ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  )
+                                : Column(
+                                    children: [
+                                      SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        height: 300,
+                                        child: RiveAnimation.asset(
+                                            ColorTheme.riveEmptyListAnimation(
+                                                themeValue)),
+                                      ),
+                                      Text(
+                                        "You haven't written any poetry yet ...",
+                                        style: GoogleFonts.ebGaramond(
+                                          textStyle: TextStyle(
+                                              color:
+                                                  ColorTheme.text(themeValue),
+                                              letterSpacing: .5,
+                                              fontSize: 18),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                       ),
                     ),
                   ),
                 ),
-                AnimatedBuilder(
-                  animation: _controller,
-                  builder: (context, child) {
-                    return ClipPath(
-                      clipper: DrawClip(_controller.value),
-                      child: SizedBox(
-                        width: double.infinity,
-                        height: 60,
-                        child: Container(
-                          color: ColorTheme.secondary(themeValue),
-                        ),
+              ),
+              AnimatedBuilder(
+                animation: _controller,
+                builder: (context, child) {
+                  return ClipPath(
+                    clipper: DrawClip(_controller.value),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 60,
+                      child: Container(
+                        color: ColorTheme.secondary(themeValue),
                       ),
-                    );
-                  },
-                )
-              ],
-            ),
+                    ),
+                  );
+                },
+              )
+            ],
           ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: ColorTheme.accent(themeValue),
         onPressed: () {
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => PoetryEditor(
-                        editorAppbarColor: ColorTheme.accent(themeValue),
-                        editorFontColor: ColorTheme.text(themeValue),
-                      )));
+          if (isTemplateClicked) {
+            int currentPoemIndex = poemListIndexBox.get('poemIndex') ?? -1;
+            int newPoemIndex = currentPoemIndex + 1;
+            poemListIndexBox.put('poemIndex', newPoemIndex);
+            var setPoemTitle =
+                "Untitled-${poemListIndexBox.get('poemIndex')}  $setPoemForm";
+            setPoemList(
+                poemListIndexBox.get('poemIndex'), setPoemTitle, setPoemForm);
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => PoetryEditor(
+                          editorAppbarColor: ColorTheme.accent(themeValue),
+                          editorFontColor: ColorTheme.text(themeValue),
+                        )));
+          } else {
+            print("select a template!");
+          }
         },
         child: Icon(
           Icons.add,

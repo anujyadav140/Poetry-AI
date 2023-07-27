@@ -126,7 +126,8 @@ class _PoetryEditorState extends State<PoetryEditor> {
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const HomePage(),));
+                    builder: (context) => const HomePage(),
+                  ));
             },
             icon: const Icon(Icons.arrow_back)),
         title: Text(
@@ -258,48 +259,43 @@ class _PoetryEditorState extends State<PoetryEditor> {
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
           child: Scrollbar(
             thumbVisibility: true,
-            child: Scrollbar(
-              thumbVisibility: true,
-              child: ListView.builder(
-                itemCount: _aiTools.length,
-                itemBuilder: (context, index) {
-                  return InkWell(
-                    onTap: () {
-                      // Handle the click event here
-                      print('Clicked on ${_aiTools[index][1]}');
-                    },
-                    splashColor:
-                        widget.editorAppbarColor, // Customize the splash color
-                    highlightColor: Colors.transparent, // No highlight color
-                    child: Column(
-                      children: [
-                        ListTile(
-                          leading: SizedBox(
-                            width: 50,
-                            height: 50,
-                            child: Image.asset(_aiTools[index][0]),
-                          ),
-                          title: Text(
-                            _aiTools[index][1],
-                            style: GoogleFonts.ebGaramond(
-                              textStyle: TextStyle(
-                                color: widget.editorFontColor,
-                                letterSpacing: .5,
-                                fontSize: 15,
-                              ),
+            child: ListView.builder(
+              itemCount: _aiTools.length,
+              itemBuilder: (context, index) {
+                return InkWell(
+                  onTap: () {
+                    print('Clicked on ${_aiTools[index][1]}');
+                  },
+                  splashColor: widget.editorAppbarColor,
+                  highlightColor: Colors.transparent,
+                  child: Column(
+                    children: [
+                      ListTile(
+                        leading: SizedBox(
+                          width: 50,
+                          height: 50,
+                          child: Image.asset(_aiTools[index][0]),
+                        ),
+                        title: Text(
+                          _aiTools[index][1],
+                          style: GoogleFonts.ebGaramond(
+                            textStyle: TextStyle(
+                              color: widget.editorFontColor,
+                              letterSpacing: .5,
+                              fontSize: 15,
                             ),
                           ),
                         ),
-                        if (index != _aiTools.length - 1)
-                          const Divider(
-                            height: 1,
-                            color: Colors.grey,
-                          ),
-                      ],
-                    ),
-                  );
-                },
-              ),
+                      ),
+                      if (index != _aiTools.length - 1)
+                        const Divider(
+                          height: 1,
+                          color: Colors.grey,
+                        ),
+                    ],
+                  ),
+                );
+              },
             ),
           ),
         ),
