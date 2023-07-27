@@ -381,7 +381,7 @@ class _HomePageState extends State<HomePage>
       floatingActionButton: FloatingActionButton(
         backgroundColor: ColorTheme.accent(themeValue),
         onPressed: () {
-          Navigator.push(
+          Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                   builder: (context) => PoetryEditor(
