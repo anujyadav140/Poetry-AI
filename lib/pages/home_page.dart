@@ -114,13 +114,6 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
-    Navigator.of(context).didPop = () {
-      setState(() {
-        // Reset the isTemplateClicked flag to false
-        isTemplateClicked = false;
-      });
-      return Future.value(true);
-    };
     final themeValue = globalThemeBox.get('theme') ?? 'Green';
     void logout() async {
       //show loading
