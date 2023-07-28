@@ -1,24 +1,32 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:poetry_ai/pages/home_page.dart';
 import 'package:rive/rive.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'dart:async';
 
 class PoetryEditor extends StatefulWidget {
+  final int poemIndex;
   final Color editorAppbarColor;
   final Color editorFontColor;
-  const PoetryEditor(
-      {super.key,
-      required this.editorAppbarColor,
-      required this.editorFontColor});
+  const PoetryEditor({
+    super.key,
+    required this.poemIndex,
+    required this.editorAppbarColor,
+    required this.editorFontColor,
+  });
 
   @override
   State<PoetryEditor> createState() => _PoetryEditorState();
 }
 
 class _PoetryEditorState extends State<PoetryEditor> {
+  final poemListBox = Hive.box('myPoemBox');
+  final poemListIndexBox = Hive.box('myPoemListIndexBox');
   quill.QuillController controller = quill.QuillController(
     document: quill.Document(),
     keepStyleOnNewLine: true,
@@ -27,6 +35,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
   bool _isRhymeLines = false;
   bool _isKeyboardVisible = false;
   late StreamSubscription<bool> keyboardSubscription;
+  late String poemTitle = "";
   final List<dynamic> _googleFonts = [
     ["ebGaramond", GoogleFonts.ebGaramond().fontFamily!],
     ["monofett", GoogleFonts.monofett().fontFamily!],
@@ -57,7 +66,10 @@ class _PoetryEditorState extends State<PoetryEditor> {
   void initState() {
     super.initState();
     controller.addListener(_onTextChanged);
-
+    print(poemListBox.get(widget.poemIndex));
+    var poemData = poemListBox.getAt(widget.poemIndex) as Map<dynamic, dynamic>;
+    poemTitle = poemData['title'] as String;
+    // poemForm = poemData['form'] as String;
     var keyboardVisibilityController = KeyboardVisibilityController();
     // Query
     print(
@@ -89,6 +101,12 @@ class _PoetryEditorState extends State<PoetryEditor> {
       String cursorPositionPlaintext = getCursorPositionPlainText(controller);
       print('Plain Text before the cursor: $cursorPositionPlaintext');
     }
+    setState(() {
+      var poemData =
+          poemListBox.getAt(widget.poemIndex) as Map<dynamic, dynamic>;
+      poemData['poetry'] = jsonEncode(controller.document.toDelta().toJson());
+      poemListBox.putAt(widget.poemIndex, poemData);
+    });
   }
 
   String getCursorPositionPlainText(quill.QuillController controller) {
@@ -131,7 +149,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
             },
             icon: const Icon(Icons.arrow_back)),
         title: Text(
-          "Editor",
+          "Editor - $poemTitle",
           style: TextStyle(
             color: widget.editorFontColor,
           ),

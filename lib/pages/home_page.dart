@@ -10,6 +10,8 @@ import 'package:poetry_ai/pages/editor.dart';
 import 'package:poetry_ai/services/authentication/auth_service.dart';
 import 'package:rive/rive.dart';
 import 'dart:math' as math;
+import 'package:wave/config.dart';
+import 'package:wave/wave.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -22,8 +24,9 @@ class Poem {
   int index;
   String title;
   String form;
+  String poetry;
 
-  Poem(this.index, this.title, this.form);
+  Poem(this.index, this.title, this.form, this.poetry);
 }
 
 class _HomePageState extends State<HomePage>
@@ -87,16 +90,16 @@ class _HomePageState extends State<HomePage>
     "Purple",
   ];
 
-  void setPoemList(int poemIndex, String poemTitle, String poemForm) {
-    var poem = Poem(poemIndex, poemTitle, poemForm);
+  void setPoemList(
+      int poemIndex, String poemTitle, String poemForm, String poetry) {
+    var poem = Poem(poemIndex, poemTitle, poemForm, poetry);
 
     poemListBox.add({
       'index': poem.index,
       'title': poem.title,
       'form': poem.form,
+      'poem': poem.poetry,
     });
-
-    print("${poemListBox.get(3)} SEXESS");
   }
 
   void showThemeDialog(BuildContext context) {
@@ -443,8 +446,7 @@ class _HomePageState extends State<HomePage>
                                                         context: context,
                                                         builder: (context) {
                                                           String editedTitle =
-                                                              poemTitle; // Initialize with the current poemTitle
-
+                                                              poemTitle;
                                                           return Container(
                                                             decoration:
                                                                 BoxDecoration(
@@ -454,53 +456,97 @@ class _HomePageState extends State<HomePage>
                                                                           8.0), // Add border radius here
                                                             ),
                                                             child: AlertDialog(
-                                                              title: Text(
+                                                              title: const Text(
                                                                   "Edit the poem title:"),
-                                                              content:
+                                                              content: Column(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .min,
+                                                                children: [
+                                                                  // WaveWidget(
+                                                                  //   config:
+                                                                  //       CustomConfig(
+                                                                  //     gradients: [
+                                                                  //       [
+                                                                  //         Colors
+                                                                  //             .blue,
+                                                                  //         Colors
+                                                                  //             .blue
+                                                                  //             .shade200
+                                                                  //       ],
+                                                                  //       [
+                                                                  //         Colors
+                                                                  //             .blue
+                                                                  //             .shade200,
+                                                                  //         Colors
+                                                                  //             .blue
+                                                                  //             .shade100
+                                                                  //       ],
+                                                                  //     ],
+                                                                  //     durations: [
+                                                                  //       3500,
+                                                                  //       5000
+                                                                  //     ],
+                                                                  //     heightPercentages: [
+                                                                  //       0.05,
+                                                                  //       0.1
+                                                                  //     ],
+                                                                  //   ),
+                                                                  //   waveAmplitude:
+                                                                  //       0,
+                                                                  //   backgroundColor:
+                                                                  //       Colors
+                                                                  //           .transparent,
+                                                                  //   size: Size(
+                                                                  //       double
+                                                                  //           .infinity,
+                                                                  //       80.0),
+                                                                  // ),
+                                                                  // SizedBox(
+                                                                  //     height:
+                                                                  //         16.0),
                                                                   TextField(
-                                                                onChanged:
-                                                                    (value) {
-                                                                  editedTitle =
-                                                                      value; // Update the editedTitle when the TextField value changes
-                                                                },
-                                                                decoration:
-                                                                    InputDecoration(
-                                                                  hintText:
-                                                                      "Poem Name", // Placeholder
-                                                                  // Customize the TextField style as needed
-                                                                  // For example, you can set the border, background color, etc.
-                                                                  border:
-                                                                      OutlineInputBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            8.0),
-                                                                    borderSide:
-                                                                        BorderSide(
-                                                                            color:
-                                                                                Colors.grey),
+                                                                    onChanged:
+                                                                        (value) {
+                                                                      editedTitle =
+                                                                          value;
+                                                                    },
+                                                                    decoration:
+                                                                        InputDecoration(
+                                                                      hintText:
+                                                                          "Poem Name",
+                                                                      border:
+                                                                          OutlineInputBorder(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(8.0),
+                                                                        borderSide:
+                                                                            const BorderSide(color: Colors.grey),
+                                                                      ),
+                                                                      filled:
+                                                                          true,
+                                                                      fillColor:
+                                                                          Colors
+                                                                              .grey[200],
+                                                                      contentPadding:
+                                                                          const EdgeInsets
+                                                                              .symmetric(
+                                                                        vertical:
+                                                                            12.0,
+                                                                        horizontal:
+                                                                            16.0,
+                                                                      ),
+                                                                    ),
                                                                   ),
-                                                                  filled: true,
-                                                                  fillColor:
-                                                                      Colors.grey[
-                                                                          200],
-                                                                  contentPadding:
-                                                                      const EdgeInsets
-                                                                          .symmetric(
-                                                                    vertical:
-                                                                        12.0,
-                                                                    horizontal:
-                                                                        16.0,
-                                                                  ),
-                                                                ),
+                                                                ],
                                                               ),
                                                               actions: [
                                                                 TextButton(
                                                                   onPressed:
                                                                       () {
                                                                     Navigator.pop(
-                                                                        context); // Close the dialog without saving changes
+                                                                        context);
                                                                   },
-                                                                  child: Text(
+                                                                  child: const Text(
                                                                       "Cancel"),
                                                                 ),
                                                                 TextButton(
@@ -508,7 +554,6 @@ class _HomePageState extends State<HomePage>
                                                                       () {
                                                                     setState(
                                                                         () {
-                                                                      // Update the poemListBox with the edited title
                                                                       var poemData = poemListBox
                                                                           .getAt(
                                                                               index) as Map<
@@ -522,10 +567,11 @@ class _HomePageState extends State<HomePage>
                                                                           poemData);
                                                                     });
                                                                     Navigator.pop(
-                                                                        context); // Close the dialog after saving changes
+                                                                        context);
                                                                   },
-                                                                  child: Text(
-                                                                      "Save"),
+                                                                  child:
+                                                                      const Text(
+                                                                          "Save"),
                                                                 ),
                                                               ],
                                                             ),
@@ -541,7 +587,22 @@ class _HomePageState extends State<HomePage>
                                                       ColorTheme.secondary(
                                                           themeValue),
                                                   onTap: () {
-                                                    print(poemIndex);
+                                                    // print(poemIndex);
+                                                    Navigator.pushReplacement(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder:
+                                                                (context) =>
+                                                                    PoetryEditor(
+                                                                      editorAppbarColor:
+                                                                          ColorTheme.accent(
+                                                                              themeValue),
+                                                                      editorFontColor:
+                                                                          ColorTheme.text(
+                                                                              themeValue),
+                                                                      poemIndex:
+                                                                          index,
+                                                                    )));
                                                   },
                                                   splashColor:
                                                       ColorTheme.accent(
@@ -615,14 +676,15 @@ class _HomePageState extends State<HomePage>
             poemListIndexBox.put('poemIndex', newPoemIndex);
             var setPoemTitle =
                 "Untitled-${poemListIndexBox.get('poemIndex')}  $setPoemForm";
-            setPoemList(
-                poemListIndexBox.get('poemIndex'), setPoemTitle, setPoemForm);
+            setPoemList(poemListIndexBox.get('poemIndex'), setPoemTitle,
+                setPoemForm, "");
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                     builder: (context) => PoetryEditor(
                           editorAppbarColor: ColorTheme.accent(themeValue),
                           editorFontColor: ColorTheme.text(themeValue),
+                          poemIndex: newPoemIndex,
                         )));
           } else {
             print("select a template!");
