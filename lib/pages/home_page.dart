@@ -374,48 +374,172 @@ class _HomePageState extends State<HomePage>
                                             poemData['title'] as String;
                                         String poemForm =
                                             poemData['form'] as String;
-
-                                        return Dismissible(
-                                          key: UniqueKey(),
-                                          background: Container(
-                                            color: Colors.red,
-                                            alignment: Alignment.centerRight,
-                                            padding: const EdgeInsets.only(
-                                                right: 20.0),
-                                            child: const Icon(
-                                              Icons.delete,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                          onDismissed: (direction) {
-                                            setState(() {
-                                              // Delete the item from the poemListBox when dismissed
-                                              poemListBox.deleteAt(index);
-                                            });
-
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              SnackBar(
-                                                content:
-                                                    Text('$poemTitle deleted.'),
-                                                action: SnackBarAction(
-                                                  label: 'Undo',
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      // Reinsert the item back to the poemListBox if "Undo" is clicked
-                                                      poemListBox.put(
-                                                          index, poemData);
-                                                    });
-                                                  },
-                                                ),
+                                        return Slidable(
+                                          key: const ValueKey(0),
+                                          endActionPane: ActionPane(
+                                            motion: const ScrollMotion(),
+                                            children: [
+                                              SlidableAction(
+                                                onPressed: (context) {},
+                                                backgroundColor:
+                                                    const Color(0xFF21B7CA),
+                                                foregroundColor: Colors.white,
+                                                icon: Icons.share,
+                                                label: 'Share',
                                               ),
-                                            );
-                                          },
+                                              SlidableAction(
+                                                onPressed: (context) {
+                                                  setState(() {
+                                                    poemListBox.deleteAt(index);
+                                                  });
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
+                                                      backgroundColor:
+                                                          ColorTheme.accent(
+                                                              themeValue),
+                                                      content: Text(
+                                                        '$poemTitle deleted.',
+                                                        style: TextStyle(
+                                                            color:
+                                                                ColorTheme.text(
+                                                                    themeValue)),
+                                                      ),
+                                                      action: SnackBarAction(
+                                                        backgroundColor:
+                                                            ColorTheme.primary(
+                                                                themeValue),
+                                                        label: 'Undo',
+                                                        textColor:
+                                                            ColorTheme.text(
+                                                                themeValue),
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            poemListBox
+                                                                .add(poemData);
+                                                          });
+                                                        },
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                                backgroundColor:
+                                                    const Color(0xFFFE4A49),
+                                                foregroundColor: Colors.white,
+                                                icon: Icons.delete,
+                                                label: 'Delete',
+                                              ),
+                                            ],
+                                          ),
                                           child: Column(
                                             children: [
                                               Material(
                                                 child: ListTile(
+                                                  trailing: IconButton(
+                                                    onPressed: () {
+                                                      showDialog(
+                                                        barrierDismissible:
+                                                            true,
+                                                        context: context,
+                                                        builder: (context) {
+                                                          String editedTitle =
+                                                              poemTitle; // Initialize with the current poemTitle
+
+                                                          return Container(
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8.0), // Add border radius here
+                                                            ),
+                                                            child: AlertDialog(
+                                                              title: Text(
+                                                                  "Edit the poem title:"),
+                                                              content:
+                                                                  TextField(
+                                                                onChanged:
+                                                                    (value) {
+                                                                  editedTitle =
+                                                                      value; // Update the editedTitle when the TextField value changes
+                                                                },
+                                                                decoration:
+                                                                    InputDecoration(
+                                                                  hintText:
+                                                                      "Poem Name", // Placeholder
+                                                                  // Customize the TextField style as needed
+                                                                  // For example, you can set the border, background color, etc.
+                                                                  border:
+                                                                      OutlineInputBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            8.0),
+                                                                    borderSide:
+                                                                        BorderSide(
+                                                                            color:
+                                                                                Colors.grey),
+                                                                  ),
+                                                                  filled: true,
+                                                                  fillColor:
+                                                                      Colors.grey[
+                                                                          200],
+                                                                  contentPadding:
+                                                                      const EdgeInsets
+                                                                          .symmetric(
+                                                                    vertical:
+                                                                        12.0,
+                                                                    horizontal:
+                                                                        16.0,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              actions: [
+                                                                TextButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.pop(
+                                                                        context); // Close the dialog without saving changes
+                                                                  },
+                                                                  child: Text(
+                                                                      "Cancel"),
+                                                                ),
+                                                                TextButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    setState(
+                                                                        () {
+                                                                      // Update the poemListBox with the edited title
+                                                                      var poemData = poemListBox
+                                                                          .getAt(
+                                                                              index) as Map<
+                                                                          dynamic,
+                                                                          dynamic>;
+                                                                      poemData[
+                                                                              'title'] =
+                                                                          editedTitle;
+                                                                      poemListBox.putAt(
+                                                                          index,
+                                                                          poemData);
+                                                                    });
+                                                                    Navigator.pop(
+                                                                        context); // Close the dialog after saving changes
+                                                                  },
+                                                                  child: Text(
+                                                                      "Save"),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          );
+                                                        },
+                                                      );
+                                                    },
+                                                    icon:
+                                                        const Icon(Icons.edit),
+                                                  ),
                                                   title: Text(poemTitle),
+                                                  tileColor:
+                                                      ColorTheme.secondary(
+                                                          themeValue),
                                                   onTap: () {
                                                     print(poemIndex);
                                                   },
