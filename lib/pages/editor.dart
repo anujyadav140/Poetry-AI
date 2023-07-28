@@ -66,9 +66,17 @@ class _PoetryEditorState extends State<PoetryEditor> {
   void initState() {
     super.initState();
     controller.addListener(_onTextChanged);
-    print(poemListBox.get(widget.poemIndex));
     var poemData = poemListBox.getAt(widget.poemIndex) as Map<dynamic, dynamic>;
     poemTitle = poemData['title'] as String;
+    String poetryContent = poemData['poetry'] as String;
+    var myJSON = jsonDecode(poetryContent);
+    controller = quill.QuillController(
+      document: quill.Document.fromJson(myJSON),
+      keepStyleOnNewLine: true,
+      selection: const TextSelection.collapsed(offset: 0),
+    );
+    print(poemListBox.get(widget.poemIndex));
+
     // poemForm = poemData['form'] as String;
     var keyboardVisibilityController = KeyboardVisibilityController();
     // Query
@@ -101,12 +109,6 @@ class _PoetryEditorState extends State<PoetryEditor> {
       String cursorPositionPlaintext = getCursorPositionPlainText(controller);
       print('Plain Text before the cursor: $cursorPositionPlaintext');
     }
-    setState(() {
-      var poemData =
-          poemListBox.getAt(widget.poemIndex) as Map<dynamic, dynamic>;
-      poemData['poetry'] = jsonEncode(controller.document.toDelta().toJson());
-      poemListBox.putAt(widget.poemIndex, poemData);
-    });
   }
 
   String getCursorPositionPlainText(quill.QuillController controller) {
@@ -165,13 +167,19 @@ class _PoetryEditorState extends State<PoetryEditor> {
         actions: [
           IconButton(
             onPressed: () {
-              print("check!000");
+              // setState(() {
+              //   _isRhymeLines = !_isRhymeLines;
+              // });
               setState(() {
-                _isRhymeLines = !_isRhymeLines;
+                var poemData = poemListBox.getAt(widget.poemIndex)
+                    as Map<dynamic, dynamic>;
+                poemData['poetry'] =
+                    jsonEncode(controller.document.toDelta().toJson());
+                poemListBox.putAt(widget.poemIndex, poemData);
               });
             },
             icon: Icon(
-              Icons.cloud,
+              Icons.save,
               color: widget.editorFontColor,
             ),
           ),
