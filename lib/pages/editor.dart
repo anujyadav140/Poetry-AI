@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
 import 'package:google_fonts/google_fonts.dart';
@@ -7,7 +7,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:poetry_ai/pages/home_page.dart';
 import 'package:rive/rive.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import 'dart:async';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class PoetryEditor extends StatefulWidget {
   final int poemIndex;
@@ -169,15 +169,24 @@ class _PoetryEditorState extends State<PoetryEditor> {
         actions: [
           IconButton(
             onPressed: () {
-              // setState(() {
-              //   _isRhymeLines = !_isRhymeLines;
-              // });
               setState(() {
+                // setState(() {
+                //   _isRhymeLines = !_isRhymeLines;
+                // });
                 var poemData = poemListBox.getAt(widget.poemIndex)
                     as Map<dynamic, dynamic>;
                 poemData['poetry'] =
                     jsonEncode(controller.document.toDelta().toJson());
                 poemListBox.putAt(widget.poemIndex, poemData);
+
+                Fluttertoast.showToast(
+                    msg: "Poem Saved!",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.CENTER,
+                    timeInSecForIosWeb: 1,
+                    backgroundColor: Colors.red,
+                    textColor: Colors.white,
+                    fontSize: 16.0);
               });
             },
             icon: Icon(

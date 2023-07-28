@@ -54,6 +54,7 @@ dependencies:
   flutter_keyboard_visibility: ^5.4.1
   flutter_slidable: ^3.0.0
   wave: ^0.2.2
+  fluttertoast: ^8.2.2
   
 dev_dependencies:
   flutter_test:
