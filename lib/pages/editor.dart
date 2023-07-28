@@ -68,13 +68,15 @@ class _PoetryEditorState extends State<PoetryEditor> {
     controller.addListener(_onTextChanged);
     var poemData = poemListBox.getAt(widget.poemIndex) as Map<dynamic, dynamic>;
     poemTitle = poemData['title'] as String;
-    String poetryContent = poemData['poetry'] as String;
-    var myJSON = jsonDecode(poetryContent);
+    String? poetryContent = poemData['poetry'] as String?;
+    var myJSON = poetryContent != null ? jsonDecode(poetryContent) : null;
     controller = quill.QuillController(
-      document: quill.Document.fromJson(myJSON),
+      document:
+          myJSON != null ? quill.Document.fromJson(myJSON) : quill.Document(),
       keepStyleOnNewLine: true,
       selection: const TextSelection.collapsed(offset: 0),
     );
+
     print(poemListBox.get(widget.poemIndex));
 
     // poemForm = poemData['form'] as String;
