@@ -283,9 +283,9 @@ class _PoetryEditorState extends State<PoetryEditor> {
                 label: 'AI poetry tool',
                 backgroundColor: widget.editorAppbarColor,
                 onTap: () => showModalBottomSheet(
-                backgroundColor: Colors.transparent,
-                context: context,
-                builder: (builder) => bottomSheet()),
+                    backgroundColor: Colors.transparent,
+                    context: context,
+                    builder: (builder) => bottomSheet()),
               ),
               SpeedDialChild(
                 child: const Icon(Icons.copy),
@@ -319,16 +319,22 @@ class _PoetryEditorState extends State<PoetryEditor> {
 
   Widget bottomSheet() {
     return SizedBox(
-      height: 278,
+      height: MediaQuery.of(context).size.height * 0.8,
       width: MediaQuery.of(context).size.width,
       child: Card(
-        // margin: const EdgeInsets.all(18.0),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        margin: EdgeInsets.zero, // Remove the default padding
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(15.0),
+            topRight: Radius.circular(15.0),
+          ),
+        ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
           child: Scrollbar(
             thumbVisibility: true,
             child: ListView.builder(
+              shrinkWrap: true,
               itemCount: _aiTools.length,
               itemBuilder: (context, index) {
                 return InkWell(
