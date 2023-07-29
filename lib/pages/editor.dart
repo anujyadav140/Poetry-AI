@@ -184,8 +184,8 @@ class _PoetryEditorState extends State<PoetryEditor> {
                     toastLength: Toast.LENGTH_SHORT,
                     gravity: ToastGravity.CENTER,
                     timeInSecForIosWeb: 1,
-                    backgroundColor: Colors.red,
-                    textColor: Colors.white,
+                    backgroundColor: widget.editorAppbarColor,
+                    textColor: widget.editorFontColor,
                     fontSize: 16.0);
               });
             },
@@ -197,68 +197,62 @@ class _PoetryEditorState extends State<PoetryEditor> {
         ],
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(children: [
-            quill.QuillToolbar.basic(
-              controller: controller,
-              toolbarIconSize: 15,
-              showQuote: false,
-              showIndent: false,
-              showDividers: false,
-              showSubscript: false,
-              showSuperscript: false,
-              showListBullets: false,
-              showListNumbers: false,
-              showHeaderStyle: false,
-              showListCheck: false,
-              showInlineCode: false,
-              showSearchButton: false,
-              showLink: false,
-              color: Colors.grey,
-              showFontSize: true,
-              showFontFamily: true,
-              fontSizeValues: const {
-                'Small': '26',
-                'Medium': '32',
-                'Large': '38',
-              },
-              fontFamilyValues: {
-                for (var fontFamily in _googleFonts)
-                  fontFamily[0]: fontFamily[1]
-              },
+        child: Column(children: [
+          quill.QuillToolbar.basic(
+            controller: controller,
+            toolbarIconSize: 15,
+            showQuote: false,
+            showIndent: false,
+            showDividers: false,
+            showSubscript: false,
+            showSuperscript: false,
+            showListBullets: false,
+            showListNumbers: false,
+            showHeaderStyle: false,
+            showListCheck: false,
+            showInlineCode: false,
+            showSearchButton: false,
+            showLink: false,
+            color: Colors.grey,
+            showFontSize: true,
+            showFontFamily: true,
+            fontSizeValues: const {
+              'Small': '26',
+              'Medium': '32',
+              'Large': '38',
+            },
+            fontFamilyValues: {
+              for (var fontFamily in _googleFonts)
+                fontFamily[0]: fontFamily[1]
+            },
+          ),
+          Expanded(
+            child: SizedBox(
+              child: quill.QuillEditor(
+                placeholder: "Write your poetry here ...",
+                controller: controller,
+                focusNode: focusNode,
+                scrollController: scrollController,
+                scrollable: true,
+                customStyles: quill.DefaultStyles(
+                  paragraph: quill.DefaultTextBlockStyle(
+                      GoogleFonts.ebGaramond(
+                          fontSize: 26,
+                          fontWeight: FontWeight.w300,
+                          color: Colors.black),
+                      const quill.VerticalSpacing(0, 6),
+                      const quill.VerticalSpacing(0, 6),
+                      null),
+                ),
+                padding: const EdgeInsets.all(15.0),
+                autoFocus: true,
+                readOnly: false,
+                expands: true,
+                textCapitalization: TextCapitalization.sentences,
+              ),
             ),
-            LayoutBuilder(
-              builder: (context, constraints) {
-                return SizedBox(
-                  width: screenWidth,
-                  height: screenHeight,
-                  child: quill.QuillEditor(
-                    placeholder: "Write your poetry here ...",
-                    controller: controller,
-                    focusNode: focusNode,
-                    scrollController: scrollController,
-                    scrollable: true,
-                    customStyles: quill.DefaultStyles(
-                      paragraph: quill.DefaultTextBlockStyle(
-                          GoogleFonts.ebGaramond(
-                              fontSize: 26,
-                              fontWeight: FontWeight.w300,
-                              color: Colors.black),
-                          const quill.VerticalSpacing(0, 6),
-                          const quill.VerticalSpacing(0, 6),
-                          null),
-                    ),
-                    padding: const EdgeInsets.all(15.0),
-                    autoFocus: true,
-                    readOnly: false,
-                    expands: true,
-                    textCapitalization: TextCapitalization.sentences,
-                  ),
-                );
-              },
-            ),
-          ]),
-        ),
+          ),
+        ]),
       ),
       floatingActionButton: Padding(
         padding: !_isKeyboardVisible
