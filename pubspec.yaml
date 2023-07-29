@@ -55,6 +55,7 @@ dependencies:
   flutter_slidable: ^3.0.0
   wave: ^0.2.2
   fluttertoast: ^8.2.2
+  flutter_speed_dial: ^7.0.0
   
 dev_dependencies:
   flutter_test:

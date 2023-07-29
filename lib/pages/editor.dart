@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:poetry_ai/components/color_palette.dart';
 import 'package:poetry_ai/pages/home_page.dart';
 import 'package:rive/rive.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
@@ -25,6 +27,7 @@ class PoetryEditor extends StatefulWidget {
 }
 
 class _PoetryEditorState extends State<PoetryEditor> {
+  final isOpenDial = ValueNotifier(false);
   final poemListBox = Hive.box('myPoemBox');
   final poemListIndexBox = Hive.box('myPoemListIndexBox');
   quill.QuillController controller = quill.QuillController(
@@ -139,144 +142,179 @@ class _PoetryEditorState extends State<PoetryEditor> {
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
-    double screenWidth = MediaQuery.of(context).size.width;
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-            onPressed: () {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const HomePage(),
-                  ));
-            },
-            icon: const Icon(Icons.arrow_back)),
-        title: Text(
-          "Editor - $poemTitle",
-          style: TextStyle(
-            color: widget.editorFontColor,
-          ),
-        ),
-        iconTheme: IconThemeData(
-          color: widget.editorFontColor, // Set the custom color here
-        ),
-        backgroundColor: widget.editorAppbarColor,
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-          bottom: Radius.circular(25),
-        )),
-        actions: [
-          IconButton(
-            onPressed: () {
-              setState(() {
-                // setState(() {
-                //   _isRhymeLines = !_isRhymeLines;
-                // });
-                var poemData = poemListBox.getAt(widget.poemIndex)
-                    as Map<dynamic, dynamic>;
-                poemData['poetry'] =
-                    jsonEncode(controller.document.toDelta().toJson());
-                poemListBox.putAt(widget.poemIndex, poemData);
+    return WillPopScope(
+      onWillPop: () async {
+        if (isOpenDial.value) {
+          //close speed dial
+          isOpenDial.value = false;
 
-                Fluttertoast.showToast(
-                    msg: "Poem Saved!",
-                    toastLength: Toast.LENGTH_SHORT,
-                    gravity: ToastGravity.CENTER,
-                    timeInSecForIosWeb: 1,
-                    backgroundColor: widget.editorAppbarColor,
-                    textColor: widget.editorFontColor,
-                    fontSize: 16.0);
-              });
-            },
-            icon: Icon(
-              Icons.save,
+          return false;
+        } else {
+          return true;
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const HomePage(),
+                    ));
+              },
+              icon: const Icon(Icons.arrow_back)),
+          title: Text(
+            "Editor - $poemTitle",
+            style: TextStyle(
               color: widget.editorFontColor,
             ),
           ),
-        ],
-      ),
-      body: SafeArea(
-        child: Column(children: [
-          quill.QuillToolbar.basic(
-            controller: controller,
-            toolbarIconSize: 15,
-            showQuote: false,
-            showIndent: false,
-            showDividers: false,
-            showSubscript: false,
-            showSuperscript: false,
-            showListBullets: false,
-            showListNumbers: false,
-            showHeaderStyle: false,
-            showListCheck: false,
-            showInlineCode: false,
-            showSearchButton: false,
-            showLink: false,
-            color: Colors.grey,
-            showFontSize: true,
-            showFontFamily: true,
-            fontSizeValues: const {
-              'Small': '26',
-              'Medium': '32',
-              'Large': '38',
-            },
-            fontFamilyValues: {
-              for (var fontFamily in _googleFonts)
-                fontFamily[0]: fontFamily[1]
-            },
+          iconTheme: IconThemeData(
+            color: widget.editorFontColor, // Set the custom color here
           ),
-          Expanded(
-            child: SizedBox(
-              child: quill.QuillEditor(
-                placeholder: "Write your poetry here ...",
-                controller: controller,
-                focusNode: focusNode,
-                scrollController: scrollController,
-                scrollable: true,
-                customStyles: quill.DefaultStyles(
-                  paragraph: quill.DefaultTextBlockStyle(
-                      GoogleFonts.ebGaramond(
-                          fontSize: 26,
-                          fontWeight: FontWeight.w300,
-                          color: Colors.black),
-                      const quill.VerticalSpacing(0, 6),
-                      const quill.VerticalSpacing(0, 6),
-                      null),
-                ),
-                padding: const EdgeInsets.all(15.0),
-                autoFocus: true,
-                readOnly: false,
-                expands: true,
-                textCapitalization: TextCapitalization.sentences,
+          backgroundColor: widget.editorAppbarColor,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(25),
+          )),
+          actions: [
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  // setState(() {
+                  //   _isRhymeLines = !_isRhymeLines;
+                  // });
+                  var poemData = poemListBox.getAt(widget.poemIndex)
+                      as Map<dynamic, dynamic>;
+                  poemData['poetry'] =
+                      jsonEncode(controller.document.toDelta().toJson());
+                  poemListBox.putAt(widget.poemIndex, poemData);
+                  showToast("Poem Saved!");
+                });
+              },
+              icon: Icon(
+                Icons.save,
+                color: widget.editorFontColor,
               ),
             ),
-          ),
-        ]),
-      ),
-      floatingActionButton: Padding(
-        padding: !_isKeyboardVisible
-            ? const EdgeInsets.only(top: 0)
-            : EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.15),
-        child: FloatingActionButton(
-          backgroundColor: widget.editorAppbarColor,
-          child: SizedBox(
-            width: 40,
-            height: 40,
-            child: Image.asset(_aiTools[0][0]),
-          ),
-          onPressed: () {
-            showModalBottomSheet(
+          ],
+        ),
+        body: SafeArea(
+          child: Column(children: [
+            quill.QuillToolbar.basic(
+              controller: controller,
+              toolbarIconSize: 15,
+              showQuote: false,
+              showIndent: false,
+              showDividers: false,
+              showSubscript: false,
+              showSuperscript: false,
+              showListBullets: false,
+              showListNumbers: false,
+              showHeaderStyle: false,
+              showListCheck: false,
+              showInlineCode: false,
+              showSearchButton: false,
+              showLink: false,
+              color: Colors.grey,
+              showFontSize: true,
+              showFontFamily: true,
+              fontSizeValues: const {
+                'Small': '26',
+                'Medium': '32',
+                'Large': '38',
+              },
+              fontFamilyValues: {
+                for (var fontFamily in _googleFonts)
+                  fontFamily[0]: fontFamily[1]
+              },
+            ),
+            Expanded(
+              child: SizedBox(
+                child: quill.QuillEditor(
+                  placeholder: "Write your poetry here ...",
+                  controller: controller,
+                  focusNode: focusNode,
+                  scrollController: scrollController,
+                  scrollable: true,
+                  customStyles: quill.DefaultStyles(
+                    paragraph: quill.DefaultTextBlockStyle(
+                        GoogleFonts.ebGaramond(
+                            fontSize: 26,
+                            fontWeight: FontWeight.w300,
+                            color: Colors.black),
+                        const quill.VerticalSpacing(0, 6),
+                        const quill.VerticalSpacing(0, 6),
+                        null),
+                  ),
+                  padding: const EdgeInsets.all(15.0),
+                  autoFocus: true,
+                  readOnly: false,
+                  expands: true,
+                  textCapitalization: TextCapitalization.sentences,
+                ),
+              ),
+            ),
+          ]),
+        ),
+        floatingActionButton: Padding(
+          // padding: !_isKeyboardVisible
+          //     ? const EdgeInsets.only(top: 0)
+          //     : EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.15),
+          padding:
+              EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.15),
+          child: SpeedDial(
+            animatedIcon: AnimatedIcons.menu_close,
+            backgroundColor: widget.editorAppbarColor,
+            overlayColor: widget.editorAppbarColor,
+            overlayOpacity: 0.4,
+            spacing: 9,
+            spaceBetweenChildren: 9,
+            closeManually: false,
+            // direction: !_isKeyboardVisible
+            //     ? SpeedDialDirection.up
+            //     : SpeedDialDirection.down,
+            direction: SpeedDialDirection.down,
+            openCloseDial: isOpenDial,
+            children: [
+              SpeedDialChild(
+                child: const Icon(Icons.mail),
+                label: 'AI poetry tool',
+                backgroundColor: widget.editorAppbarColor,
+                onTap: () => showModalBottomSheet(
                 backgroundColor: Colors.transparent,
                 context: context,
-                builder: (builder) => bottomSheet());
-          },
+                builder: (builder) => bottomSheet()),
+              ),
+              SpeedDialChild(
+                child: const Icon(Icons.copy),
+                label: 'Copy',
+                backgroundColor: Colors.green,
+                onTap: () => showToast("Copy Clicked!"),
+              ),
+            ],
+          ),
         ),
+        // floatingActionButtonLocation: !_isKeyboardVisible
+        //     ? FloatingActionButtonLocation.endFloat
+        //     : FloatingActionButtonLocation.endTop,
+        floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
       ),
-      floatingActionButtonLocation: !_isKeyboardVisible
-          ? FloatingActionButtonLocation.endFloat
-          : FloatingActionButtonLocation.endTop,
     );
+  }
+
+  Future showToast(String message) async {
+    await Fluttertoast.cancel();
+
+    Fluttertoast.showToast(
+        msg: message,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: widget.editorAppbarColor,
+        textColor: widget.editorFontColor,
+        fontSize: 18.0);
   }
 
   Widget bottomSheet() {
@@ -284,7 +322,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
       height: 278,
       width: MediaQuery.of(context).size.width,
       child: Card(
-        margin: const EdgeInsets.all(18.0),
+        // margin: const EdgeInsets.all(18.0),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
