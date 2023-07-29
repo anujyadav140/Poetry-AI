@@ -62,7 +62,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
     ],
     ["images/dante.png", "INSPIRATION"],
     ["images/lines.png", "THEME GENERATOR"],
-    ["images/book.png", "WHAT TO WRITE ABOUT NEXT?"]
+    ["images/book.png", "WHAT TO WRITE ABOUT NEXT?"],
   ];
 
   FocusNode focusNode = FocusNode();
@@ -281,87 +281,87 @@ class _PoetryEditorState extends State<PoetryEditor> {
                 label: 'AI Poetry Tool',
                 backgroundColor: widget.editorAppbarColor,
                 onTap: () => showModalBottomSheet(
-                    backgroundColor: Colors.transparent,
-                    context: context,
-                    builder: (context) {
-                      return StatefulBuilder(
-                        builder: (context, setState) {
-                          return SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.8,
-                            width: MediaQuery.of(context).size.width,
-                            child: Card(
-                              shadowColor: Colors.white,
-                              margin: EdgeInsets.zero,
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(15.0),
-                                  topRight: Radius.circular(15.0),
+                  backgroundColor: Colors.transparent,
+                  context: context,
+                  builder: (context) {
+                    // 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
+                    return StatefulBuilder(
+                      builder: (context, setState) {
+                        return Card(
+                          shadowColor: Colors.white,
+                          margin: EdgeInsets.zero,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(15.0),
+                              topRight: Radius.circular(15.0),
+                            ),
+                          ),
+                          child: Column(
+                            children: [
+                              Align(
+                                alignment: Alignment.topCenter,
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: Container(
+                                    height: 5,
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.1,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey,
+                                      borderRadius: BorderRadius.circular(2.5),
+                                    ),
+                                  ),
                                 ),
                               ),
-                              child: Column(
-                                children: [
-                                  Align(
-                                    alignment: Alignment.topCenter,
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 8.0),
-                                      child: Container(
-                                        height: 5,
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.1,
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey,
-                                          borderRadius:
-                                              BorderRadius.circular(2.5),
-                                        ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(10, 20, 10, 10),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      _isInfoClicked
+                                          ? 'Information:'
+                                          : 'AI Tools:',
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                        10, 20, 10, 10),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const Text(
-                                          'AI Tools:',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              _isInfoClicked = !_isInfoClicked;
-                                            });
-                                          },
-                                          child: const Icon(
-                                            Icons.info_outline,
-                                            color: Colors.grey,
-                                            size: 24,
-                                          ),
-                                        ),
-                                      ],
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          _isInfoClicked = !_isInfoClicked;
+                                        });
+                                      },
+                                      child: Icon(
+                                        _isInfoClicked
+                                            ? Icons.arrow_back
+                                            : Icons.info_outline,
+                                        color: Colors.black,
+                                        size: 24,
+                                      ),
                                     ),
-                                  ),
-                                  const Divider(
-                                    height: 1,
-                                    color: Colors.grey,
-                                  ),
-                                  _isInfoClicked
-                                      ? const InfoPage()
-                                      : AiToolsList(aiTools: _aiTools),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                      );
-                    }),
+                              const Divider(
+                                height: 1,
+                                color: Colors.grey,
+                              ),
+                              _isInfoClicked
+                                  ? const InfoPage()
+                                  : AiToolsList(aiTools: _aiTools),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
               SpeedDialChild(
                 child: const Icon(Icons.shutter_speed_outlined),

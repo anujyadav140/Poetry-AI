@@ -253,10 +253,10 @@ packages:
     dependency: transitive
     description:
       name: dart_openai
-      sha256: "23ad2492b5b82d97e1a6952298723772bd0525e6e10ff72924c18bbd64f862a7"
+      sha256: "707f6975454513f4a6197125b5a0fbe92ab7cbe4b8ea9111e529a09d7a3ce0c3"
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.0"
+    version: "4.0.0"
   dart_style:
     dependency: transitive
     description:
@@ -532,10 +532,10 @@ packages:
     dependency: "direct main"
     description:
       name: google_fonts
-      sha256: "6b6f10f0ce3c42f6552d1c70d2c28d764cf22bb487f50f66cca31dcd5194f4d6"
+      sha256: "2776c66b3e97c6cdd58d1bd3281548b074b64f1fd5c8f82391f7456e38849567"
       url: "https://pub.dev"
     source: hosted
-    version: "4.0.4"
+    version: "4.0.5"
   google_identity_services_web:
     dependency: transitive
     description:
@@ -628,10 +628,10 @@ packages:
     dependency: transitive
     description:
       name: http
-      sha256: "5895291c13fa8a3bd82e76d5627f69e0d85ca6a30dcac95c4ea19a5d555879c2"
+      sha256: "759d1a329847dd0f39226c688d3e06a6b8679668e350e2891a6474f8b4bb8525"
       url: "https://pub.dev"
     source: hosted
-    version: "0.13.6"
+    version: "1.1.0"
   http_multi_server:
     dependency: transitive
     description:
@@ -708,18 +708,18 @@ packages:
     dependency: "direct main"
     description:
       name: langchain
-      sha256: "185d7771a0a16d6a7c3389fdaf1463e3a020c2de8db547330f908694ad1a1c44"
+      sha256: "3b1e3b09b7d80ed0cd487e828eec37cd7053cbc8355bba5b310f03587189073e"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.2"
+    version: "0.0.3"
   langchain_openai:
     dependency: "direct main"
     description:
       name: langchain_openai
-      sha256: a24885e1a2e89c26de5e02deab201dd2c78cf721017f23ccaab0cfc9bd9c99ca
+      sha256: d05b98c310e1240fdd4f5f00df36a953105a9829d1d3f52f627856d69af8f274
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.2"
+    version: "0.0.3"
   lints:
     dependency: transitive
     description:
@@ -964,18 +964,18 @@ packages:
     dependency: "direct main"
     description:
       name: rive
-      sha256: f3b8af0898c987d68019e91d92257edd902c28c816e49de033a7272e86bd5425
+      sha256: "291d8c706d22d4d0c5fefb7b8edd9237c388eaaa240bdbf5782c71574c2a93d0"
       url: "https://pub.dev"
     source: hosted
-    version: "0.11.4"
+    version: "0.11.8"
   rive_common:
     dependency: transitive
     description:
       name: rive_common
-      sha256: f6687f9d70e6fd3888a9b0e9c0b307966d2ce74cf00cfb01dce906c3bbada52f
+      sha256: "83af8b500ad4d23930397229c7ed520e266eb851690a8621afa6cbd782aeac87"
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.0"
+    version: "0.2.3"
   shelf:
     dependency: transitive
     description:
