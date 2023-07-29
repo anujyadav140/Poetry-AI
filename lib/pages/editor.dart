@@ -174,7 +174,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
             ),
           ),
           iconTheme: IconThemeData(
-            color: widget.editorFontColor, // Set the custom color here
+            color: widget.editorFontColor,
           ),
           backgroundColor: widget.editorAppbarColor,
           shape: const RoundedRectangleBorder(
@@ -345,18 +345,6 @@ class _PoetryEditorState extends State<PoetryEditor> {
                                             size: 24,
                                           ),
                                         ),
-                                        // IconButton(
-                                        //   onPressed: () {
-                                        //     setState(() {
-                                        //       _isInfoClicked = !_isInfoClicked;
-                                        //     });
-                                        //   },
-                                        //   icon: const Icon(
-                                        //     Icons.info_outline,
-                                        //     color: Colors.grey,
-                                        //     size: 24,
-                                        //   ),
-                                        // )
                                       ],
                                     ),
                                   ),
@@ -462,21 +450,6 @@ class AiToolsList extends StatelessWidget {
     );
   }
 }
-
-// class AiToolsBottomSheet extends StatefulWidget {
-//   const AiToolsBottomSheet({super.key, required this.aiTools});
-//   final List<dynamic> aiTools;
-//   @override
-//   State<AiToolsBottomSheet> createState() => _AiToolsBottomSheetState();
-// }
-
-// class _AiToolsBottomSheetState extends State<AiToolsBottomSheet> {
-//   @override
-//   Widget build(BuildContext context) {
-//     bool isInfoClicked = false;
-//     return
-//   }
-// }
 
 class InfoPage extends StatelessWidget {
   const InfoPage({super.key});
