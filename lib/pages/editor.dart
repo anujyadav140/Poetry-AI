@@ -15,11 +15,13 @@ class PoetryEditor extends StatefulWidget {
   final int poemIndex;
   final Color editorAppbarColor;
   final Color editorFontColor;
+  final Color editorPrimaryColor;
   const PoetryEditor({
     super.key,
     required this.poemIndex,
     required this.editorAppbarColor,
     required this.editorFontColor,
+    required this.editorPrimaryColor,
   });
 
   @override
@@ -266,6 +268,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
               EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.15),
           child: SpeedDial(
             animatedIcon: AnimatedIcons.menu_close,
+            foregroundColor: widget.editorFontColor,
             backgroundColor: widget.editorAppbarColor,
             overlayColor: widget.editorAppbarColor,
             overlayOpacity: 0.4,
@@ -280,7 +283,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
             children: [
               SpeedDialChild(
                 child: const Icon(Icons.mail),
-                label: 'AI poetry tool',
+                label: 'AI Poetry Tool',
                 backgroundColor: widget.editorAppbarColor,
                 onTap: () => showModalBottomSheet(
                     backgroundColor: Colors.transparent,
@@ -288,10 +291,10 @@ class _PoetryEditorState extends State<PoetryEditor> {
                     builder: (builder) => bottomSheet()),
               ),
               SpeedDialChild(
-                child: const Icon(Icons.copy),
-                label: 'Copy',
-                backgroundColor: Colors.green,
-                onTap: () => showToast("Copy Clicked!"),
+                child: const Icon(Icons.shutter_speed_outlined),
+                label: 'Previous AI Tool Analysis',
+                backgroundColor: widget.editorAppbarColor,
+                onTap: () => showToast("Previous AI Tool Analysis Clicked!"),
               ),
             ],
           ),
@@ -322,57 +325,106 @@ class _PoetryEditorState extends State<PoetryEditor> {
       height: MediaQuery.of(context).size.height * 0.8,
       width: MediaQuery.of(context).size.width,
       child: Card(
-        margin: EdgeInsets.zero, // Remove the default padding
+        shadowColor: widget.editorAppbarColor,
+        margin: EdgeInsets.zero,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(15.0),
             topRight: Radius.circular(15.0),
           ),
         ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-          child: Scrollbar(
-            thumbVisibility: true,
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: _aiTools.length,
-              itemBuilder: (context, index) {
-                return InkWell(
-                  onTap: () {
-                    print('Clicked on ${_aiTools[index][1]}');
-                  },
-                  splashColor: widget.editorAppbarColor,
-                  highlightColor: Colors.transparent,
-                  child: Column(
-                    children: [
-                      ListTile(
-                        leading: SizedBox(
-                          width: 50,
-                          height: 50,
-                          child: Image.asset(_aiTools[index][0]),
-                        ),
-                        title: Text(
-                          _aiTools[index][1],
-                          style: GoogleFonts.ebGaramond(
-                            textStyle: TextStyle(
-                              color: widget.editorFontColor,
-                              letterSpacing: .5,
-                              fontSize: 15,
+        child: Column(
+          children: [
+            Align(
+              alignment: Alignment.topCenter,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Container(
+                  height: 5,
+                  width: MediaQuery.of(context).size.width * 0.1,
+                  decoration: BoxDecoration(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.circular(2.5),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding:
+                  const EdgeInsets.fromLTRB(10, 20, 10, 10), // Updated padding
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Comments:',
+                    style: TextStyle(
+                      color: widget.editorFontColor,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      print('Info icon tapped');
+                    },
+                    child: const Icon(
+                      Icons.info_outline,
+                      color: Colors.grey,
+                      size: 24,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Divider(
+              height: 1,
+              color: Colors.grey,
+            ),
+            Expanded(
+              child: Scrollbar(
+                thumbVisibility: true,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: _aiTools.length,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () {
+                        print('Clicked on ${_aiTools[index][1]}');
+                      },
+                      splashColor: widget.editorAppbarColor,
+                      highlightColor: Colors.transparent,
+                      child: Column(
+                        children: [
+                          ListTile(
+                            leading: SizedBox(
+                              width: 50,
+                              height: 50,
+                              child: Image.asset(_aiTools[index][0]),
+                            ),
+                            title: Text(
+                              _aiTools[index][1],
+                              style: GoogleFonts.ebGaramond(
+                                textStyle: TextStyle(
+                                  color: widget.editorFontColor,
+                                  letterSpacing: .5,
+                                  fontSize: 15,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
+                          if (index != _aiTools.length - 1)
+                            const Divider(
+                              height: 1,
+                              color: Colors.grey,
+                            ),
+                        ],
                       ),
-                      if (index != _aiTools.length - 1)
-                        const Divider(
-                          height: 1,
-                          color: Colors.grey,
-                        ),
-                    ],
-                  ),
-                );
-              },
+                    );
+                  },
+                ),
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );

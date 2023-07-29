@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class GreenColorTheme {
-  static const Color text = Color.fromRGBO(255, 255, 255, 1);
+  static const Color text = Color.fromRGBO(0, 0, 0, 1);
   static const Color background = Color.fromRGBO(248, 232, 246, 1);
   static const Color primary = Color.fromRGBO(150, 223, 158, 1);
   static const Color secondary = Color.fromRGBO(177, 225, 231, 1);

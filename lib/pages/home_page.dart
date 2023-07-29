@@ -600,6 +600,9 @@ class _HomePageState extends State<HomePage>
                                                                       editorFontColor:
                                                                           ColorTheme.text(
                                                                               themeValue),
+                                                                      editorPrimaryColor:
+                                                                          ColorTheme.primary(
+                                                                              themeValue),
                                                                       poemIndex:
                                                                           index,
                                                                     )));
@@ -684,6 +687,7 @@ class _HomePageState extends State<HomePage>
                     builder: (context) => PoetryEditor(
                           editorAppbarColor: ColorTheme.accent(themeValue),
                           editorFontColor: ColorTheme.text(themeValue),
+                          editorPrimaryColor: ColorTheme.primary(themeValue),
                           poemIndex: newPoemIndex,
                         )));
           } else {
