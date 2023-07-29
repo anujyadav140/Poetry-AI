@@ -39,6 +39,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
   );
   bool _isRhymeLines = false;
   bool _isKeyboardVisible = false;
+  bool _isInfoClicked = false;
   late StreamSubscription<bool> keyboardSubscription;
   late String poemTitle = "";
   final List<dynamic> _googleFonts = [
@@ -261,9 +262,6 @@ class _PoetryEditorState extends State<PoetryEditor> {
           ]),
         ),
         floatingActionButton: Padding(
-          // padding: !_isKeyboardVisible
-          //     ? const EdgeInsets.only(top: 0)
-          //     : EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.15),
           padding:
               EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.15),
           child: SpeedDial(
@@ -275,9 +273,6 @@ class _PoetryEditorState extends State<PoetryEditor> {
             spacing: 9,
             spaceBetweenChildren: 9,
             closeManually: false,
-            // direction: !_isKeyboardVisible
-            //     ? SpeedDialDirection.up
-            //     : SpeedDialDirection.down,
             direction: SpeedDialDirection.down,
             openCloseDial: isOpenDial,
             children: [
@@ -288,7 +283,97 @@ class _PoetryEditorState extends State<PoetryEditor> {
                 onTap: () => showModalBottomSheet(
                     backgroundColor: Colors.transparent,
                     context: context,
-                    builder: (builder) => bottomSheet()),
+                    builder: (context) {
+                      return StatefulBuilder(
+                        builder: (context, setState) {
+                          return SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.8,
+                            width: MediaQuery.of(context).size.width,
+                            child: Card(
+                              shadowColor: Colors.white,
+                              margin: EdgeInsets.zero,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(15.0),
+                                  topRight: Radius.circular(15.0),
+                                ),
+                              ),
+                              child: Column(
+                                children: [
+                                  Align(
+                                    alignment: Alignment.topCenter,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0),
+                                      child: Container(
+                                        height: 5,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.1,
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey,
+                                          borderRadius:
+                                              BorderRadius.circular(2.5),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                        10, 20, 10, 10),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text(
+                                          'AI Tools:',
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              _isInfoClicked = !_isInfoClicked;
+                                            });
+                                          },
+                                          child: const Icon(
+                                            Icons.info_outline,
+                                            color: Colors.grey,
+                                            size: 24,
+                                          ),
+                                        ),
+                                        // IconButton(
+                                        //   onPressed: () {
+                                        //     setState(() {
+                                        //       _isInfoClicked = !_isInfoClicked;
+                                        //     });
+                                        //   },
+                                        //   icon: const Icon(
+                                        //     Icons.info_outline,
+                                        //     color: Colors.grey,
+                                        //     size: 24,
+                                        //   ),
+                                        // )
+                                      ],
+                                    ),
+                                  ),
+                                  const Divider(
+                                    height: 1,
+                                    color: Colors.grey,
+                                  ),
+                                  _isInfoClicked
+                                      ? const InfoPage()
+                                      : AiToolsList(aiTools: _aiTools),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    }),
               ),
               SpeedDialChild(
                 child: const Icon(Icons.shutter_speed_outlined),
@@ -319,144 +404,85 @@ class _PoetryEditorState extends State<PoetryEditor> {
         textColor: widget.editorFontColor,
         fontSize: 18.0);
   }
+}
 
-  Widget bottomSheet() {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.8,
-      width: MediaQuery.of(context).size.width,
-      child: Card(
-        shadowColor: widget.editorAppbarColor,
-        margin: EdgeInsets.zero,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(15.0),
-            topRight: Radius.circular(15.0),
-          ),
-        ),
-        child: Column(
-          children: [
-            Align(
-              alignment: Alignment.topCenter,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Container(
-                  height: 5,
-                  width: MediaQuery.of(context).size.width * 0.1,
-                  decoration: BoxDecoration(
-                    color: Colors.grey,
-                    borderRadius: BorderRadius.circular(2.5),
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.fromLTRB(10, 20, 10, 10), // Updated padding
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+class AiToolsList extends StatelessWidget {
+  const AiToolsList({
+    super.key,
+    required List aiTools,
+  }) : _aiTools = aiTools;
+
+  final List _aiTools;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Scrollbar(
+        thumbVisibility: true,
+        child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: _aiTools.length,
+          itemBuilder: (context, index) {
+            return InkWell(
+              onTap: () {
+                print('Clicked on ${_aiTools[index][1]}');
+              },
+              splashColor: Colors.grey,
+              highlightColor: Colors.transparent,
+              child: Column(
                 children: [
-                  Text(
-                    'Comments:',
-                    style: TextStyle(
-                      color: widget.editorFontColor,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                  ListTile(
+                    leading: SizedBox(
+                      width: 50,
+                      height: 50,
+                      child: Image.asset(_aiTools[index][0]),
+                    ),
+                    title: Text(
+                      _aiTools[index][1],
+                      style: GoogleFonts.ebGaramond(
+                        textStyle: const TextStyle(
+                          color: Colors.black,
+                          letterSpacing: .5,
+                          fontSize: 15,
+                        ),
+                      ),
                     ),
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      print('Info icon tapped');
-                    },
-                    child: const Icon(
-                      Icons.info_outline,
+                  if (index != _aiTools.length - 1)
+                    const Divider(
+                      height: 1,
                       color: Colors.grey,
-                      size: 24,
                     ),
-                  ),
                 ],
               ),
-            ),
-            Divider(
-              height: 1,
-              color: Colors.grey,
-            ),
-            Expanded(
-              child: Scrollbar(
-                thumbVisibility: true,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: _aiTools.length,
-                  itemBuilder: (context, index) {
-                    return InkWell(
-                      onTap: () {
-                        print('Clicked on ${_aiTools[index][1]}');
-                      },
-                      splashColor: widget.editorAppbarColor,
-                      highlightColor: Colors.transparent,
-                      child: Column(
-                        children: [
-                          ListTile(
-                            leading: SizedBox(
-                              width: 50,
-                              height: 50,
-                              child: Image.asset(_aiTools[index][0]),
-                            ),
-                            title: Text(
-                              _aiTools[index][1],
-                              style: GoogleFonts.ebGaramond(
-                                textStyle: TextStyle(
-                                  color: widget.editorFontColor,
-                                  letterSpacing: .5,
-                                  fontSize: 15,
-                                ),
-                              ),
-                            ),
-                          ),
-                          if (index != _aiTools.length - 1)
-                            const Divider(
-                              height: 1,
-                              color: Colors.grey,
-                            ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
-          ],
+            );
+          },
         ),
       ),
     );
   }
+}
 
-  Widget iconCreation(IconData icons, Color color, String text) {
-    return InkWell(
-      onTap: () {},
-      child: Column(
-        children: [
-          CircleAvatar(
-            radius: 30,
-            backgroundColor: color,
-            child: Icon(
-              icons,
-              // semanticLabel: "Help",
-              size: 29,
-              color: widget.editorFontColor,
-            ),
-          ),
-          const SizedBox(
-            height: 5,
-          ),
-          Text(
-            text,
-            style: const TextStyle(
-              fontSize: 12,
-              // fontWeight: FontWeight.w100,
-            ),
-          )
-        ],
-      ),
-    );
+// class AiToolsBottomSheet extends StatefulWidget {
+//   const AiToolsBottomSheet({super.key, required this.aiTools});
+//   final List<dynamic> aiTools;
+//   @override
+//   State<AiToolsBottomSheet> createState() => _AiToolsBottomSheetState();
+// }
+
+// class _AiToolsBottomSheetState extends State<AiToolsBottomSheet> {
+//   @override
+//   Widget build(BuildContext context) {
+//     bool isInfoClicked = false;
+//     return
+//   }
+// }
+
+class InfoPage extends StatelessWidget {
+  const InfoPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Text("Write the info to help user here:");
   }
 }
