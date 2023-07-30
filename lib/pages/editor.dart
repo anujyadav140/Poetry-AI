@@ -48,7 +48,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
   // late StreamSubscription<bool> keyboardSubscription;
   late String poemTitle = "";
   late ScrollController _scrollController;
-  final FocusNode focusNode = FocusNode();
+  final FocusNode _focusNode = FocusNode();
   final List<dynamic> _googleFonts = [
     ["ebGaramond", GoogleFonts.ebGaramond().fontFamily!],
     ["monofett", GoogleFonts.monofett().fontFamily!],
@@ -88,15 +88,15 @@ class _PoetryEditorState extends State<PoetryEditor> {
       selection: const TextSelection.collapsed(offset: 0),
     );
 
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      _moveCursorToEnd();
-      // Scroll to the bottom of the document
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    });
+    // SchedulerBinding.instance.addPostFrameCallback((_) {
+    //   _moveCursorToEnd();
+    //   // Scroll to the bottom of the document
+    //   _scrollController.animateTo(
+    //     _scrollController.position.maxScrollExtent,
+    //     duration: const Duration(milliseconds: 300),
+    //     curve: Curves.easeInOut,
+    //   );
+    // });
 
     print(poemListBox.get(widget.poemIndex));
 
@@ -115,18 +115,17 @@ class _PoetryEditorState extends State<PoetryEditor> {
     // });
   }
 
-  //move the cursor to the end of the filled document
-  void _moveCursorToEnd() {
-    final documentLength = controller.document.length;
-    final newPosition = TextSelection.collapsed(offset: documentLength);
-    controller.updateSelection(newPosition, quill.ChangeSource.LOCAL);
-  }
+  // //move the cursor to the end of the filled document
+  // void _moveCursorToEnd() {
+  //   final documentLength = controller.document.length;
+  //   final newPosition = TextSelection.collapsed(offset: documentLength);
+  //   controller.updateSelection(newPosition, quill.ChangeSource.LOCAL);
+  // }
 
   @override
   void dispose() {
     controller.removeListener(_onTextChanged);
     _scrollController.dispose();
-    focusNode.dispose();
     // keyboardSubscription.cancel();
     super.dispose();
   }
@@ -260,7 +259,8 @@ class _PoetryEditorState extends State<PoetryEditor> {
               child: quill.QuillEditor(
                 placeholder: "Write your poetry here ...",
                 controller: controller,
-                focusNode: focusNode,
+                focusNode: _focusNode,
+                autoFocus: false,
                 scrollController: _scrollController,
                 scrollable: true,
                 customStyles: quill.DefaultStyles(
@@ -274,7 +274,6 @@ class _PoetryEditorState extends State<PoetryEditor> {
                       null),
                 ),
                 padding: const EdgeInsets.all(15.0),
-                autoFocus: false,
                 readOnly: false,
                 expands: true,
                 textCapitalization: TextCapitalization.sentences,
@@ -389,8 +388,10 @@ class _PoetryEditorState extends State<PoetryEditor> {
                 backgroundColor: widget.editorAppbarColor,
                 onTap: () async {
                   final llm = OpenAI(apiKey: openAiKey, temperature: 0.9);
-                  const text = 'What would be a good name for an indian boy?';
+                  const text =
+                      'i would like to kill myself, convince me otherwise using less than 20 words?';
                   final res = await llm.predict(text);
+                  print(text);
                   print(res);
                 },
               ),
