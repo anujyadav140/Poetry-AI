@@ -87,16 +87,14 @@ class _PoetryEditorState extends State<PoetryEditor> {
       keepStyleOnNewLine: true,
       selection: const TextSelection.collapsed(offset: 0),
     );
+    bool _isFirstFocus = true;
 
-    // SchedulerBinding.instance.addPostFrameCallback((_) {
-    //   _moveCursorToEnd();
-    //   // Scroll to the bottom of the document
-    //   _scrollController.animateTo(
-    //     _scrollController.position.maxScrollExtent,
-    //     duration: const Duration(milliseconds: 300),
-    //     curve: Curves.easeInOut,
-    //   );
-    // });
+    _focusNode.addListener(() {
+      if (_focusNode.hasFocus && _isFirstFocus) {
+        _scrollToCursor();
+        _isFirstFocus = false;
+      }
+    });
 
     print(poemListBox.get(widget.poemIndex));
 
@@ -115,12 +113,18 @@ class _PoetryEditorState extends State<PoetryEditor> {
     // });
   }
 
-  // //move the cursor to the end of the filled document
-  // void _moveCursorToEnd() {
-  //   final documentLength = controller.document.length;
-  //   final newPosition = TextSelection.collapsed(offset: documentLength);
-  //   controller.updateSelection(newPosition, quill.ChangeSource.LOCAL);
-  // }
+  void _scrollToCursor() {
+    final cursorOffset = controller.selection.baseOffset;
+    const lineHeight =
+        26; // You can adjust this value based on your font size and line height
+    final scrollToOffset = cursorOffset * lineHeight;
+
+    _scrollController.animateTo(
+      scrollToOffset.toDouble(),
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
 
   @override
   void dispose() {
@@ -260,7 +264,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
                 placeholder: "Write your poetry here ...",
                 controller: controller,
                 focusNode: _focusNode,
-                autoFocus: false,
+                autoFocus: true,
                 scrollController: _scrollController,
                 scrollable: true,
                 customStyles: quill.DefaultStyles(
