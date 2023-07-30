@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,6 +11,8 @@ import 'package:poetry_ai/pages/home_page.dart';
 import 'package:rive/rive.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:langchain/langchain.dart';
+import 'package:langchain_openai/langchain_openai.dart';
 
 class PoetryEditor extends StatefulWidget {
   final int poemIndex;
@@ -32,16 +35,21 @@ class _PoetryEditorState extends State<PoetryEditor> {
   final isOpenDial = ValueNotifier(false);
   final poemListBox = Hive.box('myPoemBox');
   final poemListIndexBox = Hive.box('myPoemListIndexBox');
+  final llm = OpenAI(
+      apiKey: "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",
+      temperature: 0.9);
   quill.QuillController controller = quill.QuillController(
     document: quill.Document(),
     keepStyleOnNewLine: true,
     selection: const TextSelection.collapsed(offset: 0),
   );
   bool _isRhymeLines = false;
-  bool _isKeyboardVisible = false;
+  // bool _isKeyboardVisible = false;
   bool _isInfoClicked = false;
-  late StreamSubscription<bool> keyboardSubscription;
+  // late StreamSubscription<bool> keyboardSubscription;
   late String poemTitle = "";
+  late ScrollController _scrollController;
+  final FocusNode focusNode = FocusNode();
   final List<dynamic> _googleFonts = [
     ["ebGaramond", GoogleFonts.ebGaramond().fontFamily!],
     ["monofett", GoogleFonts.monofett().fontFamily!],
@@ -65,12 +73,10 @@ class _PoetryEditorState extends State<PoetryEditor> {
     ["images/book.png", "WHAT TO WRITE ABOUT NEXT?"],
   ];
 
-  FocusNode focusNode = FocusNode();
-  ScrollController scrollController = ScrollController();
-
   @override
   void initState() {
     super.initState();
+    _scrollController = ScrollController();
     controller.addListener(_onTextChanged);
     var poemData = poemListBox.getAt(widget.poemIndex) as Map<dynamic, dynamic>;
     poemTitle = poemData['title'] as String;
@@ -83,28 +89,46 @@ class _PoetryEditorState extends State<PoetryEditor> {
       selection: const TextSelection.collapsed(offset: 0),
     );
 
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      _moveCursorToEnd();
+      // Scroll to the bottom of the document
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    });
+
     print(poemListBox.get(widget.poemIndex));
 
-    // poemForm = poemData['form'] as String;
-    var keyboardVisibilityController = KeyboardVisibilityController();
-    // Query
-    print(
-        'Keyboard visibility direct query: ${keyboardVisibilityController.isVisible}');
+    // // poemForm = poemData['form'] as String;
+    // var keyboardVisibilityController = KeyboardVisibilityController();
+    // print(
+    //     'Keyboard visibility direct query: ${keyboardVisibilityController.isVisible}');
 
-    // Subscribe
-    keyboardSubscription =
-        keyboardVisibilityController.onChange.listen((bool visible) {
-      print('Keyboard visibility update. Is visible: $visible');
-      setState(() {
-        _isKeyboardVisible = visible;
-      });
-    });
+    // // Subscribe
+    // keyboardSubscription =
+    //     keyboardVisibilityController.onChange.listen((bool visible) {
+    //   print('Keyboard visibility update. Is visible: $visible');
+    //   setState(() {
+    //     _isKeyboardVisible = visible;
+    //   });
+    // });
+  }
+
+  //move the cursor to the end of the filled document
+  void _moveCursorToEnd() {
+    final documentLength = controller.document.length;
+    final newPosition = TextSelection.collapsed(offset: documentLength);
+    controller.updateSelection(newPosition, quill.ChangeSource.LOCAL);
   }
 
   @override
   void dispose() {
     controller.removeListener(_onTextChanged);
-    keyboardSubscription.cancel();
+    _scrollController.dispose();
+    focusNode.dispose();
+    // keyboardSubscription.cancel();
     super.dispose();
   }
 
@@ -239,7 +263,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
                   placeholder: "Write your poetry here ...",
                   controller: controller,
                   focusNode: focusNode,
-                  scrollController: scrollController,
+                  scrollController: _scrollController,
                   scrollable: true,
                   customStyles: quill.DefaultStyles(
                     paragraph: quill.DefaultTextBlockStyle(
@@ -252,7 +276,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
                         null),
                   ),
                   padding: const EdgeInsets.all(15.0),
-                  autoFocus: true,
+                  autoFocus: false,
                   readOnly: false,
                   expands: true,
                   textCapitalization: TextCapitalization.sentences,
@@ -284,7 +308,6 @@ class _PoetryEditorState extends State<PoetryEditor> {
                   backgroundColor: Colors.transparent,
                   context: context,
                   builder: (context) {
-                    // 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
                     return StatefulBuilder(
                       builder: (context, setState) {
                         return Card(
@@ -367,7 +390,11 @@ class _PoetryEditorState extends State<PoetryEditor> {
                 child: const Icon(Icons.shutter_speed_outlined),
                 label: 'Previous AI Tool Analysis',
                 backgroundColor: widget.editorAppbarColor,
-                onTap: () => showToast("Previous AI Tool Analysis Clicked!"),
+                onTap: () async {
+                  const text = 'What would be a good name for an indian boy?';
+                  final res = await llm.predict(text);
+                  print(res);
+                },
               ),
             ],
           ),
