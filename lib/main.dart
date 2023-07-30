@@ -5,6 +5,7 @@ import 'package:poetry_ai/firebase_options.dart';
 import 'package:poetry_ai/services/authentication/auth_gate.dart';
 import 'package:poetry_ai/services/authentication/auth_service.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   //initialize hive
@@ -15,6 +16,7 @@ void main() async {
   var poemListBox = await Hive.openBox('myPoemBox');
   var poemListIndexBox = await Hive.openBox('myPoemListIndexBox');
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(ChangeNotifierProvider(
     create: (context) => AuthService(),

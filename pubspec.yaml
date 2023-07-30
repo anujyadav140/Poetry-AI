@@ -47,6 +47,7 @@ dependencies:
   rive: ^0.11.4
   animated_text_kit: ^4.2.2
   lottie: ^2.5.0
+  flutter_dotenv: ^5.1.0
   google_fonts: ^4.0.4
   auto_size_text: ^3.0.0
   english_words: ^4.0.0
@@ -85,6 +86,7 @@ flutter:
   assets:
     - images/
     - assets/
+    - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

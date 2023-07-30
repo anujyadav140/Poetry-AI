@@ -13,6 +13,7 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:langchain/langchain.dart';
 import 'package:langchain_openai/langchain_openai.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class PoetryEditor extends StatefulWidget {
   final int poemIndex;
@@ -35,9 +36,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
   final isOpenDial = ValueNotifier(false);
   final poemListBox = Hive.box('myPoemBox');
   final poemListIndexBox = Hive.box('myPoemListIndexBox');
-  final llm = OpenAI(
-      apiKey: "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",
-      temperature: 0.9);
+  final openAiKey = dotenv.env['OPENAI_API_KEY'];
   quill.QuillController controller = quill.QuillController(
     document: quill.Document(),
     keepStyleOnNewLine: true,
@@ -258,29 +257,27 @@ class _PoetryEditorState extends State<PoetryEditor> {
               },
             ),
             Expanded(
-              child: SizedBox(
-                child: quill.QuillEditor(
-                  placeholder: "Write your poetry here ...",
-                  controller: controller,
-                  focusNode: focusNode,
-                  scrollController: _scrollController,
-                  scrollable: true,
-                  customStyles: quill.DefaultStyles(
-                    paragraph: quill.DefaultTextBlockStyle(
-                        GoogleFonts.ebGaramond(
-                            fontSize: 26,
-                            fontWeight: FontWeight.w300,
-                            color: Colors.black),
-                        const quill.VerticalSpacing(0, 6),
-                        const quill.VerticalSpacing(0, 6),
-                        null),
-                  ),
-                  padding: const EdgeInsets.all(15.0),
-                  autoFocus: false,
-                  readOnly: false,
-                  expands: true,
-                  textCapitalization: TextCapitalization.sentences,
+              child: quill.QuillEditor(
+                placeholder: "Write your poetry here ...",
+                controller: controller,
+                focusNode: focusNode,
+                scrollController: _scrollController,
+                scrollable: true,
+                customStyles: quill.DefaultStyles(
+                  paragraph: quill.DefaultTextBlockStyle(
+                      GoogleFonts.ebGaramond(
+                          fontSize: 26,
+                          fontWeight: FontWeight.w300,
+                          color: Colors.black),
+                      const quill.VerticalSpacing(0, 6),
+                      const quill.VerticalSpacing(0, 6),
+                      null),
                 ),
+                padding: const EdgeInsets.all(15.0),
+                autoFocus: false,
+                readOnly: false,
+                expands: true,
+                textCapitalization: TextCapitalization.sentences,
               ),
             ),
           ]),
@@ -391,6 +388,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
                 label: 'Previous AI Tool Analysis',
                 backgroundColor: widget.editorAppbarColor,
                 onTap: () async {
+                  final llm = OpenAI(apiKey: openAiKey, temperature: 0.9);
                   const text = 'What would be a good name for an indian boy?';
                   final res = await llm.predict(text);
                   print(res);
