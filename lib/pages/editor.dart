@@ -8,12 +8,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:poetry_ai/components/color_palette.dart';
 import 'package:poetry_ai/pages/home_page.dart';
+import 'package:poetry_ai/services/ai/poetry_tools.dart';
 import 'package:rive/rive.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:langchain/langchain.dart';
-import 'package:langchain_openai/langchain_openai.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class PoetryEditor extends StatefulWidget {
   final int poemIndex;
@@ -36,7 +34,6 @@ class _PoetryEditorState extends State<PoetryEditor> {
   final isOpenDial = ValueNotifier(false);
   final poemListBox = Hive.box('myPoemBox');
   final poemListIndexBox = Hive.box('myPoemListIndexBox');
-  final openAiKey = dotenv.env['OPENAI_API_KEY'];
   quill.QuillController controller = quill.QuillController(
     document: quill.Document(),
     keepStyleOnNewLine: true,
@@ -391,12 +388,29 @@ class _PoetryEditorState extends State<PoetryEditor> {
                 label: 'Previous AI Tool Analysis',
                 backgroundColor: widget.editorAppbarColor,
                 onTap: () async {
-                  final llm = OpenAI(apiKey: openAiKey, temperature: 0.9);
-                  const text =
-                      'i would like to kill myself, convince me otherwise using less than 20 words?';
-                  final res = await llm.predict(text);
-                  print(text);
-                  print(res);
+                  // PoetryTools().helloWorld(
+                  //     'i would like to kill myself, convince me otherwise using less than 20 words?');
+                  final wordToPronunciation =
+                      await PoetryTools().parseCmuDict();
+
+                  // // Query a specific word (make sure it's transformed to lowercase)
+                  // String word = "example";
+                  // String? pronunciation =
+                  //     wordToPronunciation[word.toLowerCase()];
+
+                  // if (pronunciation != null) {
+                  //   print("The pronunciation of '$word' is: $pronunciation");
+                  // } else {
+                  //   print("Word not found in CMUdict.");
+                  // }
+                  // Input with multiple words
+                  const String word = "Oh what can ail thee, knight-at-arms";
+                  final stressPattern = PoetryTools()
+                      .findStressPattern(word, wordToPronunciation);
+
+                  print("Stress pattern for '$word': $stressPattern");
+                  final rhyme = PoetryTools().findRhyme('healed', 'sealed');
+                  print(rhyme);
                 },
               ),
             ],
