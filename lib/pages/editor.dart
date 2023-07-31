@@ -57,17 +57,14 @@ class _PoetryEditorState extends State<PoetryEditor> {
   ];
 
   final List<dynamic> _aiTools = [
-    ["images/rhyme.png", "RHYME SELECTED LINES"],
-    ["images/rhyme.png", "RHYME WHOLE POEM"],
-    ["images/meter.png", "SHOW / FIND THE METER OF THE WHOLE POEM"],
-    ["images/rhyme.png", "THE RHYME SCHEME OF THE WHOLE POEM"],
-    [
-      "images/poetry.png",
-      "THE GENERATE FEW LINES (REMAINING LINES) FOR INSPIRATION"
-    ],
-    ["images/dante.png", "INSPIRATION"],
-    ["images/lines.png", "THEME GENERATOR"],
-    ["images/book.png", "WHAT TO WRITE ABOUT NEXT?"],
+    [1, "images/rhyme.png", "Rhyme Selected Lines"],
+    [2, "images/rhyme.png", "Rhyme Whole Poem"],
+    [3, "images/meter.png", "Metre"],
+    [4, "images/rhyme.png", "Rhyme Scheme Pattern"],
+    [5, "images/poetry.png", "Generate Few Lines For Inspiration"],
+    [6, "images/dante.png", "Get Inspired"],
+    [7, "images/lines.png", "Generate Theme Ideas"],
+    [8, "images/book.png", "What To Write About Next?"],
   ];
 
   @override
@@ -193,8 +190,12 @@ class _PoetryEditorState extends State<PoetryEditor> {
               icon: const Icon(Icons.arrow_back)),
           title: Text(
             "Editor - $poemTitle",
-            style: TextStyle(
-              color: widget.editorFontColor,
+            style: GoogleFonts.ebGaramond(
+              textStyle: TextStyle(
+                color: widget.editorFontColor,
+                letterSpacing: .5,
+                fontSize: 18,
+              ),
             ),
           ),
           iconTheme: IconThemeData(
@@ -301,6 +302,13 @@ class _PoetryEditorState extends State<PoetryEditor> {
               SpeedDialChild(
                 child: const Icon(Icons.mail),
                 label: 'AI Poetry Tool',
+                labelStyle: GoogleFonts.ebGaramond(
+                  textStyle: const TextStyle(
+                    color: Colors.black,
+                    letterSpacing: .5,
+                    fontSize: 15,
+                  ),
+                ),
                 backgroundColor: widget.editorAppbarColor,
                 onTap: () => showModalBottomSheet(
                   backgroundColor: Colors.transparent,
@@ -346,10 +354,12 @@ class _PoetryEditorState extends State<PoetryEditor> {
                                       _isInfoClicked
                                           ? 'Information:'
                                           : 'AI Tools:',
-                                      style: const TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
+                                      style: GoogleFonts.ebGaramond(
+                                        textStyle: const TextStyle(
+                                          color: Colors.black,
+                                          letterSpacing: .5,
+                                          fontSize: 18,
+                                        ),
                                       ),
                                     ),
                                     GestureDetector(
@@ -375,7 +385,9 @@ class _PoetryEditorState extends State<PoetryEditor> {
                               ),
                               _isInfoClicked
                                   ? const InfoPage()
-                                  : AiToolsList(aiTools: _aiTools),
+                                  : AiToolsList(
+                                      aiTools: _aiTools,
+                                      controller: controller),
                             ],
                           ),
                         );
@@ -387,14 +399,19 @@ class _PoetryEditorState extends State<PoetryEditor> {
               SpeedDialChild(
                 child: const Icon(Icons.shutter_speed_outlined),
                 label: 'Previous AI Tool Analysis',
+                labelStyle: GoogleFonts.ebGaramond(
+                  textStyle: const TextStyle(
+                    color: Colors.black,
+                    letterSpacing: .5,
+                    fontSize: 15,
+                  ),
+                ),
                 backgroundColor: widget.editorAppbarColor,
                 onTap: () async {
                   // PoetryTools().helloWorld(
                   //     'What is the rhyme for the words SNEED and FEED? Look at the dice coefficient from the tool agent and give your own analysis on it');
                   // final wordToPronunciation =
                   //     await PoetryTools().parseCmuDict();
-
-                  PoetryTools().findRhymeScheme();
 
                   // // Query a specific word (make sure it's transformed to lowercase)
                   // String word = "example";
@@ -414,7 +431,6 @@ class _PoetryEditorState extends State<PoetryEditor> {
                   //     .findStressPattern(word, wordToPronunciation);
 
                   // print("Stress pattern for '$word': $stressPattern");
-                  // final rhyme = PoetryTools().findRhyme('healed', 'sealed');
                   // print(rhyme);
                   // PoetryTools().rhymeAgent();
                 },
@@ -448,9 +464,11 @@ class AiToolsList extends StatelessWidget {
   const AiToolsList({
     super.key,
     required List aiTools,
+    required this.controller,
   }) : _aiTools = aiTools;
 
   final List _aiTools;
+  final quill.QuillController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -463,7 +481,93 @@ class AiToolsList extends StatelessWidget {
           itemBuilder: (context, index) {
             return InkWell(
               onTap: () {
-                print('Clicked on ${_aiTools[index][1]}');
+                print('Clicked on ${_aiTools[index][0]}');
+                aiToolsSelected(_aiTools[index][0], controller)
+                    .then((response) {
+                  print(response);
+                });
+                String aiToolsSelectTitle = _aiTools[index][2];
+                Navigator.of(context).pop();
+                showModalBottomSheet(
+                  context: context,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20.0),
+                      topRight: Radius.circular(20.0),
+                    ),
+                  ),
+                  builder: (context) {
+                    return SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height,
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20.0),
+                            topRight: Radius.circular(20.0),
+                          ),
+                          color: Colors
+                              .white, // You can change this color as needed
+                        ),
+                        child: Column(
+                          children: [
+                            Align(
+                              alignment: Alignment.topCenter,
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8.0),
+                                child: Container(
+                                  height: 5,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.1,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey,
+                                    borderRadius: BorderRadius.circular(2.5),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(10, 20, 10, 10),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    aiToolsSelectTitle,
+                                    style: GoogleFonts.ebGaramond(
+                                      textStyle: const TextStyle(
+                                        color: Colors.black,
+                                        letterSpacing: .5,
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Divider(
+                              height: 1,
+                              color: Colors.grey,
+                            ),
+                            Center(
+                              child: Text(
+                                "Hello world",
+                                style: GoogleFonts.ebGaramond(
+                                  textStyle: const TextStyle(
+                                    color: Colors.black,
+                                    letterSpacing: .5,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
               },
               splashColor: Colors.grey,
               highlightColor: Colors.transparent,
@@ -473,10 +577,20 @@ class AiToolsList extends StatelessWidget {
                     leading: SizedBox(
                       width: 50,
                       height: 50,
-                      child: Image.asset(_aiTools[index][0]),
+                      child: Image.asset(_aiTools[index][1]),
                     ),
                     title: Text(
-                      _aiTools[index][1],
+                      _aiTools[index][2],
+                      style: GoogleFonts.ebGaramond(
+                        textStyle: const TextStyle(
+                          color: Colors.black,
+                          letterSpacing: .5,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ),
+                    subtitle: Text(
+                      "Hello world",
                       style: GoogleFonts.ebGaramond(
                         textStyle: const TextStyle(
                           color: Colors.black,
@@ -499,6 +613,33 @@ class AiToolsList extends StatelessWidget {
       ),
     );
   }
+
+  Future<String> aiToolsSelected(
+      int userChoice, quill.QuillController controller) async {
+    AiToolsHandler aiToolsHandler = AiToolsHandler();
+    switch (userChoice) {
+      case 1:
+        aiToolsHandler.rhymeSelectedLines();
+        return "";
+      case 2:
+        aiToolsHandler.rhymeWholePoem();
+        return "";
+      case 3:
+        aiToolsHandler.metreHighlighter();
+        return "";
+      case 4:
+        return await aiToolsHandler.rhymeSchemePattern(controller);
+      case 5:
+        aiToolsHandler.generateFewLinesForInspiration();
+        return "";
+      case 6:
+        aiToolsHandler.poemInspiration();
+        return "";
+      default:
+        print('Invalid choice.');
+        return "";
+    }
+  }
 }
 
 class InfoPage extends StatelessWidget {
@@ -507,5 +648,41 @@ class InfoPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Text("Write the info to help user here:");
+  }
+}
+
+class AiToolsHandler {
+  Future<String> rhymeSchemePattern(quill.QuillController controller) async {
+    print('Executing RhymeSchemePattern...');
+    String plainText = "";
+    int len = controller.document.length;
+    plainText = controller.document.getPlainText(0, len - 1);
+    String response = await PoetryTools().rhymeSchemePatternFinder(plainText);
+    return response;
+  }
+
+  Future<void> metreHighlighter() async {
+    print('Executing MetreHighlighter...');
+    // Your implementation for MetreHighlighter here
+  }
+
+  Future<void> poemInspiration() async {
+    print('Executing PoemInspiration...');
+    // Your implementation for PoemInspiration here
+  }
+
+  Future<void> rhymeSelectedLines() async {
+    print('Executing RhymeSelectedLines...');
+    // Your implementation for RhymeSelectedLines here
+  }
+
+  Future<void> rhymeWholePoem() async {
+    print('Executing RhymeWholePoem...');
+    // Your implementation for RhymeWholePoem here
+  }
+
+  Future<void> generateFewLinesForInspiration() async {
+    print('Executing GenerateFewLinesForInspiration...');
+    // Your implementation for GenerateFewLinesForInspiration here
   }
 }
