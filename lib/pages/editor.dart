@@ -12,6 +12,7 @@ import 'package:poetry_ai/services/ai/poetry_tools.dart';
 import 'package:rive/rive.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:english_words/english_words.dart';
 
 class PoetryEditor extends StatefulWidget {
   final int poemIndex;
@@ -389,9 +390,11 @@ class _PoetryEditorState extends State<PoetryEditor> {
                 backgroundColor: widget.editorAppbarColor,
                 onTap: () async {
                   // PoetryTools().helloWorld(
-                  //     'i would like to kill myself, convince me otherwise using less than 20 words?');
-                  final wordToPronunciation =
-                      await PoetryTools().parseCmuDict();
+                  //     'What is the rhyme for the words SNEED and FEED? Look at the dice coefficient from the tool agent and give your own analysis on it');
+                  // final wordToPronunciation =
+                  //     await PoetryTools().parseCmuDict();
+
+                  PoetryTools().findRhymeScheme();
 
                   // // Query a specific word (make sure it's transformed to lowercase)
                   // String word = "example";
@@ -404,13 +407,16 @@ class _PoetryEditorState extends State<PoetryEditor> {
                   //   print("Word not found in CMUdict.");
                   // }
                   // Input with multiple words
-                  const String word = "Oh what can ail thee, knight-at-arms";
-                  final stressPattern = PoetryTools()
-                      .findStressPattern(word, wordToPronunciation);
+                  // const String word = "On whose eyes I might approve";
+                  // // var syl = syllables(word);
+                  // // print(syl);
+                  // final stressPattern = PoetryTools()
+                  //     .findStressPattern(word, wordToPronunciation);
 
-                  print("Stress pattern for '$word': $stressPattern");
-                  final rhyme = PoetryTools().findRhyme('healed', 'sealed');
-                  print(rhyme);
+                  // print("Stress pattern for '$word': $stressPattern");
+                  // final rhyme = PoetryTools().findRhyme('healed', 'sealed');
+                  // print(rhyme);
+                  // PoetryTools().rhymeAgent();
                 },
               ),
             ],
