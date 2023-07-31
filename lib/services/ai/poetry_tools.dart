@@ -60,7 +60,7 @@ class PoetryTools {
   }
 
   void findRhymeScheme() {
-    String input = '''
+    String input = """
     Shall I compare thee to a summer’s day?
     Thou art more lovely and more temperate:
     Rough winds do shake the darling buds of May,
@@ -75,64 +75,39 @@ class PoetryTools {
     When in eternal lines to time thou grow’st:
        So long as men can breathe or eyes can see,
        So long lives this, and this gives life to thee.
-  ''';
+  """;
 
-    List<String> individualLines =
-        input.split('\n').map((line) => line.trim()).toList();
+    List<String> lines = input.split('\n').map((line) => line.trim()).toList();
+    List<List<String>> wordsInLines =
+        lines.map((line) => line.split(' ')).toList();
 
-    String result = '';
-    Map<String, String> wordRhymes =
-        {}; // Store the rhyme information for each word.
+    Map<String, List<int>> rhymeScheme = {};
 
-    for (int i = 0; i < individualLines.length; i++) {
-      String lastWord1 = getLastWord(individualLines[i]);
-      String lineResult =
-          'A'; // Assume the word rhymes with itself (considering it as 'A').
-
-      if (wordRhymes.containsKey(lastWord1)) {
-        lineResult += wordRhymes[lastWord1]!;
-      } else {
-        for (int j = i + 1; j < individualLines.length; j++) {
-          String lastWord2 = getLastWord(individualLines[j]);
-          String rhymeResult = findRhyme(lastWord1, lastWord2);
-
-          if (rhymeResult == 'A') {
-            lineResult += 'A';
-            wordRhymes[lastWord1] =
-                'A'; // Store the rhyme information for the word.
-            wordRhymes[lastWord2] =
-                'A'; // Store the rhyme information for the other word.
-            break; // Break the inner loop once a rhyming word is found for efficiency.
-          } else {
-            lineResult += 'B';
+    for (int i = 0; i < wordsInLines.length; i++) {
+      String lastWord = wordsInLines[i].last.toLowerCase();
+      for (int j = i + 1; j < wordsInLines.length; j++) {
+        String nextLastWord = wordsInLines[j].last.toLowerCase();
+        double similarity = calculateDiceCoefficient(lastWord, nextLastWord);
+        if (similarity >= 0.3) {
+          if (!rhymeScheme.containsKey(lastWord)) {
+            rhymeScheme[lastWord] = [i + 1];
           }
+          rhymeScheme[nextLastWord] = [j + 1, rhymeScheme[lastWord]![0]];
+          break;
         }
       }
-
-      result += lineResult;
     }
 
-    print("Rhyme pattern: $result");
+    // Display the rhyme scheme pattern
+    rhymeScheme.forEach((word, lines) {
+      String rhymePattern =
+          lines.map((line) => String.fromCharCode(64 + line)).join();
+      print("$word: $rhymePattern");
+    });
   }
 
-  String getLastWord(String line) {
-    List<String> words = line.trim().split(' ');
-    return words.isNotEmpty
-        ? words.last.toLowerCase().replaceAll(RegExp(r'[^\w\s]'), '')
-        : '';
-  }
-
-  String findRhyme(String word1, String word2) {
-    double diceCoefficient = calculateDiceCoefficient(word1, word2);
-    print("Dice's Coefficient for $word1 and $word2: $diceCoefficient");
-
-    double rhymeThreshold = 0.3;
-
-    if (diceCoefficient >= rhymeThreshold) {
-      return 'A';
-    } else {
-      return 'B';
-    }
+  double calculateDiceCoefficient(String word1, String word2) {
+    return StringSimilarity.compareTwoStrings(word1, word2);
   }
 
   // String findRhyme(String word1, String word2) {
@@ -147,10 +122,6 @@ class PoetryTools {
   //     return 'The words "$word1" and "$word2" do not rhyme.';
   //   }
   // }
-
-  static double calculateDiceCoefficient(String word1, String word2) {
-    return StringSimilarity.compareTwoStrings(word1, word2);
-  }
 
   String findStressPattern(String sentence, Map<String, String> cmuDict) {
     sentence = sentence.replaceAll(RegExp(r'[^A-Za-z ]'), "").toLowerCase();
