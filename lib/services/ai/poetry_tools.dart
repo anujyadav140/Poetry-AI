@@ -73,37 +73,48 @@ class PoetryTools {
     Nor lose possession of that fair thou ow’st;
     Nor shall death brag thou wander’st in his shade,
     When in eternal lines to time thou grow’st:
-       So long as men can breathe or eyes can see,
-       So long lives this, and this gives life to thee.
+    So long as men can breathe or eyes can see,
+    So long lives this, and this gives life to thee.
   """;
 
-    List<String> lines = input.split('\n').map((line) => line.trim()).toList();
-    List<List<String>> wordsInLines =
-        lines.map((line) => line.split(' ')).toList();
+    List<String> lastWordsList = extractLastWords(input);
+    List<String> rhymingPairs = findRhymingPairs(lastWordsList);
 
-    Map<String, List<int>> rhymeScheme = {};
+    print("Rhyming Pairs:");
+    rhymingPairs.forEach((pair) {
+      print(pair);
+    });
+  }
 
-    for (int i = 0; i < wordsInLines.length; i++) {
-      String lastWord = wordsInLines[i].last.toLowerCase();
-      for (int j = i + 1; j < wordsInLines.length; j++) {
-        String nextLastWord = wordsInLines[j].last.toLowerCase();
-        double similarity = calculateDiceCoefficient(lastWord, nextLastWord);
+  List<String> extractLastWords(String input) {
+    List<String> lines = input.split('\n');
+
+    // Remove leading and trailing whitespaces from each line and extract last word
+    List<String> lastWordsList = lines.map((line) {
+      String trimmedLine = line.trim();
+      List<String> words = trimmedLine.split(' ');
+      return words.isNotEmpty ? words.last : "";
+    }).toList();
+
+    return lastWordsList;
+  }
+
+  List<String> findRhymingPairs(List<String> lastWordsList) {
+    List<String> rhymingPairs = [];
+
+    for (int i = 0; i < lastWordsList.length - 1; i++) {
+      for (int j = i + 1; j < lastWordsList.length; j++) {
+        double similarity =
+            calculateDiceCoefficient(lastWordsList[i], lastWordsList[j]);
         if (similarity >= 0.3) {
-          if (!rhymeScheme.containsKey(lastWord)) {
-            rhymeScheme[lastWord] = [i + 1];
-          }
-          rhymeScheme[nextLastWord] = [j + 1, rhymeScheme[lastWord]![0]];
-          break;
+          // You can adjust the threshold value (0.5) as per your preference.
+          String pair = "${lastWordsList[i]} - ${lastWordsList[j]}";
+          rhymingPairs.add(pair);
         }
       }
     }
 
-    // Display the rhyme scheme pattern
-    rhymeScheme.forEach((word, lines) {
-      String rhymePattern =
-          lines.map((line) => String.fromCharCode(64 + line)).join();
-      print("$word: $rhymePattern");
-    });
+    return rhymingPairs;
   }
 
   double calculateDiceCoefficient(String word1, String word2) {
