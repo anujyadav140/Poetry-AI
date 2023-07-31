@@ -57,14 +57,24 @@ class _PoetryEditorState extends State<PoetryEditor> {
   ];
 
   final List<dynamic> _aiTools = [
-    [1, "images/rhyme.png", "Rhyme Selected Lines"],
-    [2, "images/rhyme.png", "Rhyme Whole Poem"],
-    [3, "images/meter.png", "Metre"],
-    [4, "images/rhyme.png", "Rhyme Scheme Pattern"],
-    [5, "images/poetry.png", "Generate Few Lines For Inspiration"],
-    [6, "images/dante.png", "Get Inspired"],
-    [7, "images/lines.png", "Generate Theme Ideas"],
-    [8, "images/book.png", "What To Write About Next?"],
+    [1, "images/rhyme.png", "Rhyme Selected Lines", "Placeholder text"],
+    [2, "images/rhyme.png", "Rhyme Whole Poem", "Placeholder text"],
+    [3, "images/meter.png", "Metre", "Placeholder text"],
+    [
+      4,
+      "images/rhyme.png",
+      "Rhyme Scheme Pattern",
+      "Find the rhyming scheme pattern for the whole poem"
+    ],
+    [
+      5,
+      "images/poetry.png",
+      "Generate Few Lines For Inspiration",
+      "Placeholder text"
+    ],
+    [6, "images/dante.png", "Get Inspired", "Placeholder text"],
+    [7, "images/lines.png", "Generate Theme Ideas", "Placeholder text"],
+    [8, "images/book.png", "What To Write About Next?", "Placeholder text"],
   ];
 
   @override
@@ -460,7 +470,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
   }
 }
 
-class AiToolsList extends StatelessWidget {
+class AiToolsList extends StatefulWidget {
   const AiToolsList({
     super.key,
     required List aiTools,
@@ -471,103 +481,114 @@ class AiToolsList extends StatelessWidget {
   final quill.QuillController controller;
 
   @override
+  State<AiToolsList> createState() => _AiToolsListState();
+}
+
+class _AiToolsListState extends State<AiToolsList> {
+  String responseText = "";
+  @override
   Widget build(BuildContext context) {
     return Expanded(
       child: Scrollbar(
         thumbVisibility: true,
         child: ListView.builder(
           shrinkWrap: true,
-          itemCount: _aiTools.length,
+          itemCount: widget._aiTools.length,
           itemBuilder: (context, index) {
             return InkWell(
               onTap: () {
-                print('Clicked on ${_aiTools[index][0]}');
-                aiToolsSelected(_aiTools[index][0], controller)
+                String aiToolsSelectTitle = widget._aiTools[index][2];
+                print('Clicked on ${widget._aiTools[index][0]}');
+                aiToolsSelected(widget._aiTools[index][0], widget.controller)
                     .then((response) {
                   print(response);
-                });
-                String aiToolsSelectTitle = _aiTools[index][2];
-                Navigator.of(context).pop();
-                showModalBottomSheet(
-                  context: context,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20.0),
-                      topRight: Radius.circular(20.0),
-                    ),
-                  ),
-                  builder: (context) {
-                    return SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height,
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20.0),
-                            topRight: Radius.circular(20.0),
-                          ),
-                          color: Colors
-                              .white, // You can change this color as needed
+                  setState(() {
+                    responseText = response;
+                    showModalBottomSheet(
+                      context: context,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20.0),
+                          topRight: Radius.circular(20.0),
                         ),
-                        child: Column(
-                          children: [
-                            Align(
-                              alignment: Alignment.topCenter,
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8.0),
-                                child: Container(
-                                  height: 5,
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.1,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey,
-                                    borderRadius: BorderRadius.circular(2.5),
+                      ),
+                      builder: (context) {
+                        return SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height,
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(20.0),
+                                topRight: Radius.circular(20.0),
+                              ),
+                              color: Colors
+                                  .white, // You can change this color as needed
+                            ),
+                            child: Column(
+                              children: [
+                                Align(
+                                  alignment: Alignment.topCenter,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
+                                    child: Container(
+                                      height: 5,
+                                      width: MediaQuery.of(context).size.width *
+                                          0.1,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey,
+                                        borderRadius:
+                                            BorderRadius.circular(2.5),
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(10, 20, 10, 10),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    aiToolsSelectTitle,
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(10, 20, 10, 10),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        aiToolsSelectTitle,
+                                        style: GoogleFonts.ebGaramond(
+                                          textStyle: const TextStyle(
+                                            color: Colors.black,
+                                            letterSpacing: .5,
+                                            fontSize: 18,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const Divider(
+                                  height: 1,
+                                  color: Colors.grey,
+                                ),
+                                Center(
+                                  child: Text(
+                                    responseText,
                                     style: GoogleFonts.ebGaramond(
                                       textStyle: const TextStyle(
                                         color: Colors.black,
                                         letterSpacing: .5,
-                                        fontSize: 18,
+                                        fontSize: 15,
                                       ),
                                     ),
                                   ),
-                                ],
-                              ),
-                            ),
-                            const Divider(
-                              height: 1,
-                              color: Colors.grey,
-                            ),
-                            Center(
-                              child: Text(
-                                "Hello world",
-                                style: GoogleFonts.ebGaramond(
-                                  textStyle: const TextStyle(
-                                    color: Colors.black,
-                                    letterSpacing: .5,
-                                    fontSize: 15,
-                                  ),
                                 ),
-                              ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ),
+                          ),
+                        );
+                      },
                     );
-                  },
-                );
+                  });
+                });
+                // Navigator.of(context).pop();
               },
               splashColor: Colors.grey,
               highlightColor: Colors.transparent,
@@ -577,10 +598,10 @@ class AiToolsList extends StatelessWidget {
                     leading: SizedBox(
                       width: 50,
                       height: 50,
-                      child: Image.asset(_aiTools[index][1]),
+                      child: Image.asset(widget._aiTools[index][1]),
                     ),
                     title: Text(
-                      _aiTools[index][2],
+                      widget._aiTools[index][2],
                       style: GoogleFonts.ebGaramond(
                         textStyle: const TextStyle(
                           color: Colors.black,
@@ -590,7 +611,7 @@ class AiToolsList extends StatelessWidget {
                       ),
                     ),
                     subtitle: Text(
-                      "Hello world",
+                      widget._aiTools[index][3],
                       style: GoogleFonts.ebGaramond(
                         textStyle: const TextStyle(
                           color: Colors.black,
@@ -600,7 +621,7 @@ class AiToolsList extends StatelessWidget {
                       ),
                     ),
                   ),
-                  if (index != _aiTools.length - 1)
+                  if (index != widget._aiTools.length - 1)
                     const Divider(
                       height: 1,
                       color: Colors.grey,
