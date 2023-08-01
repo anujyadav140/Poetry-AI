@@ -485,7 +485,8 @@ class AiToolsList extends StatefulWidget {
 }
 
 class _AiToolsListState extends State<AiToolsList> {
-  String responseText = "";
+  List<String> patternList = []; // Initialize the list to store patterns
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -503,7 +504,6 @@ class _AiToolsListState extends State<AiToolsList> {
                     .then((response) {
                   print(response);
                   setState(() {
-                    responseText = response;
                     showModalBottomSheet(
                       context: context,
                       shape: const RoundedRectangleBorder(
@@ -568,15 +568,30 @@ class _AiToolsListState extends State<AiToolsList> {
                                   height: 1,
                                   color: Colors.grey,
                                 ),
-                                Center(
-                                  child: Text(
-                                    responseText,
-                                    style: GoogleFonts.ebGaramond(
-                                      textStyle: const TextStyle(
-                                        color: Colors.black,
-                                        letterSpacing: .5,
-                                        fontSize: 15,
-                                      ),
+                                Expanded(
+                                  child: SingleChildScrollView(
+                                    child: Column(
+                                      children: [
+                                        // Use a ListView.builder to display the patterns
+                                        ListView.builder(
+                                          shrinkWrap: true,
+                                          itemCount: patternList.length,
+                                          itemBuilder: (context, index) {
+                                            return Center(
+                                              child: Text(
+                                                patternList[index],
+                                                style: GoogleFonts.ebGaramond(
+                                                  textStyle: const TextStyle(
+                                                    color: Colors.black,
+                                                    letterSpacing: .5,
+                                                    fontSize: 15,
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -635,7 +650,7 @@ class _AiToolsListState extends State<AiToolsList> {
     );
   }
 
-  Future<String> aiToolsSelected(
+  Future<Object> aiToolsSelected(
       int userChoice, quill.QuillController controller) async {
     AiToolsHandler aiToolsHandler = AiToolsHandler();
     switch (userChoice) {
@@ -646,8 +661,7 @@ class _AiToolsListState extends State<AiToolsList> {
         aiToolsHandler.rhymeWholePoem();
         return "";
       case 3:
-        aiToolsHandler.metreHighlighter();
-        return "";
+        return await aiToolsHandler.metreHighlighter(controller);
       case 4:
         return await aiToolsHandler.rhymeSchemePattern(controller);
       case 5:
@@ -673,18 +687,24 @@ class InfoPage extends StatelessWidget {
 }
 
 class AiToolsHandler {
-  Future<String> rhymeSchemePattern(quill.QuillController controller) async {
+  Future<List<String>> rhymeSchemePattern(
+      quill.QuillController controller) async {
     print('Executing RhymeSchemePattern...');
     String plainText = "";
     int len = controller.document.length;
     plainText = controller.document.getPlainText(0, len - 1);
     String response = await PoetryTools().rhymeSchemePatternFinder(plainText);
-    return response;
+    List<String> patternList = response.split(' ');
+    return patternList;
   }
 
-  Future<void> metreHighlighter() async {
+  Future<String> metreHighlighter(quill.QuillController controller) async {
     print('Executing MetreHighlighter...');
-    // Your implementation for MetreHighlighter here
+    String plainText = "";
+    int len = controller.document.length;
+    plainText = controller.document.getPlainText(0, len - 1);
+    String response = await PoetryTools().poeticMetreFinder(plainText);
+    return response;
   }
 
   Future<void> poemInspiration() async {

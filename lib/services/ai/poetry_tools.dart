@@ -68,10 +68,35 @@ class PoetryTools {
   }
 
   Future<String> rhymeSchemePatternFinder(String poem) async {
+    print(poem);
     final chat =
         ChatOpenAI(apiKey: dotenv.env['OPENAI_API_KEY'], temperature: 0.9);
     const template =
-        'You are a helpful poetry tutor that finds the rhyme scheme of a given poem, only return rhyme scheme letters';
+        '''You are a helpful poetry tutor that finds the rhyme scheme of a given poem, 
+        only return rhyme scheme letters in uppercases do NOT return anything else, don't say what you are returning just the letters; 
+        if you think the poem doesn\'t have a rhyme scheme
+        do not return a rhyme scheme instead say the poem doesn\'t have any *overarching* rhyme scheme,
+        be honest in your assessment''';
+    final systemMessagePrompt =
+        SystemChatMessagePromptTemplate.fromTemplate(template);
+    const humanTemplate = '{poem}';
+    final humanMessagePrompt =
+        HumanChatMessagePromptTemplate.fromTemplate(humanTemplate);
+    final chatPrompt = ChatPromptTemplate.fromPromptMessages(
+        [systemMessagePrompt, humanMessagePrompt]);
+    final chain = LLMChain(llm: chat, prompt: chatPrompt);
+    final res = await chain.run({'poem': poem});
+    return res;
+  }
+
+  Future<String> poeticMetreFinder(String poem) async {
+    final chat =
+        ChatOpenAI(apiKey: dotenv.env['OPENAI_API_KEY'], temperature: 0.9);
+    const template =
+        '''You are a helpful poetry tutor that highlights the metre of a given poem,'
+         return the whole poem- for stressed syllables uppercase the syllables & for unstressed lowercase;
+        if you think the poem doesn\'t have a metre do not return metre instead say the poem doesn\'t have any *overarching* metre,
+         be honest in your assessment''';
     final systemMessagePrompt =
         SystemChatMessagePromptTemplate.fromTemplate(template);
     const humanTemplate = '{poem}';
