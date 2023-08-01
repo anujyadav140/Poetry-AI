@@ -23,10 +23,11 @@ class HomePage extends StatefulWidget {
 class Poem {
   int index;
   String title;
-  String form;
+  String type;
+  List<String> features;
   String poetry;
 
-  Poem(this.index, this.title, this.form, this.poetry);
+  Poem(this.index, this.title, this.type, this.features, this.poetry);
 }
 
 class _HomePageState extends State<HomePage>
@@ -34,7 +35,7 @@ class _HomePageState extends State<HomePage>
   late AnimationController _controller;
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   String user = "";
-  String setPoemForm = "";
+  String setPoemType = "";
   ScrollController scrollController = ScrollController();
   final globalThemeBox = Hive.box('myThemeBox');
   final poemListBox = Hive.box('myPoemBox');
@@ -90,14 +91,15 @@ class _HomePageState extends State<HomePage>
     "Purple",
   ];
 
-  void setPoemList(
-      int poemIndex, String poemTitle, String poemForm, String poetry) {
-    var poem = Poem(poemIndex, poemTitle, poemForm, poetry);
+  void setPoemList(int poemIndex, String poemTitle, String poemType,
+      List<String> poemFeatures, String poetry) {
+    var poem = Poem(poemIndex, poemTitle, poemType, poemFeatures, poetry);
 
     poemListBox.add({
       'index': poem.index,
       'title': poem.title,
-      'form': poem.form,
+      'type': poem.type,
+      'features': poem.features,
       'poem': poem.poetry,
     });
   }
@@ -169,10 +171,10 @@ class _HomePageState extends State<HomePage>
           isTemplateClicked = true;
           poetryTypeName = PoetryTypesData.getPoetryTypeByName(
               PoetryTypesData.poetryTypes[index].name);
-          setPoemForm = PoetryTypesData.poetryTypes[index].name;
+          setPoemType = PoetryTypesData.poetryTypes[index].name;
           features = PoetryTypesData.getFeaturesByName(poetryTypeName.name);
           icons = PoetryTypesData.getIconsByName(poetryTypeName.name);
-          print(setPoemForm);
+          print(setPoemType);
           // print(features);
           // print(icons);
         }
@@ -376,7 +378,7 @@ class _HomePageState extends State<HomePage>
                                         String poemTitle =
                                             poemData['title'] as String;
                                         String poemForm =
-                                            poemData['form'] as String;
+                                            poemData['type'] as String;
                                         return Slidable(
                                           key: const ValueKey(0),
                                           endActionPane: ActionPane(
@@ -678,9 +680,9 @@ class _HomePageState extends State<HomePage>
             int newPoemIndex = currentPoemIndex + 1;
             poemListIndexBox.put('poemIndex', newPoemIndex);
             var setPoemTitle =
-                "Untitled-${poemListIndexBox.get('poemIndex')}  $setPoemForm";
+                "Untitled-${poemListIndexBox.get('poemIndex')}  $setPoemType";
             setPoemList(poemListIndexBox.get('poemIndex'), setPoemTitle,
-                setPoemForm, "");
+                setPoemType, features, "");
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(

@@ -83,6 +83,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
     _scrollController = ScrollController();
     controller.addListener(_onTextChanged);
     var poemData = poemListBox.getAt(widget.poemIndex) as Map<dynamic, dynamic>;
+    print(poemData);
     poemTitle = poemData['title'] as String;
     String? poetryContent = poemData['poetry'] as String?;
     var myJSON = poetryContent != null ? jsonDecode(poetryContent) : null;
@@ -485,22 +486,7 @@ class AiToolsList extends StatefulWidget {
 }
 
 class _AiToolsListState extends State<AiToolsList> {
-  List<String> listResponse = [];
   String wordResponse = "";
-  bool isWordResponse = false;
-  List<String> formatRhymeSchemePatternResponse(String response) {
-    if (response.contains("overarching")) {
-      List<String> patternList = [];
-      patternList.add(response);
-      return patternList;
-    }
-    List<int> runesList = response.runes.toList();
-    List<String> patternList =
-        runesList.map((rune) => String.fromCharCode(rune)).toList();
-    print(patternList);
-    return patternList;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -518,14 +504,7 @@ class _AiToolsListState extends State<AiToolsList> {
                     .then((response) {
                   print(response);
                   setState(() {
-                    if (widget._aiTools[index][0] == 4) {
-                      isWordResponse = false;
-                      listResponse = formatRhymeSchemePatternResponse(response);
-                    } else {
-                      isWordResponse = true;
-                      wordResponse = response;
-                    }
-                    response = "";
+                    wordResponse = response;
                     showModalBottomSheet(
                       context: context,
                       shape: const RoundedRectangleBorder(
@@ -594,37 +573,16 @@ class _AiToolsListState extends State<AiToolsList> {
                                   child: SingleChildScrollView(
                                     child: Column(
                                       children: [
-                                        isWordResponse
-                                            ? Text(
-                                                wordResponse,
-                                                style: GoogleFonts.ebGaramond(
-                                                  textStyle: const TextStyle(
-                                                    color: Colors.black,
-                                                    letterSpacing: .5,
-                                                    fontSize: 15,
-                                                  ),
-                                                ),
-                                              )
-                                            : ListView.builder(
-                                                shrinkWrap: true,
-                                                itemCount: listResponse.length,
-                                                itemBuilder: (context, index) {
-                                                  return Center(
-                                                    child: Text(
-                                                      listResponse[index],
-                                                      style: GoogleFonts
-                                                          .ebGaramond(
-                                                        textStyle:
-                                                            const TextStyle(
-                                                          color: Colors.black,
-                                                          letterSpacing: .5,
-                                                          fontSize: 15,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                              ),
+                                        Text(
+                                          wordResponse,
+                                          style: GoogleFonts.ebGaramond(
+                                            textStyle: const TextStyle(
+                                              color: Colors.black,
+                                              letterSpacing: .5,
+                                              fontSize: 15,
+                                            ),
+                                          ),
+                                        )
                                       ],
                                     ),
                                   ),

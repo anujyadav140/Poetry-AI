@@ -69,14 +69,13 @@ class PoetryTools {
 
   Future<String> rhymeSchemePatternFinder(String poem) async {
     print(poem);
-    final chat =
-        ChatOpenAI(apiKey: dotenv.env['OPENAI_API_KEY'], temperature: 0.9);
+    final chat = ChatOpenAI(
+      model: 'gpt-3.5-turbo',
+      apiKey: dotenv.env['OPENAI_API_KEY'],
+      temperature: 0.9,
+    );
     const template =
-        '''You are a helpful poetry tutor that finds the rhyme scheme of a given poem, 
-        only return rhyme scheme letters in uppercases do NOT return anything else, do not give any other information; 
-        if you think the poem doesn\'t have a rhyme scheme
-        do not return a rhyme scheme instead say the poem doesn\'t have any *overarching* rhyme scheme,
-        be honest in your assessment''';
+        '''You are a helpful poetry tutor that helps in finding the words that rhyme together from the given poem, only return pairs''';
     final systemMessagePrompt =
         SystemChatMessagePromptTemplate.fromTemplate(template);
     const humanTemplate = '{poem}';
@@ -94,9 +93,7 @@ class PoetryTools {
         ChatOpenAI(apiKey: dotenv.env['OPENAI_API_KEY'], temperature: 0.9);
     const template =
         '''You are a helpful poetry tutor that highlights the metre of a given poem,'
-         return the whole poem- for stressed syllables uppercase the syllables & for unstressed lowercase;
-        if you think the poem doesn\'t have a metre do not return metre instead say the poem doesn\'t have any *overarching* metre,
-         be honest in your assessment''';
+        return the whole poem- for stressed syllables uppercase the syllables & for unstressed lowercase''';
     final systemMessagePrompt =
         SystemChatMessagePromptTemplate.fromTemplate(template);
     const humanTemplate = '{poem}';
