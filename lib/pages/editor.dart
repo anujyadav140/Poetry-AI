@@ -485,8 +485,9 @@ class AiToolsList extends StatefulWidget {
 }
 
 class _AiToolsListState extends State<AiToolsList> {
-  List<String> patternList = []; // Initialize the list to store patterns
-
+  List<String> listResponse = [];
+  String wordResponse = "";
+  bool isWordResponse = false;
   List<String> formatRhymeSchemePatternResponse(String response) {
     if (response.contains("overarching")) {
       List<String> patternList = [];
@@ -517,7 +518,14 @@ class _AiToolsListState extends State<AiToolsList> {
                     .then((response) {
                   print(response);
                   setState(() {
-                    patternList = formatRhymeSchemePatternResponse(response);
+                    if (widget._aiTools[index][0] == 4) {
+                      isWordResponse = false;
+                      listResponse = formatRhymeSchemePatternResponse(response);
+                    } else {
+                      isWordResponse = true;
+                      wordResponse = response;
+                    }
+                    response = "";
                     showModalBottomSheet(
                       context: context,
                       shape: const RoundedRectangleBorder(
@@ -586,14 +594,9 @@ class _AiToolsListState extends State<AiToolsList> {
                                   child: SingleChildScrollView(
                                     child: Column(
                                       children: [
-                                        // Use a ListView.builder to display the patterns
-                                        ListView.builder(
-                                          shrinkWrap: true,
-                                          itemCount: patternList.length,
-                                          itemBuilder: (context, index) {
-                                            return Center(
-                                              child: Text(
-                                                patternList[index],
+                                        isWordResponse
+                                            ? Text(
+                                                wordResponse,
                                                 style: GoogleFonts.ebGaramond(
                                                   textStyle: const TextStyle(
                                                     color: Colors.black,
@@ -601,10 +604,27 @@ class _AiToolsListState extends State<AiToolsList> {
                                                     fontSize: 15,
                                                   ),
                                                 ),
+                                              )
+                                            : ListView.builder(
+                                                shrinkWrap: true,
+                                                itemCount: listResponse.length,
+                                                itemBuilder: (context, index) {
+                                                  return Center(
+                                                    child: Text(
+                                                      listResponse[index],
+                                                      style: GoogleFonts
+                                                          .ebGaramond(
+                                                        textStyle:
+                                                            const TextStyle(
+                                                          color: Colors.black,
+                                                          letterSpacing: .5,
+                                                          fontSize: 15,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
                                               ),
-                                            );
-                                          },
-                                        ),
                                       ],
                                     ),
                                   ),
