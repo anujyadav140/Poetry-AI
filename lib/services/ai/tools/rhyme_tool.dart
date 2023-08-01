@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:english_words/english_words.dart';
 import 'package:langchain/langchain.dart';
 import 'package:string_similarity/string_similarity.dart';
 // import 'package:math_expressions/math_expressions.dart';
@@ -27,6 +27,28 @@ final class RhymeTool extends Tool {
     } catch (e) {
       return "I don't know how to do that.";
     }
+  }
+
+  String poem = '''long tresses over--
+blooming face; reminds one of:
+cherry budding tree''';
+
+  String preprocessPoem(String poem) {
+    return poem.replaceAll(RegExp(r"['’]"), 'a');
+  }
+
+  int countTotalSyllables() {
+    int totalSyllables = syllables("tresses");
+    print(totalSyllables);
+    // String preprocessedPoem = preprocessPoem(poem);
+    // List<String> words = preprocessedPoem.split(RegExp(r'\s+|\n'));
+    // int totalSyllables = 0;
+    // for (String word in words) {
+    //   String cleanWord = word.replaceAll(RegExp(r'[^\w\s]'), '');
+    //   totalSyllables += syllables(cleanWord);
+    // }
+    // print(totalSyllables);
+    return totalSyllables;
   }
 
   String findRhyme(String input) {

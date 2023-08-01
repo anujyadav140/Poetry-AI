@@ -68,24 +68,25 @@ class PoetryTools {
   }
 
   Future<String> rhymeSchemePatternFinder(String poem) async {
+    RhymeTool().countTotalSyllables();
     print(poem);
-    final chat = ChatOpenAI(
-      model: 'gpt-3.5-turbo',
-      apiKey: dotenv.env['OPENAI_API_KEY'],
-      temperature: 0.9,
-    );
-    const template =
-        '''You are a helpful poetry tutor that helps in finding the rhyme scheme of the poem''';
-    final systemMessagePrompt =
-        SystemChatMessagePromptTemplate.fromTemplate(template);
-    const humanTemplate = '{poem}';
-    final humanMessagePrompt =
-        HumanChatMessagePromptTemplate.fromTemplate(humanTemplate);
-    final chatPrompt = ChatPromptTemplate.fromPromptMessages(
-        [systemMessagePrompt, humanMessagePrompt]);
-    final chain = LLMChain(llm: chat, prompt: chatPrompt);
-    final res = await chain.run({'poem': poem});
-    return res;
+    // final chat = ChatOpenAI(
+    //   model: 'gpt-3.5-turbo',
+    //   apiKey: dotenv.env['OPENAI_API_KEY'],
+    //   temperature: 0.9,
+    // );
+    // const template =
+    //     '''You are a helpful poetry tutor that helps in finding the rhyme scheme of the poem''';
+    // final systemMessagePrompt =
+    //     SystemChatMessagePromptTemplate.fromTemplate(template);
+    // const humanTemplate = '{poem}';
+    // final humanMessagePrompt =
+    //     HumanChatMessagePromptTemplate.fromTemplate(humanTemplate);
+    // final chatPrompt = ChatPromptTemplate.fromPromptMessages(
+    //     [systemMessagePrompt, humanMessagePrompt]);
+    // final chain = LLMChain(llm: chat, prompt: chatPrompt);
+    // final res = await chain.run({'poem': poem});
+    return "";
   }
 
   Future<String> poeticMetreFinder(String poem) async {
