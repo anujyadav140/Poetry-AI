@@ -487,6 +487,19 @@ class AiToolsList extends StatefulWidget {
 class _AiToolsListState extends State<AiToolsList> {
   List<String> patternList = []; // Initialize the list to store patterns
 
+  List<String> formatRhymeSchemePatternResponse(String response) {
+    if (response.contains("overarching")) {
+      List<String> patternList = [];
+      patternList.add(response);
+      return patternList;
+    }
+    List<int> runesList = response.runes.toList();
+    List<String> patternList =
+        runesList.map((rune) => String.fromCharCode(rune)).toList();
+    print(patternList);
+    return patternList;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -504,6 +517,7 @@ class _AiToolsListState extends State<AiToolsList> {
                     .then((response) {
                   print(response);
                   setState(() {
+                    patternList = formatRhymeSchemePatternResponse(response);
                     showModalBottomSheet(
                       context: context,
                       shape: const RoundedRectangleBorder(
@@ -650,7 +664,7 @@ class _AiToolsListState extends State<AiToolsList> {
     );
   }
 
-  Future<Object> aiToolsSelected(
+  Future<String> aiToolsSelected(
       int userChoice, quill.QuillController controller) async {
     AiToolsHandler aiToolsHandler = AiToolsHandler();
     switch (userChoice) {
@@ -687,15 +701,13 @@ class InfoPage extends StatelessWidget {
 }
 
 class AiToolsHandler {
-  Future<List<String>> rhymeSchemePattern(
-      quill.QuillController controller) async {
+  Future<String> rhymeSchemePattern(quill.QuillController controller) async {
     print('Executing RhymeSchemePattern...');
     String plainText = "";
     int len = controller.document.length;
     plainText = controller.document.getPlainText(0, len - 1);
     String response = await PoetryTools().rhymeSchemePatternFinder(plainText);
-    List<String> patternList = response.split(' ');
-    return patternList;
+    return response;
   }
 
   Future<String> metreHighlighter(quill.QuillController controller) async {

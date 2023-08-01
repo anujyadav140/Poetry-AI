@@ -73,7 +73,7 @@ class PoetryTools {
         ChatOpenAI(apiKey: dotenv.env['OPENAI_API_KEY'], temperature: 0.9);
     const template =
         '''You are a helpful poetry tutor that finds the rhyme scheme of a given poem, 
-        only return rhyme scheme letters in uppercases do NOT return anything else, don't say what you are returning just the letters; 
+        only return rhyme scheme letters in uppercases do NOT return anything else, do not give any other information; 
         if you think the poem doesn\'t have a rhyme scheme
         do not return a rhyme scheme instead say the poem doesn\'t have any *overarching* rhyme scheme,
         be honest in your assessment''';
