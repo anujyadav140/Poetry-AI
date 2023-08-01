@@ -75,7 +75,7 @@ class PoetryTools {
       temperature: 0.9,
     );
     const template =
-        '''You are a helpful poetry tutor that helps in finding the words that rhyme together from the given poem, only return pairs''';
+        '''You are a helpful poetry tutor that helps in finding the rhyme scheme of the poem''';
     final systemMessagePrompt =
         SystemChatMessagePromptTemplate.fromTemplate(template);
     const humanTemplate = '{poem}';
@@ -93,7 +93,8 @@ class PoetryTools {
         ChatOpenAI(apiKey: dotenv.env['OPENAI_API_KEY'], temperature: 0.9);
     const template =
         '''You are a helpful poetry tutor that highlights the metre of a given poem,'
-        return the whole poem- for stressed syllables uppercase the syllables & for unstressed lowercase''';
+        return the whole poem- for stressed syllables uppercase the syllables & for unstressed lowercase;
+        write few sentences talking about it''';
     final systemMessagePrompt =
         SystemChatMessagePromptTemplate.fromTemplate(template);
     const humanTemplate = '{poem}';
@@ -103,6 +104,28 @@ class PoetryTools {
         [systemMessagePrompt, humanMessagePrompt]);
     final chain = LLMChain(llm: chat, prompt: chatPrompt);
     final res = await chain.run({'poem': poem});
+    return res;
+  }
+
+  Future<String> reviewTheFeatures(String poem, List<String> features) async {
+    final chat =
+        ChatOpenAI(apiKey: dotenv.env['OPENAI_API_KEY'], temperature: 1);
+    const template =
+        '''You are a helpful poetry tutor that guides the user to follow the correct poetry features.
+         These are the features in a list: {features}
+         try to make sure your student follows the features for the poem''';
+    final systemMessagePrompt =
+        SystemChatMessagePromptTemplate.fromTemplate(template);
+    const humanTemplate = '{poem}';
+    final humanMessagePrompt =
+        HumanChatMessagePromptTemplate.fromTemplate(humanTemplate);
+    final chatPrompt = ChatPromptTemplate.fromPromptMessages(
+        [systemMessagePrompt, humanMessagePrompt]);
+    final chain = LLMChain(llm: chat, prompt: chatPrompt);
+    final res = await chain.run({
+      'poem': poem,
+      'features': features,
+    });
     return res;
   }
 }

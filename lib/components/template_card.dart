@@ -16,8 +16,8 @@ class PoetryTypesData {
       'A 14-line poem, usually written in iambic pentameter, with various rhyme schemes. Examples include the Shakespearean and Petrarchan sonnets.',
       [
         '14 lines in length',
-        'Usually written in iambic pentameter',
-        'Various rhyme schemes (Shakespearean and Petrarchan)',
+        'Written in Iambic Pentameter',
+        'Various rhyme schemes (Can be Shakespearean and Petrarchan)',
       ],
       [
         'images/lines.png',

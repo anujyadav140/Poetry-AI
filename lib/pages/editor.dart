@@ -45,6 +45,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
   bool _isInfoClicked = false;
   // late StreamSubscription<bool> keyboardSubscription;
   late String poemTitle = "";
+  List<String> poetryFeatures = [];
   late ScrollController _scrollController;
   final FocusNode _focusNode = FocusNode();
   final List<dynamic> _googleFonts = [
@@ -86,6 +87,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
     print(poemData);
     poemTitle = poemData['title'] as String;
     String? poetryContent = poemData['poetry'] as String?;
+    poetryFeatures = poemData['features'];
     var myJSON = poetryContent != null ? jsonDecode(poetryContent) : null;
     controller = quill.QuillController(
       document:
@@ -398,7 +400,9 @@ class _PoetryEditorState extends State<PoetryEditor> {
                                   ? const InfoPage()
                                   : AiToolsList(
                                       aiTools: _aiTools,
-                                      controller: controller),
+                                      controller: controller,
+                                      poetryFeatures: poetryFeatures,
+                                    ),
                             ],
                           ),
                         );
@@ -476,10 +480,12 @@ class AiToolsList extends StatefulWidget {
     super.key,
     required List aiTools,
     required this.controller,
+    required this.poetryFeatures,
   }) : _aiTools = aiTools;
 
   final List _aiTools;
   final quill.QuillController controller;
+  final List<String> poetryFeatures;
 
   @override
   State<AiToolsList> createState() => _AiToolsListState();
@@ -500,7 +506,8 @@ class _AiToolsListState extends State<AiToolsList> {
               onTap: () {
                 String aiToolsSelectTitle = widget._aiTools[index][2];
                 print('Clicked on ${widget._aiTools[index][0]}');
-                aiToolsSelected(widget._aiTools[index][0], widget.controller)
+                aiToolsSelected(widget._aiTools[index][0], widget.controller,
+                        widget.poetryFeatures)
                     .then((response) {
                   print(response);
                   setState(() {
@@ -573,13 +580,20 @@ class _AiToolsListState extends State<AiToolsList> {
                                   child: SingleChildScrollView(
                                     child: Column(
                                       children: [
-                                        Text(
-                                          wordResponse,
-                                          style: GoogleFonts.ebGaramond(
-                                            textStyle: const TextStyle(
-                                              color: Colors.black,
-                                              letterSpacing: .5,
-                                              fontSize: 15,
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 8.0,
+                                              left: 20.0,
+                                              right: 8.0,
+                                              bottom: 8.0),
+                                          child: Text(
+                                            wordResponse,
+                                            style: GoogleFonts.ebGaramond(
+                                              textStyle: const TextStyle(
+                                                color: Colors.black,
+                                                letterSpacing: .5,
+                                                fontSize: 15,
+                                              ),
                                             ),
                                           ),
                                         )
@@ -642,13 +656,13 @@ class _AiToolsListState extends State<AiToolsList> {
     );
   }
 
-  Future<String> aiToolsSelected(
-      int userChoice, quill.QuillController controller) async {
+  Future<String> aiToolsSelected(int userChoice,
+      quill.QuillController controller, List<String> poetryFeatures) async {
     AiToolsHandler aiToolsHandler = AiToolsHandler();
     switch (userChoice) {
       case 1:
-        aiToolsHandler.rhymeSelectedLines();
-        return "";
+        return await aiToolsHandler.rhymeSelectedLines(
+            controller, poetryFeatures);
       case 2:
         aiToolsHandler.rhymeWholePoem();
         return "";
@@ -702,9 +716,15 @@ class AiToolsHandler {
     // Your implementation for PoemInspiration here
   }
 
-  Future<void> rhymeSelectedLines() async {
+  Future<String> rhymeSelectedLines(
+      quill.QuillController controller, List<String> poetryFeatures) async {
     print('Executing RhymeSelectedLines...');
-    // Your implementation for RhymeSelectedLines here
+    String plainText = "";
+    int len = controller.document.length;
+    plainText = controller.document.getPlainText(0, len - 1);
+    String response =
+        await PoetryTools().reviewTheFeatures(plainText, poetryFeatures);
+    return response;
   }
 
   Future<void> rhymeWholePoem() async {
