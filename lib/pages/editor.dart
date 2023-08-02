@@ -55,27 +55,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
     ["zhiMangXing", GoogleFonts.zhiMangXing().fontFamily!],
     ["zenTokyoZoo", GoogleFonts.zenTokyoZoo().fontFamily!],
   ];
-
-  final List<dynamic> _aiTools = [
-    [1, "images/rhyme.png", "Rhyme Selected Lines", "Placeholder text"],
-    [2, "images/rhyme.png", "Rhyme Whole Poem", "Placeholder text"],
-    [3, "images/meter.png", "Metre", "Placeholder text"],
-    [
-      4,
-      "images/rhyme.png",
-      "Rhyme Scheme Pattern",
-      "Find the rhyming scheme pattern for the whole poem"
-    ],
-    [
-      5,
-      "images/poetry.png",
-      "Generate Few Lines For Inspiration",
-      "Placeholder text"
-    ],
-    [6, "images/dante.png", "Get Inspired", "Placeholder text"],
-    [7, "images/lines.png", "Generate Theme Ideas", "Placeholder text"],
-    [8, "images/book.png", "What To Write About Next?", "Placeholder text"],
-  ];
+  late List<dynamic> _aiTools;
 
   @override
   void initState() {
@@ -87,6 +67,33 @@ class _PoetryEditorState extends State<PoetryEditor> {
     poemTitle = poemData['title'] as String;
     String? poetryContent = poemData['poetry'] as String?;
     poetryFeatures = poemData['features'];
+    String? poetryType = poemData['type'] as String;
+    _aiTools = [
+      [
+        1,
+        "images/dante.png",
+        "Review The Whole Poem",
+        "See whether your poetical work follows all the criteria to be called a work of $poetryType",
+      ],
+      [2, "images/rhyme.png", "Rhyme Selected Lines", "Placeholder text"],
+      [5, "images/rhyme.png", "Rhyme Whole Poem", "Placeholder text"],
+      [3, "images/meter.png", "Metre", "Placeholder text"],
+      [
+        4,
+        "images/rhyme.png",
+        "Rhyme Scheme Pattern",
+        "Find the rhyming scheme pattern for the whole poem"
+      ],
+      [
+        6,
+        "images/poetry.png",
+        "Generate Few Lines For Inspiration",
+        "Placeholder text"
+      ],
+      [7, "images/dante.png", "Get Inspired", "Placeholder text"],
+      [8, "images/lines.png", "Generate Theme Ideas", "Placeholder text"],
+      [9, "images/book.png", "What To Write About Next?", "Placeholder text"],
+    ];
     var myJSON = poetryContent != null ? jsonDecode(poetryContent) : null;
     controller = quill.QuillController(
       document:
