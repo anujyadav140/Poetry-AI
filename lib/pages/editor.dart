@@ -9,10 +9,12 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:poetry_ai/components/color_palette.dart';
 import 'package:poetry_ai/pages/home_page.dart';
 import 'package:poetry_ai/services/ai/poetry_tools.dart';
+import 'package:poetry_ai/services/authentication/auth_service.dart';
 import 'package:rive/rive.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:english_words/english_words.dart';
+import 'package:provider/provider.dart';
 
 class PoetryEditor extends StatefulWidget {
   final int poemIndex;
@@ -56,7 +58,8 @@ class _PoetryEditorState extends State<PoetryEditor> {
     ["zenTokyoZoo", GoogleFonts.zenTokyoZoo().fontFamily!],
   ];
   late List<dynamic> _aiTools;
-
+  bool isFirstLineSelected = false;
+  bool isSecondLineSelected = false;
   @override
   void initState() {
     super.initState();
@@ -73,17 +76,22 @@ class _PoetryEditorState extends State<PoetryEditor> {
         1,
         "images/dante.png",
         "Review The Whole Poem",
-        "See whether your poetical work follows all the criteria to be called a work of $poetryType",
+        "See whether your poetical work follows all the features to be called a work of $poetryType.",
       ],
       [2, "images/rhyme.png", "Rhyme Selected Lines", "Placeholder text"],
-      [5, "images/rhyme.png", "Rhyme Whole Poem", "Placeholder text"],
-      [3, "images/meter.png", "Metre", "Placeholder text"],
+      [
+        3,
+        "images/meter.png",
+        "Metre",
+        "Find the metre pattern for the whole poem. Uppercase for stressed syllables and Lowercase for unstressed."
+      ],
       [
         4,
         "images/rhyme.png",
         "Rhyme Scheme Pattern",
-        "Find the rhyming scheme pattern for the whole poem"
+        "Find the rhyming scheme pattern for the whole poem."
       ],
+      [5, "images/rhyme.png", "Rhyme Whole Poem", "Placeholder text"],
       [
         6,
         "images/poetry.png",
@@ -102,7 +110,6 @@ class _PoetryEditorState extends State<PoetryEditor> {
       selection: const TextSelection.collapsed(offset: 0),
     );
     bool _isFirstFocus = true;
-
     _focusNode.addListener(() {
       if (_focusNode.hasFocus && _isFirstFocus) {
         _scrollToCursor();
@@ -185,6 +192,8 @@ class _PoetryEditorState extends State<PoetryEditor> {
 
   @override
   Widget build(BuildContext context) {
+    final isRhymeSelectedLines =
+        context.watch<AuthService>().isRhymeSelectedLines;
     return WillPopScope(
       onWillPop: () async {
         if (isOpenDial.value) {
@@ -198,17 +207,35 @@ class _PoetryEditorState extends State<PoetryEditor> {
       },
       child: Scaffold(
         appBar: AppBar(
-          leading: IconButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const HomePage(),
-                    ));
-              },
-              icon: const Icon(Icons.arrow_back)),
+          leading: !isRhymeSelectedLines
+              ? IconButton(
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const HomePage(),
+                        ));
+                  },
+                  icon: const Icon(Icons.arrow_back))
+              : IconButton(
+                  onPressed: () {
+                    context.read<AuthService>().isRhymeSelectedLines = false;
+                    setState(() {
+                      isFirstLineSelected = false;
+                      isSecondLineSelected = false;
+                    });
+                  },
+                  icon: const Icon(Icons.cancel_outlined),
+                  tooltip: "Click on this if you want to cancel the selection",
+                ),
           title: Text(
-            "Editor - $poemTitle",
+            !isRhymeSelectedLines
+                ? "Editor - $poemTitle"
+                : !isFirstLineSelected
+                    ? "Select Line 1 To Rhyme"
+                    : !isSecondLineSelected
+                        ? "Select Line 2 To Rhyme"
+                        : "You Are Ready To Go, Rhyme It!",
             style: GoogleFonts.ebGaramond(
               textStyle: TextStyle(
                 color: widget.editorFontColor,
@@ -226,25 +253,100 @@ class _PoetryEditorState extends State<PoetryEditor> {
             bottom: Radius.circular(25),
           )),
           actions: [
-            IconButton(
-              onPressed: () {
-                setState(() {
-                  // setState(() {
-                  //   _isRhymeLines = !_isRhymeLines;
-                  // });
-                  var poemData = poemListBox.getAt(widget.poemIndex)
-                      as Map<dynamic, dynamic>;
-                  poemData['poetry'] =
-                      jsonEncode(controller.document.toDelta().toJson());
-                  poemListBox.putAt(widget.poemIndex, poemData);
-                  showToast("Poem Saved!");
-                });
-              },
-              icon: Icon(
-                Icons.save,
-                color: widget.editorFontColor,
-              ),
-            ),
+            !isRhymeSelectedLines
+                ? IconButton(
+                    onPressed: () {
+                      setState(() {
+                        // setState(() {
+                        //   _isRhymeLines = !_isRhymeLines;
+                        // });
+                        var poemData = poemListBox.getAt(widget.poemIndex)
+                            as Map<dynamic, dynamic>;
+                        poemData['poetry'] =
+                            jsonEncode(controller.document.toDelta().toJson());
+                        poemListBox.putAt(widget.poemIndex, poemData);
+                        showToast("Poem Saved!");
+                      });
+                    },
+                    icon: Icon(
+                      Icons.save,
+                      color: widget.editorFontColor,
+                    ),
+                  )
+                : !isFirstLineSelected
+                    ? IconButton(
+                        onPressed: () {
+                          String selectedLine1 = "";
+                          // String selectedLine2 = "";
+                          selectedLine1 =
+                              getSelectedTextAsPlaintext(controller);
+                          print(selectedLine1);
+                          if (selectedLine1.isEmpty) {
+                            showToast(
+                                "Select a line so that you can rhyme them!");
+                          } else if (selectedLine1.isNotEmpty) {
+                            setState(() {
+                              isFirstLineSelected = true;
+                            });
+                            showToast(
+                                "Select another line to rhyme with the last selected line!");
+                          }
+                          // if (selectedLine2.isEmpty) {
+                          //   showToast("Select a line so that you can rhyme them!");
+                          // } else if (selectedLine2.isNotEmpty) {
+                          //   setState(() {
+                          //     isSecondLineSelected = true;
+                          //   });
+                          //   showToast("Rhyming In Process ...");
+                          // }
+                          // print(selectedLine2);
+                        },
+                        icon: const Icon(Icons.check),
+                        tooltip:
+                            "Click on this after selecting a line in the editor",
+                      )
+                    : IconButton(
+                        onPressed: () {
+                          String selectedLine2 = "";
+                          selectedLine2 =
+                              getSelectedTextAsPlaintext(controller);
+                          if (selectedLine2.isEmpty) {
+                            showToast(
+                                "Select the second line so that you can rhyme them!");
+                          } else if (selectedLine2.isNotEmpty) {
+                            setState(() {
+                              isSecondLineSelected = true;
+                            });
+                            if (isSecondLineSelected) {
+                              context.read<AuthService>().isRhymeSelectedLines =
+                                  false;
+                              setState(() {
+                                isFirstLineSelected = false;
+                                isSecondLineSelected = false;
+                              });
+                              showToast("Rhyming In Process ...");
+                              showModalBottomSheet(
+                                context: context,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(20.0),
+                                    topRight: Radius.circular(20.0),
+                                  ),
+                                ),
+                                builder: (context) {
+                                  return CustomModalBottomSheet(
+                                    title: "Rhyme Selected Lines",
+                                    content: "word",
+                                  );
+                                },
+                              );
+                            }
+                          }
+                          print(selectedLine2);
+                        },
+                        icon: Icon(!isSecondLineSelected
+                            ? Icons.check
+                            : Icons.rocket_launch)),
           ],
         ),
         body: SafeArea(
@@ -492,7 +594,6 @@ class AiToolsList extends StatefulWidget {
   final List _aiTools;
   final quill.QuillController controller;
   final List<String> poetryFeatures;
-
   @override
   State<AiToolsList> createState() => _AiToolsListState();
 }
@@ -501,6 +602,9 @@ class _AiToolsListState extends State<AiToolsList> {
   String wordResponse = "";
   @override
   Widget build(BuildContext context) {
+    final isRhymeSelectedLines =
+        context.watch<AuthService>().isRhymeSelectedLines;
+
     return Expanded(
       child: Scrollbar(
         thumbVisibility: true,
@@ -517,102 +621,32 @@ class _AiToolsListState extends State<AiToolsList> {
                     .then((response) {
                   print(response);
                   setState(() {
+                    if (widget._aiTools[index][0] == 2) {
+                      context.read<AuthService>().isRhymeSelectedLines =
+                          !isRhymeSelectedLines;
+                      // _PoetryEditorState()
+                      //     .getSelectedTextAsPlaintext(widget.controller);
+                      print(isRhymeSelectedLines);
+                      Navigator.of(context).pop();
+                    }
                     wordResponse = response;
-                    showModalBottomSheet(
-                      context: context,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20.0),
-                          topRight: Radius.circular(20.0),
-                        ),
-                      ),
-                      builder: (context) {
-                        return SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height,
-                          child: Container(
-                            decoration: const BoxDecoration(
+                    !context.read<AuthService>().isRhymeSelectedLines
+                        ? showModalBottomSheet(
+                            context: context,
+                            shape: const RoundedRectangleBorder(
                               borderRadius: BorderRadius.only(
                                 topLeft: Radius.circular(20.0),
                                 topRight: Radius.circular(20.0),
                               ),
-                              color: Colors
-                                  .white, // You can change this color as needed
                             ),
-                            child: Column(
-                              children: [
-                                Align(
-                                  alignment: Alignment.topCenter,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 8.0),
-                                    child: Container(
-                                      height: 5,
-                                      width: MediaQuery.of(context).size.width *
-                                          0.1,
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey,
-                                        borderRadius:
-                                            BorderRadius.circular(2.5),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(10, 20, 10, 10),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        aiToolsSelectTitle,
-                                        style: GoogleFonts.ebGaramond(
-                                          textStyle: const TextStyle(
-                                            color: Colors.black,
-                                            letterSpacing: .5,
-                                            fontSize: 18,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const Divider(
-                                  height: 1,
-                                  color: Colors.grey,
-                                ),
-                                Expanded(
-                                  child: SingleChildScrollView(
-                                    child: Column(
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              top: 8.0,
-                                              left: 20.0,
-                                              right: 8.0,
-                                              bottom: 8.0),
-                                          child: Text(
-                                            wordResponse,
-                                            style: GoogleFonts.ebGaramond(
-                                              textStyle: const TextStyle(
-                                                color: Colors.black,
-                                                letterSpacing: .5,
-                                                fontSize: 15,
-                                              ),
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    );
+                            builder: (context) {
+                              return CustomModalBottomSheet(
+                                title: aiToolsSelectTitle,
+                                content: wordResponse,
+                              );
+                            },
+                          )
+                        : null;
                   });
                 });
                 // Navigator.of(context).pop();
@@ -667,10 +701,10 @@ class _AiToolsListState extends State<AiToolsList> {
     AiToolsHandler aiToolsHandler = AiToolsHandler();
     switch (userChoice) {
       case 1:
-        return await aiToolsHandler.rhymeSelectedLines(
+        return await aiToolsHandler.reviewTheFeatures(
             controller, poetryFeatures);
       case 2:
-        aiToolsHandler.rhymeWholePoem();
+        aiToolsHandler.rhymeSelectedLines();
         return "";
       case 3:
         return await aiToolsHandler.metreHighlighter(controller);
@@ -686,6 +720,93 @@ class _AiToolsListState extends State<AiToolsList> {
         print('Invalid choice.');
         return "";
     }
+  }
+}
+
+class CustomModalBottomSheet extends StatelessWidget {
+  final String title;
+  final String content;
+
+  const CustomModalBottomSheet(
+      {super.key, required this.title, required this.content});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
+      child: Container(
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20.0),
+            topRight: Radius.circular(20.0),
+          ),
+          color: Colors.white, // You can change this color as needed
+        ),
+        child: Column(
+          children: [
+            Align(
+              alignment: Alignment.topCenter,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Container(
+                  height: 5,
+                  width: MediaQuery.of(context).size.width * 0.1,
+                  decoration: BoxDecoration(
+                    color: Colors.grey,
+                    borderRadius: BorderRadius.circular(2.5),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(10, 20, 10, 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    title,
+                    style: GoogleFonts.ebGaramond(
+                      textStyle: const TextStyle(
+                        color: Colors.black,
+                        letterSpacing: .5,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(
+              height: 1,
+              color: Colors.grey,
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          top: 8.0, left: 20.0, right: 8.0, bottom: 8.0),
+                      child: Text(
+                        content,
+                        style: GoogleFonts.ebGaramond(
+                          textStyle: const TextStyle(
+                            color: Colors.black,
+                            letterSpacing: .5,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -722,7 +843,7 @@ class AiToolsHandler {
     // Your implementation for PoemInspiration here
   }
 
-  Future<String> rhymeSelectedLines(
+  Future<String> reviewTheFeatures(
       quill.QuillController controller, List<String> poetryFeatures) async {
     print('Executing RhymeSelectedLines...');
     String plainText = "";
@@ -733,7 +854,7 @@ class AiToolsHandler {
     return response;
   }
 
-  Future<void> rhymeWholePoem() async {
+  Future<void> rhymeSelectedLines() async {
     print('Executing RhymeWholePoem...');
     // Your implementation for RhymeWholePoem here
   }

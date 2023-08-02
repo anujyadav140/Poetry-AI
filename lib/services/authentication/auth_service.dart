@@ -92,4 +92,13 @@ class AuthService extends ChangeNotifier {
 
     return tokenCounterValue;
   }
+
+  bool _isRhymeSelectedLines = false;
+
+  bool get isRhymeSelectedLines => _isRhymeSelectedLines;
+
+  set isRhymeSelectedLines(bool value) {
+    _isRhymeSelectedLines = value;
+    notifyListeners();
+  }
 }
