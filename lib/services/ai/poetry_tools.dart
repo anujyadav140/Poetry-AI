@@ -93,7 +93,7 @@ class PoetryTools {
     final chat =
         ChatOpenAI(apiKey: dotenv.env['OPENAI_API_KEY'], temperature: 0.9);
     const template =
-        '''You are a helpful poetry tutor that highlights the metre of a given poem,'
+        '''You are a helpful poetry tutor that highlights the metre of a given {poem},'
         return the whole poem- for stressed syllables uppercase the syllables & for unstressed lowercase;
         write few sentences talking about it''';
     final systemMessagePrompt =
@@ -114,7 +114,7 @@ class PoetryTools {
     const template =
         '''You are a helpful poetry tutor that guides the user to follow the correct poetry features.
          These are the features in a list: {features}
-         try to make sure your student follows the features for the poem''';
+         try to make sure your student follows the features for the {poem}''';
     final systemMessagePrompt =
         SystemChatMessagePromptTemplate.fromTemplate(template);
     const humanTemplate = '{poem}';
@@ -126,6 +126,27 @@ class PoetryTools {
     final res = await chain.run({
       'poem': poem,
       'features': features,
+    });
+    return res;
+  }
+
+  Future<String> rhymeTwoSelectedLines(
+      String firstLine, String secondLine) async {
+    print(firstLine);
+    print(secondLine);
+    final chat =
+        ChatOpenAI(apiKey: dotenv.env['OPENAI_API_KEY'], temperature: 1);
+    const template =
+        '''You are a helpful poetry tutor that helps the student in rhyming two lines of poetry; you rhyme {first} line with {second} line
+        without changing the meaning of the two lines, return two lines which totally rhyme''';
+    final systemMessagePrompt =
+        SystemChatMessagePromptTemplate.fromTemplate(template);
+    final chatPrompt =
+        ChatPromptTemplate.fromPromptMessages([systemMessagePrompt]);
+    final chain = LLMChain(llm: chat, prompt: chatPrompt);
+    final res = await chain.run({
+      'first': firstLine,
+      'second': secondLine,
     });
     return res;
   }

@@ -66,7 +66,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
     _scrollController = ScrollController();
     controller.addListener(_onTextChanged);
     var poemData = poemListBox.getAt(widget.poemIndex) as Map<dynamic, dynamic>;
-    print(poemData);
+    // print(poemData);
     poemTitle = poemData['title'] as String;
     String? poetryContent = poemData['poetry'] as String?;
     poetryFeatures = poemData['features'];
@@ -78,7 +78,12 @@ class _PoetryEditorState extends State<PoetryEditor> {
         "Review The Whole Poem",
         "See whether your poetical work follows all the features to be called a work of $poetryType.",
       ],
-      [2, "images/rhyme.png", "Rhyme Selected Lines", "Placeholder text"],
+      [
+        2,
+        "images/rhyme.png",
+        "Rhyme Selected Lines",
+        "Select two lines from the editor and make both of them rhyme without changing the general meaning."
+      ],
       [
         3,
         "images/meter.png",
@@ -117,7 +122,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
       }
     });
 
-    print(poemListBox.get(widget.poemIndex));
+    // print(poemListBox.get(widget.poemIndex));
 
     // // poemForm = poemData['form'] as String;
     // var keyboardVisibilityController = KeyboardVisibilityController();
@@ -159,10 +164,10 @@ class _PoetryEditorState extends State<PoetryEditor> {
   void _onTextChanged() {
     if (_isRhymeLines) {
       String rhymeLinesInput = getSelectedTextAsPlaintext(controller);
-      print('For rhyme lines: $rhymeLinesInput');
+      // print('For rhyme lines: $rhymeLinesInput');
     } else {
       String cursorPositionPlaintext = getCursorPositionPlainText(controller);
-      print('Plain Text before the cursor: $cursorPositionPlaintext');
+      // print('Plain Text before the cursor: $cursorPositionPlaintext');
     }
   }
 
@@ -190,6 +195,8 @@ class _PoetryEditorState extends State<PoetryEditor> {
     return '';
   }
 
+  String selectedLine1 = "";
+  String selectedLine2 = "";
   @override
   Widget build(BuildContext context) {
     final isRhymeSelectedLines =
@@ -276,11 +283,11 @@ class _PoetryEditorState extends State<PoetryEditor> {
                 : !isFirstLineSelected
                     ? IconButton(
                         onPressed: () {
-                          String selectedLine1 = "";
-                          // String selectedLine2 = "";
-                          selectedLine1 =
-                              getSelectedTextAsPlaintext(controller);
-                          print(selectedLine1);
+                          setState(() {
+                            selectedLine1 =
+                                getSelectedTextAsPlaintext(controller);
+                          });
+                          // print(selectedLine1);
                           if (selectedLine1.isEmpty) {
                             showToast(
                                 "Select a line so that you can rhyme them!");
@@ -307,9 +314,10 @@ class _PoetryEditorState extends State<PoetryEditor> {
                       )
                     : IconButton(
                         onPressed: () {
-                          String selectedLine2 = "";
-                          selectedLine2 =
-                              getSelectedTextAsPlaintext(controller);
+                          setState(() {
+                            selectedLine2 =
+                                getSelectedTextAsPlaintext(controller);
+                          });
                           if (selectedLine2.isEmpty) {
                             showToast(
                                 "Select the second line so that you can rhyme them!");
@@ -325,28 +333,38 @@ class _PoetryEditorState extends State<PoetryEditor> {
                                 isSecondLineSelected = false;
                               });
                               showToast("Rhyming In Process ...");
-                              showModalBottomSheet(
-                                context: context,
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(20.0),
-                                    topRight: Radius.circular(20.0),
-                                  ),
-                                ),
-                                builder: (context) {
-                                  return CustomModalBottomSheet(
-                                    title: "Rhyme Selected Lines",
-                                    content: "word",
+                              _AiToolsListState()
+                                  .aiToolsSelected(
+                                      2,
+                                      controller,
+                                      poetryFeatures,
+                                      selectedLine1,
+                                      selectedLine2)
+                                  .then(
+                                (value) {
+                                  print(selectedLine2);
+                                  print(selectedLine1);
+                                  showModalBottomSheet(
+                                    context: context,
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(20.0),
+                                        topRight: Radius.circular(20.0),
+                                      ),
+                                    ),
+                                    builder: (context) {
+                                      return CustomModalBottomSheet(
+                                        title: "Rhyme Selected Lines",
+                                        content: value,
+                                      );
+                                    },
                                   );
                                 },
                               );
                             }
                           }
-                          print(selectedLine2);
                         },
-                        icon: Icon(!isSecondLineSelected
-                            ? Icons.check
-                            : Icons.rocket_launch)),
+                        icon: const Icon(Icons.check)),
           ],
         ),
         body: SafeArea(
@@ -370,9 +388,9 @@ class _PoetryEditorState extends State<PoetryEditor> {
               showFontSize: true,
               showFontFamily: true,
               fontSizeValues: const {
-                'Small': '26',
-                'Medium': '32',
-                'Large': '38',
+                'Small': '21',
+                'Medium': '26',
+                'Large': '32',
               },
               fontFamilyValues: {
                 for (var fontFamily in _googleFonts)
@@ -405,162 +423,170 @@ class _PoetryEditorState extends State<PoetryEditor> {
             ),
           ]),
         ),
-        floatingActionButton: Padding(
-          padding:
-              EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.15),
-          child: SpeedDial(
-            animatedIcon: AnimatedIcons.menu_close,
-            foregroundColor: widget.editorFontColor,
-            backgroundColor: widget.editorAppbarColor,
-            overlayColor: widget.editorAppbarColor,
-            overlayOpacity: 0.4,
-            spacing: 9,
-            spaceBetweenChildren: 9,
-            closeManually: false,
-            direction: SpeedDialDirection.down,
-            openCloseDial: isOpenDial,
-            children: [
-              SpeedDialChild(
-                child: const Icon(Icons.mail),
-                label: 'AI Poetry Tool',
-                labelStyle: GoogleFonts.ebGaramond(
-                  textStyle: const TextStyle(
-                    color: Colors.black,
-                    letterSpacing: .5,
-                    fontSize: 15,
-                  ),
-                ),
-                backgroundColor: widget.editorAppbarColor,
-                onTap: () => showModalBottomSheet(
-                  backgroundColor: Colors.transparent,
-                  context: context,
-                  builder: (context) {
-                    return StatefulBuilder(
-                      builder: (context, setState) {
-                        return Card(
-                          shadowColor: Colors.white,
-                          margin: EdgeInsets.zero,
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(15.0),
-                              topRight: Radius.circular(15.0),
-                            ),
-                          ),
-                          child: Column(
-                            children: [
-                              Align(
-                                alignment: Alignment.topCenter,
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 8.0),
-                                  child: Container(
-                                    height: 5,
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.1,
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey,
-                                      borderRadius: BorderRadius.circular(2.5),
-                                    ),
+        floatingActionButton: !isRhymeSelectedLines
+            ? Padding(
+                padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height * 0.15),
+                child: SpeedDial(
+                  animatedIcon: AnimatedIcons.menu_close,
+                  foregroundColor: widget.editorFontColor,
+                  backgroundColor: widget.editorAppbarColor,
+                  overlayColor: widget.editorAppbarColor,
+                  overlayOpacity: 0.4,
+                  spacing: 9,
+                  spaceBetweenChildren: 9,
+                  closeManually: false,
+                  direction: SpeedDialDirection.down,
+                  openCloseDial: isOpenDial,
+                  children: [
+                    SpeedDialChild(
+                      child: const Icon(Icons.mail),
+                      label: 'AI Poetry Tool',
+                      labelStyle: GoogleFonts.ebGaramond(
+                        textStyle: const TextStyle(
+                          color: Colors.black,
+                          letterSpacing: .5,
+                          fontSize: 15,
+                        ),
+                      ),
+                      backgroundColor: widget.editorAppbarColor,
+                      onTap: () => showModalBottomSheet(
+                        backgroundColor: Colors.transparent,
+                        context: context,
+                        builder: (context) {
+                          return StatefulBuilder(
+                            builder: (context, setState) {
+                              return Card(
+                                shadowColor: Colors.white,
+                                margin: EdgeInsets.zero,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(15.0),
+                                    topRight: Radius.circular(15.0),
                                   ),
                                 ),
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(10, 20, 10, 10),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                child: Column(
                                   children: [
-                                    Text(
-                                      _isInfoClicked
-                                          ? 'Information:'
-                                          : 'AI Tools:',
-                                      style: GoogleFonts.ebGaramond(
-                                        textStyle: const TextStyle(
-                                          color: Colors.black,
-                                          letterSpacing: .5,
-                                          fontSize: 18,
+                                    Align(
+                                      alignment: Alignment.topCenter,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 8.0),
+                                        child: Container(
+                                          height: 5,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.1,
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey,
+                                            borderRadius:
+                                                BorderRadius.circular(2.5),
+                                          ),
                                         ),
                                       ),
                                     ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          _isInfoClicked = !_isInfoClicked;
-                                        });
-                                      },
-                                      child: Icon(
-                                        _isInfoClicked
-                                            ? Icons.arrow_back
-                                            : Icons.info_outline,
-                                        color: Colors.black,
-                                        size: 24,
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          10, 20, 10, 10),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            _isInfoClicked
+                                                ? 'Information:'
+                                                : 'AI Tools:',
+                                            style: GoogleFonts.ebGaramond(
+                                              textStyle: const TextStyle(
+                                                color: Colors.black,
+                                                letterSpacing: .5,
+                                                fontSize: 18,
+                                              ),
+                                            ),
+                                          ),
+                                          GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                _isInfoClicked =
+                                                    !_isInfoClicked;
+                                              });
+                                            },
+                                            child: Icon(
+                                              _isInfoClicked
+                                                  ? Icons.arrow_back
+                                                  : Icons.info_outline,
+                                              color: Colors.black,
+                                              size: 24,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
+                                    const Divider(
+                                      height: 1,
+                                      color: Colors.grey,
+                                    ),
+                                    _isInfoClicked
+                                        ? const InfoPage()
+                                        : AiToolsList(
+                                            aiTools: _aiTools,
+                                            controller: controller,
+                                            poetryFeatures: poetryFeatures,
+                                            firstLine: selectedLine1,
+                                            secondLine: selectedLine2,
+                                          ),
                                   ],
                                 ),
-                              ),
-                              const Divider(
-                                height: 1,
-                                color: Colors.grey,
-                              ),
-                              _isInfoClicked
-                                  ? const InfoPage()
-                                  : AiToolsList(
-                                      aiTools: _aiTools,
-                                      controller: controller,
-                                      poetryFeatures: poetryFeatures,
-                                    ),
-                            ],
-                          ),
-                        );
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                    SpeedDialChild(
+                      child: const Icon(Icons.shutter_speed_outlined),
+                      label: 'Previous AI Tool Analysis',
+                      labelStyle: GoogleFonts.ebGaramond(
+                        textStyle: const TextStyle(
+                          color: Colors.black,
+                          letterSpacing: .5,
+                          fontSize: 15,
+                        ),
+                      ),
+                      backgroundColor: widget.editorAppbarColor,
+                      onTap: () async {
+                        // PoetryTools().helloWorld(
+                        //     'What is the rhyme for the words SNEED and FEED? Look at the dice coefficient from the tool agent and give your own analysis on it');
+                        // final wordToPronunciation =
+                        //     await PoetryTools().parseCmuDict();
+
+                        // // Query a specific word (make sure it's transformed to lowercase)
+                        // String word = "example";
+                        // String? pronunciation =
+                        //     wordToPronunciation[word.toLowerCase()];
+
+                        // if (pronunciation != null) {
+                        //   print("The pronunciation of '$word' is: $pronunciation");
+                        // } else {
+                        //   print("Word not found in CMUdict.");
+                        // }
+                        // Input with multiple words
+                        // const String word = "On whose eyes I might approve";
+                        // // var syl = syllables(word);
+                        // // print(syl);
+                        // final stressPattern = PoetryTools()
+                        //     .findStressPattern(word, wordToPronunciation);
+
+                        // print("Stress pattern for '$word': $stressPattern");
+                        // print(rhyme);
+                        // PoetryTools().rhymeAgent();
                       },
-                    );
-                  },
+                    ),
+                  ],
                 ),
-              ),
-              SpeedDialChild(
-                child: const Icon(Icons.shutter_speed_outlined),
-                label: 'Previous AI Tool Analysis',
-                labelStyle: GoogleFonts.ebGaramond(
-                  textStyle: const TextStyle(
-                    color: Colors.black,
-                    letterSpacing: .5,
-                    fontSize: 15,
-                  ),
-                ),
-                backgroundColor: widget.editorAppbarColor,
-                onTap: () async {
-                  // PoetryTools().helloWorld(
-                  //     'What is the rhyme for the words SNEED and FEED? Look at the dice coefficient from the tool agent and give your own analysis on it');
-                  // final wordToPronunciation =
-                  //     await PoetryTools().parseCmuDict();
-
-                  // // Query a specific word (make sure it's transformed to lowercase)
-                  // String word = "example";
-                  // String? pronunciation =
-                  //     wordToPronunciation[word.toLowerCase()];
-
-                  // if (pronunciation != null) {
-                  //   print("The pronunciation of '$word' is: $pronunciation");
-                  // } else {
-                  //   print("Word not found in CMUdict.");
-                  // }
-                  // Input with multiple words
-                  // const String word = "On whose eyes I might approve";
-                  // // var syl = syllables(word);
-                  // // print(syl);
-                  // final stressPattern = PoetryTools()
-                  //     .findStressPattern(word, wordToPronunciation);
-
-                  // print("Stress pattern for '$word': $stressPattern");
-                  // print(rhyme);
-                  // PoetryTools().rhymeAgent();
-                },
-              ),
-            ],
-          ),
-        ),
+              )
+            : null,
         // floatingActionButtonLocation: !_isKeyboardVisible
         //     ? FloatingActionButtonLocation.endFloat
         //     : FloatingActionButtonLocation.endTop,
@@ -589,11 +615,15 @@ class AiToolsList extends StatefulWidget {
     required List aiTools,
     required this.controller,
     required this.poetryFeatures,
+    required this.firstLine,
+    required this.secondLine,
   }) : _aiTools = aiTools;
 
   final List _aiTools;
   final quill.QuillController controller;
   final List<String> poetryFeatures;
+  final String firstLine;
+  final String secondLine;
   @override
   State<AiToolsList> createState() => _AiToolsListState();
 }
@@ -615,18 +645,22 @@ class _AiToolsListState extends State<AiToolsList> {
             return InkWell(
               onTap: () {
                 String aiToolsSelectTitle = widget._aiTools[index][2];
-                print('Clicked on ${widget._aiTools[index][0]}');
-                aiToolsSelected(widget._aiTools[index][0], widget.controller,
-                        widget.poetryFeatures)
-                    .then((response) {
-                  print(response);
+                // print('Clicked on ${widget._aiTools[index][0]}');
+                aiToolsSelected(
+                  widget._aiTools[index][0],
+                  widget.controller,
+                  widget.poetryFeatures,
+                  widget.firstLine,
+                  widget.secondLine,
+                ).then((response) {
+                  // print(response);
                   setState(() {
                     if (widget._aiTools[index][0] == 2) {
                       context.read<AuthService>().isRhymeSelectedLines =
                           !isRhymeSelectedLines;
                       // _PoetryEditorState()
                       //     .getSelectedTextAsPlaintext(widget.controller);
-                      print(isRhymeSelectedLines);
+                      // print(isRhymeSelectedLines);
                       Navigator.of(context).pop();
                     }
                     wordResponse = response;
@@ -696,16 +730,19 @@ class _AiToolsListState extends State<AiToolsList> {
     );
   }
 
-  Future<String> aiToolsSelected(int userChoice,
-      quill.QuillController controller, List<String> poetryFeatures) async {
+  Future<String> aiToolsSelected(
+      int userChoice,
+      quill.QuillController controller,
+      List<String> poetryFeatures,
+      String firstLine,
+      String secondLine) async {
     AiToolsHandler aiToolsHandler = AiToolsHandler();
     switch (userChoice) {
       case 1:
         return await aiToolsHandler.reviewTheFeatures(
             controller, poetryFeatures);
       case 2:
-        aiToolsHandler.rhymeSelectedLines();
-        return "";
+        return await aiToolsHandler.rhymeSelectedLines(firstLine, secondLine);
       case 3:
         return await aiToolsHandler.metreHighlighter(controller);
       case 4:
@@ -854,9 +891,11 @@ class AiToolsHandler {
     return response;
   }
 
-  Future<void> rhymeSelectedLines() async {
-    print('Executing RhymeWholePoem...');
-    // Your implementation for RhymeWholePoem here
+  Future<String> rhymeSelectedLines(String firtLine, String secondLine) async {
+    print('Executing RhymeSelectedLines...');
+    String response =
+        await PoetryTools().rhymeTwoSelectedLines(firtLine, secondLine);
+    return response;
   }
 
   Future<void> generateFewLinesForInspiration() async {
