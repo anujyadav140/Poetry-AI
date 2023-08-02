@@ -34,7 +34,6 @@ class PoetryEditor extends StatefulWidget {
 class _PoetryEditorState extends State<PoetryEditor> {
   final isOpenDial = ValueNotifier(false);
   final poemListBox = Hive.box('myPoemBox');
-  final poemListIndexBox = Hive.box('myPoemListIndexBox');
   quill.QuillController controller = quill.QuillController(
     document: quill.Document(),
     keepStyleOnNewLine: true,

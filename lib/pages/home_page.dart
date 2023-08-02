@@ -21,17 +21,17 @@ class HomePage extends StatefulWidget {
 }
 
 class Poem {
-  int index;
   String title;
   String type;
   List<String> features;
   String poetry;
 
-  Poem(this.index, this.title, this.type, this.features, this.poetry);
+  Poem(this.title, this.type, this.features, this.poetry);
 }
 
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
+  int currentPoemIndex = -1;
   late AnimationController _controller;
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   String user = "";
@@ -49,6 +49,7 @@ class _HomePageState extends State<HomePage>
   List<dynamic>? existingPoemList = [];
   @override
   void initState() {
+    currentPoemIndex = poemListIndexBox.get('poemIndex') ?? -1;
     if (firebaseAuth.currentUser?.displayName != null) {
       user = firebaseAuth.currentUser!.displayName!;
     } else {
@@ -91,12 +92,11 @@ class _HomePageState extends State<HomePage>
     "Purple",
   ];
 
-  void setPoemList(int poemIndex, String poemTitle, String poemType,
-      List<String> poemFeatures, String poetry) {
-    var poem = Poem(poemIndex, poemTitle, poemType, poemFeatures, poetry);
+  void setPoemList(String poemTitle, String poemType, List<String> poemFeatures,
+      String poetry) {
+    var poem = Poem(poemTitle, poemType, poemFeatures, poetry);
 
     poemListBox.add({
-      'index': poem.index,
       'title': poem.title,
       'type': poem.type,
       'features': poem.features,
@@ -373,12 +373,13 @@ class _HomePageState extends State<HomePage>
                                       itemBuilder: (context, index) {
                                         var poemData = poemListBox.getAt(index)
                                             as Map<dynamic, dynamic>;
-                                        int poemIndex =
-                                            poemData['index'] as int;
                                         String poemTitle =
                                             poemData['title'] as String;
                                         String poemForm =
                                             poemData['type'] as String;
+                                        List<String> poemFeatures =
+                                            poemData['features']
+                                                as List<String>;
                                         return Slidable(
                                           key: const ValueKey(0),
                                           endActionPane: ActionPane(
@@ -396,6 +397,10 @@ class _HomePageState extends State<HomePage>
                                                 onPressed: (context) {
                                                   setState(() {
                                                     poemListBox.deleteAt(index);
+                                                    currentPoemIndex--;
+                                                    poemListIndexBox.put(
+                                                        'poemIndex',
+                                                        currentPoemIndex);
                                                   });
                                                   ScaffoldMessenger.of(context)
                                                       .showSnackBar(
@@ -676,13 +681,11 @@ class _HomePageState extends State<HomePage>
         backgroundColor: ColorTheme.accent(themeValue),
         onPressed: () {
           if (isTemplateClicked) {
-            int currentPoemIndex = poemListIndexBox.get('poemIndex') ?? -1;
             int newPoemIndex = currentPoemIndex + 1;
             poemListIndexBox.put('poemIndex', newPoemIndex);
             var setPoemTitle =
                 "Untitled-${poemListIndexBox.get('poemIndex')}  $setPoemType";
-            setPoemList(poemListIndexBox.get('poemIndex'), setPoemTitle,
-                setPoemType, features, "");
+            setPoemList(setPoemTitle, setPoemType, features, "");
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
