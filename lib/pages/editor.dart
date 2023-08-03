@@ -58,8 +58,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
     ["zenTokyoZoo", GoogleFonts.zenTokyoZoo().fontFamily!],
   ];
   late List<dynamic> _aiTools;
-  bool isFirstLineSelected = false;
-  bool isSecondLineSelected = false;
+  late String poetryMetre;
   @override
   void initState() {
     super.initState();
@@ -68,6 +67,8 @@ class _PoetryEditorState extends State<PoetryEditor> {
     // print(poemData);
     poemTitle = poemData['title'] as String;
     String? poetryContent = poemData['poetry'] as String?;
+    String? poetryMetre = poemData['meter'] as String?;
+    print(poetryMetre);
     poetryFeatures = poemData['features'];
     String? poetryType = poemData['type'] as String;
     _aiTools = [
@@ -95,16 +96,22 @@ class _PoetryEditorState extends State<PoetryEditor> {
         "Rhyme Scheme Pattern",
         "Find the rhyming scheme pattern for the whole poem."
       ],
-      [5, "images/rhyme.png", "Rhyme Whole Poem", "Placeholder text"],
       [
-        6,
+        5,
+        "images/meter.png",
+        "Convert Your Lines Into $poetryMetre",
+        "Generate lines that adhere to the proper poetry metre form."
+      ],
+      [6, "images/rhyme.png", "Rhyme Whole Poem", "Placeholder text"],
+      [
+        7,
         "images/poetry.png",
         "Generate Few Lines For Inspiration",
         "Placeholder text"
       ],
-      [7, "images/dante.png", "Get Inspired", "Placeholder text"],
-      [8, "images/lines.png", "Generate Theme Ideas", "Placeholder text"],
-      [9, "images/book.png", "What To Write About Next?", "Placeholder text"],
+      [8, "images/dante.png", "Get Inspired", "Placeholder text"],
+      [9, "images/lines.png", "Generate Theme Ideas", "Placeholder text"],
+      [10, "images/book.png", "What To Write About Next?", "Placeholder text"],
     ];
     var myJSON = poetryContent != null ? jsonDecode(poetryContent) : null;
     controller = quill.QuillController(
@@ -183,13 +190,18 @@ class _PoetryEditorState extends State<PoetryEditor> {
     return '';
   }
 
+  bool isFirstLineSelected = false;
+  bool isSecondLineSelected = false;
+  bool isConvertToMetreSelected = false;
   String selectedLine1 = "";
   String selectedLine2 = "";
   List<String> selectedLines = [];
+  String multiSelectedLines = "";
   @override
   Widget build(BuildContext context) {
     final isRhymeSelectedLines =
         context.watch<AuthService>().isRhymeSelectedLines;
+    final isConvertToMetre = context.watch<AuthService>().isConvertToMetre;
     return WillPopScope(
       onWillPop: () async {
         if (isOpenDial.value) {
@@ -203,7 +215,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
       },
       child: Scaffold(
         appBar: AppBar(
-          leading: !isRhymeSelectedLines
+          leading: !isRhymeSelectedLines && !isConvertToMetre
               ? IconButton(
                   onPressed: () {
                     Navigator.pushReplacement(
@@ -215,31 +227,49 @@ class _PoetryEditorState extends State<PoetryEditor> {
                   icon: const Icon(Icons.arrow_back))
               : IconButton(
                   onPressed: () {
-                    context.read<AuthService>().isRhymeSelectedLines = false;
-                    setState(() {
-                      isFirstLineSelected = false;
-                      isSecondLineSelected = false;
-                    });
+                    if (isRhymeSelectedLines) {
+                      context.read<AuthService>().isRhymeSelectedLines = false;
+                      setState(() {
+                        isFirstLineSelected = false;
+                        isSecondLineSelected = false;
+                      });
+                    } else if (isConvertToMetre) {
+                      context.read<AuthService>().isConvertToMetre = false;
+                      setState(() {
+                        isConvertToMetreSelected = false;
+                      });
+                    }
                   },
                   icon: const Icon(Icons.cancel_outlined),
                   tooltip: "Click on this if you want to cancel the selection",
                 ),
-          title: Text(
-            !isRhymeSelectedLines
-                ? "Editor - $poemTitle"
-                : !isFirstLineSelected
-                    ? "Select Line 1 To Rhyme"
-                    : !isSecondLineSelected
-                        ? "Select Line 2 To Rhyme"
-                        : "You Are Ready To Go, Rhyme It!",
-            style: GoogleFonts.ebGaramond(
-              textStyle: TextStyle(
-                color: widget.editorFontColor,
-                letterSpacing: .5,
-                fontSize: 18,
-              ),
-            ),
-          ),
+          title: !isConvertToMetre
+              ? Text(
+                  !isRhymeSelectedLines
+                      ? "Editor - $poemTitle"
+                      : !isFirstLineSelected
+                          ? "Select Line 1 To Rhyme"
+                          : !isSecondLineSelected
+                              ? "Select Line 2 To Rhyme"
+                              : "",
+                  style: GoogleFonts.ebGaramond(
+                    textStyle: TextStyle(
+                      color: widget.editorFontColor,
+                      letterSpacing: .5,
+                      fontSize: 18,
+                    ),
+                  ),
+                )
+              : Text(
+                  "Select Line(s)",
+                  style: GoogleFonts.ebGaramond(
+                    textStyle: TextStyle(
+                      color: widget.editorFontColor,
+                      letterSpacing: .5,
+                      fontSize: 18,
+                    ),
+                  ),
+                ),
           iconTheme: IconThemeData(
             color: widget.editorFontColor,
           ),
@@ -249,7 +279,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
             bottom: Radius.circular(25),
           )),
           actions: [
-            !isRhymeSelectedLines
+            !isRhymeSelectedLines && !isConvertToMetre
                 ? IconButton(
                     onPressed: () {
                       setState(() {
@@ -266,24 +296,71 @@ class _PoetryEditorState extends State<PoetryEditor> {
                       color: widget.editorFontColor,
                     ),
                   )
-                : !isFirstLineSelected
+                : !isFirstLineSelected || !isConvertToMetreSelected
                     ? IconButton(
                         onPressed: () {
-                          setState(() {
-                            selectedLine1 =
-                                getSelectedTextAsPlaintext(controller);
-                            selectedLines.add(selectedLine1);
-                          });
-                          // print(selectedLine1);
-                          if (selectedLine1.isEmpty) {
-                            showToast(
-                                "Select a line so that you can rhyme them!");
-                          } else if (selectedLine1.isNotEmpty) {
+                          if (isRhymeSelectedLines) {
                             setState(() {
-                              isFirstLineSelected = true;
+                              selectedLine1 =
+                                  getSelectedTextAsPlaintext(controller);
+                              selectedLines.add(selectedLine1);
                             });
-                            showToast(
-                                "Select another line to rhyme with the last selected line!");
+                            // print(selectedLine1);
+                            if (selectedLine1.isEmpty) {
+                              showToast(
+                                  "Select a line so that you can rhyme them!");
+                            } else if (selectedLine1.isNotEmpty) {
+                              setState(() {
+                                isFirstLineSelected = true;
+                              });
+                              showToast(
+                                  "Select another line to rhyme with the last selected line!");
+                            }
+                          }
+                          if (isConvertToMetre) {
+                            setState(() {
+                              multiSelectedLines =
+                                  getSelectedTextAsPlaintext(controller);
+                            });
+                            if (multiSelectedLines.isEmpty) {
+                              showToast(
+                                  "Select a line, convert it into proper metre form!");
+                            } else if (multiSelectedLines.isNotEmpty) {
+                              setState(() {
+                                context.read<AuthService>().isConvertToMetre =
+                                    false;
+                                setState(() {
+                                  isConvertToMetreSelected = false;
+                                });
+                              });
+                              showToast("Converting ...");
+                              _AiToolsListState()
+                                  .aiToolsSelected(
+                                      5,
+                                      controller,
+                                      poetryFeatures,
+                                      selectedLines,
+                                      multiSelectedLines,
+                                      poetryMetre)
+                                  .then((value) {
+                                print(poetryMetre);
+                                showModalBottomSheet(
+                                  context: context,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(20.0),
+                                      topRight: Radius.circular(20.0),
+                                    ),
+                                  ),
+                                  builder: (context) {
+                                    return CustomModalBottomSheet(
+                                      title: "Convert To Proper Metre Form",
+                                      content: value,
+                                    );
+                                  },
+                                );
+                              });
+                            }
                           }
                         },
                         icon: const Icon(Icons.check),
@@ -313,8 +390,14 @@ class _PoetryEditorState extends State<PoetryEditor> {
                               });
                               showToast("Rhyming In Process ...");
                               _AiToolsListState()
-                                  .aiToolsSelected(2, controller,
-                                      poetryFeatures, selectedLines)
+                                  .aiToolsSelected(
+                                2,
+                                controller,
+                                poetryFeatures,
+                                selectedLines,
+                                multiSelectedLines,
+                                poetryMetre,
+                              )
                                   .then(
                                 (value) {
                                   print(selectedLines);
@@ -509,6 +592,9 @@ class _PoetryEditorState extends State<PoetryEditor> {
                                             controller: controller,
                                             poetryFeatures: poetryFeatures,
                                             selectedLines: selectedLines,
+                                            multiSelectedLines:
+                                                multiSelectedLines,
+                                            poetryMetre: poetryMetre,
                                           ),
                                   ],
                                 ),
@@ -590,12 +676,16 @@ class AiToolsList extends StatefulWidget {
     required this.controller,
     required this.poetryFeatures,
     required this.selectedLines,
+    required this.multiSelectedLines,
+    required this.poetryMetre,
   }) : _aiTools = aiTools;
 
   final List _aiTools;
   final quill.QuillController controller;
   final List<String> poetryFeatures;
   final List<String> selectedLines;
+  final String multiSelectedLines;
+  final String poetryMetre;
   @override
   State<AiToolsList> createState() => _AiToolsListState();
 }
@@ -606,7 +696,7 @@ class _AiToolsListState extends State<AiToolsList> {
   Widget build(BuildContext context) {
     final isRhymeSelectedLines =
         context.watch<AuthService>().isRhymeSelectedLines;
-
+    final isConvertToMetre = context.watch<AuthService>().isConvertToMetre;
     return Expanded(
       child: Scrollbar(
         thumbVisibility: true,
@@ -617,25 +707,29 @@ class _AiToolsListState extends State<AiToolsList> {
             return InkWell(
               onTap: () {
                 String aiToolsSelectTitle = widget._aiTools[index][2];
-                // print('Clicked on ${widget._aiTools[index][0]}');
                 aiToolsSelected(
                   widget._aiTools[index][0],
                   widget.controller,
                   widget.poetryFeatures,
                   widget.selectedLines,
+                  widget.multiSelectedLines,
+                  widget.poetryMetre,
                 ).then((response) {
                   // print(response);
                   setState(() {
+                    if (widget._aiTools[index][0] == 5) {
+                      context.read<AuthService>().isConvertToMetre =
+                          !isConvertToMetre;
+                      Navigator.of(context).pop();
+                    }
                     if (widget._aiTools[index][0] == 2) {
                       context.read<AuthService>().isRhymeSelectedLines =
                           !isRhymeSelectedLines;
-                      // _PoetryEditorState()
-                      //     .getSelectedTextAsPlaintext(widget.controller);
-                      // print(isRhymeSelectedLines);
                       Navigator.of(context).pop();
                     }
                     wordResponse = response;
-                    !context.read<AuthService>().isRhymeSelectedLines
+                    !context.read<AuthService>().isRhymeSelectedLines &&
+                            !context.read<AuthService>().isConvertToMetre
                         ? showModalBottomSheet(
                             context: context,
                             shape: const RoundedRectangleBorder(
@@ -706,6 +800,8 @@ class _AiToolsListState extends State<AiToolsList> {
     quill.QuillController controller,
     List<String> poetryFeatures,
     List<String> selectedLines,
+    String multiSelectedLines,
+    String poetryMetre,
   ) async {
     AiToolsHandler aiToolsHandler = AiToolsHandler();
     switch (userChoice) {
@@ -719,8 +815,8 @@ class _AiToolsListState extends State<AiToolsList> {
       case 4:
         return await aiToolsHandler.rhymeSchemePattern(controller);
       case 5:
-        aiToolsHandler.generateFewLinesForInspiration();
-        return "";
+        return await aiToolsHandler.convertLinesToProperMetreForm(
+            multiSelectedLines, poetryMetre);
       case 6:
         aiToolsHandler.poemInspiration();
         return "";
@@ -849,6 +945,14 @@ class AiToolsHandler {
   Future<void> poemInspiration() async {
     print('Executing PoemInspiration...');
     // Your implementation for PoemInspiration here
+  }
+
+  Future<String> convertLinesToProperMetreForm(
+      String selectedLines, String poetryMetre) async {
+    print('Executing convertLinesToProperMetreForm');
+    String response = await PoetryTools()
+        .changeLinesToFollowMetre(selectedLines, poetryMetre);
+    return response;
   }
 
   Future<String> reviewTheFeatures(

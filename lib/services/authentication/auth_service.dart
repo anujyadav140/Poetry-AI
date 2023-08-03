@@ -101,4 +101,13 @@ class AuthService extends ChangeNotifier {
     _isRhymeSelectedLines = value;
     notifyListeners();
   }
+
+  bool _isConvertToMetre = false;
+
+  bool get isConvertToMetre => _isConvertToMetre;
+
+  set isConvertToMetre(bool value) {
+    _isConvertToMetre = value;
+    notifyListeners();
+  }
 }

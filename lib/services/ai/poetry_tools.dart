@@ -149,10 +149,10 @@ class PoetryTools {
 
   Future<String> changeLinesToFollowMetre(
       String lines, String metreFeature) async {
-    final openai =
-        OpenAI(apiKey: dotenv.env['OPENAI_API_KEY'], temperature: 0.9);
-    // final chat =
-    //     ChatOpenAI(apiKey: dotenv.env['OPENAI_API_KEY'], temperature: 1);
+    // final openai =
+    //     OpenAI(apiKey: dotenv.env['OPENAI_API_KEY'], temperature: 0.9);
+    final chat =
+        ChatOpenAI(apiKey: dotenv.env['OPENAI_API_KEY'], temperature: 1);
     // const template =
     //     '''You are a helpful poetry tutor that helps the student in correcting the lines of poetry; you make sure the lines follow the
     //     required {metreFeature} without changing the whole meaning of the lines''';
@@ -182,10 +182,12 @@ class PoetryTools {
     const multipleMetreFormatInput = PromptTemplate(
       inputVariables: {'lines', 'metreFeature'},
       template:
-          '''You are a helpful poetry tutor that helps the student in correcting the lines of poetry; you make sure the {lines} follow the
-     required {metreFeature} without changing the whole meaning of the lines''',
+          '''You are a helpful poetry tutor that helps the student in converting the {lines} of poetry to {metreFeature};
+           you make sure the {lines} follow the required {metreFeature} metre, without chaning the meaning of the lines''',
     );
-    final chain = LLMChain(llm: openai, prompt: multipleMetreFormatInput);
+    print(multipleMetreFormatInput
+        .format({'metreFeature': metreFeature, 'lines': lines}));
+    final chain = LLMChain(llm: chat, prompt: multipleMetreFormatInput);
     final res = await chain.run({
       'lines': lines,
       'metreFeature': metreFeature,

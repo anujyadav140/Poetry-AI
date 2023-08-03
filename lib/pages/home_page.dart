@@ -25,8 +25,9 @@ class Poem {
   String type;
   List<String> features;
   String poetry;
+  String meter;
 
-  Poem(this.title, this.type, this.features, this.poetry);
+  Poem(this.title, this.type, this.features, this.poetry, this.meter);
 }
 
 class _HomePageState extends State<HomePage>
@@ -36,11 +37,12 @@ class _HomePageState extends State<HomePage>
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   String user = "";
   String setPoemType = "";
+  String setPoemMeter = "";
   ScrollController scrollController = ScrollController();
   final globalThemeBox = Hive.box('myThemeBox');
   final poemListBox = Hive.box('myPoemBox');
   final poemListIndexBox = Hive.box('myPoemListIndexBox');
-  PoetryType poetryTypeName = PoetryType("", "", [""], [""]);
+  PoetryType poetryTypeName = PoetryType("", "", [""], [""], "");
   bool isTemplateClicked = false;
   bool isPoemListNotEmpty = true;
   List<String> features = [""];
@@ -93,14 +95,21 @@ class _HomePageState extends State<HomePage>
   ];
 
   void setPoemList(String poemTitle, String poemType, List<String> poemFeatures,
-      String poetry) {
-    var poem = Poem(poemTitle, poemType, poemFeatures, poetry);
+      String poetry, String meter) {
+    var poem = Poem(
+      poemTitle,
+      poemType,
+      poemFeatures,
+      poetry,
+      meter,
+    );
 
     poemListBox.add({
       'title': poem.title,
       'type': poem.type,
       'features': poem.features,
       'poem': poem.poetry,
+      'meter': poem.meter,
     });
   }
 
@@ -172,9 +181,10 @@ class _HomePageState extends State<HomePage>
           poetryTypeName = PoetryTypesData.getPoetryTypeByName(
               PoetryTypesData.poetryTypes[index].name);
           setPoemType = PoetryTypesData.poetryTypes[index].name;
+          setPoemMeter = PoetryTypesData.poetryTypes[index].metre;
           features = PoetryTypesData.getFeaturesByName(poetryTypeName.name);
           icons = PoetryTypesData.getIconsByName(poetryTypeName.name);
-          print(setPoemType);
+          print(setPoemMeter);
           // print(features);
           // print(icons);
         }
@@ -380,6 +390,8 @@ class _HomePageState extends State<HomePage>
                                         List<String> poemFeatures =
                                             poemData['features']
                                                 as List<String>;
+                                        String poemMeter =
+                                            poemData['meter'] as String;
                                         return Slidable(
                                           key: const ValueKey(0),
                                           endActionPane: ActionPane(
@@ -685,7 +697,13 @@ class _HomePageState extends State<HomePage>
             poemListIndexBox.put('poemIndex', newPoemIndex);
             var setPoemTitle =
                 "Untitled-${poemListIndexBox.get('poemIndex')}  $setPoemType";
-            setPoemList(setPoemTitle, setPoemType, features, "");
+            setPoemList(
+              setPoemTitle,
+              setPoemType,
+              features,
+              "",
+              setPoemMeter,
+            );
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
