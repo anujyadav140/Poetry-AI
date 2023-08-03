@@ -64,7 +64,6 @@ class _PoetryEditorState extends State<PoetryEditor> {
   void initState() {
     super.initState();
     _scrollController = ScrollController();
-    controller.addListener(_onTextChanged);
     var poemData = poemListBox.getAt(widget.poemIndex) as Map<dynamic, dynamic>;
     // print(poemData);
     poemTitle = poemData['title'] as String;
@@ -154,23 +153,12 @@ class _PoetryEditorState extends State<PoetryEditor> {
 
   @override
   void dispose() {
-    controller.removeListener(_onTextChanged);
     _scrollController.dispose();
     // keyboardSubscription.cancel();
     super.dispose();
   }
 
 //CURSOR OFFSET RETURNS THE PLAINTEXT FROM CURSOR POSITION
-  void _onTextChanged() {
-    if (_isRhymeLines) {
-      String rhymeLinesInput = getSelectedTextAsPlaintext(controller);
-      // print('For rhyme lines: $rhymeLinesInput');
-    } else {
-      String cursorPositionPlaintext = getCursorPositionPlainText(controller);
-      // print('Plain Text before the cursor: $cursorPositionPlaintext');
-    }
-  }
-
   String getCursorPositionPlainText(quill.QuillController controller) {
     final cursorPosition = controller.selection.baseOffset;
     final entirePlainText = controller.document.toPlainText();
@@ -197,6 +185,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
 
   String selectedLine1 = "";
   String selectedLine2 = "";
+  List<String> selectedLines = [];
   @override
   Widget build(BuildContext context) {
     final isRhymeSelectedLines =
@@ -264,9 +253,6 @@ class _PoetryEditorState extends State<PoetryEditor> {
                 ? IconButton(
                     onPressed: () {
                       setState(() {
-                        // setState(() {
-                        //   _isRhymeLines = !_isRhymeLines;
-                        // });
                         var poemData = poemListBox.getAt(widget.poemIndex)
                             as Map<dynamic, dynamic>;
                         poemData['poetry'] =
@@ -286,6 +272,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
                           setState(() {
                             selectedLine1 =
                                 getSelectedTextAsPlaintext(controller);
+                            selectedLines.add(selectedLine1);
                           });
                           // print(selectedLine1);
                           if (selectedLine1.isEmpty) {
@@ -298,15 +285,6 @@ class _PoetryEditorState extends State<PoetryEditor> {
                             showToast(
                                 "Select another line to rhyme with the last selected line!");
                           }
-                          // if (selectedLine2.isEmpty) {
-                          //   showToast("Select a line so that you can rhyme them!");
-                          // } else if (selectedLine2.isNotEmpty) {
-                          //   setState(() {
-                          //     isSecondLineSelected = true;
-                          //   });
-                          //   showToast("Rhyming In Process ...");
-                          // }
-                          // print(selectedLine2);
                         },
                         icon: const Icon(Icons.check),
                         tooltip:
@@ -317,6 +295,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
                           setState(() {
                             selectedLine2 =
                                 getSelectedTextAsPlaintext(controller);
+                            selectedLines.add(selectedLine2);
                           });
                           if (selectedLine2.isEmpty) {
                             showToast(
@@ -334,16 +313,12 @@ class _PoetryEditorState extends State<PoetryEditor> {
                               });
                               showToast("Rhyming In Process ...");
                               _AiToolsListState()
-                                  .aiToolsSelected(
-                                      2,
-                                      controller,
-                                      poetryFeatures,
-                                      selectedLine1,
-                                      selectedLine2)
+                                  .aiToolsSelected(2, controller,
+                                      poetryFeatures, selectedLines)
                                   .then(
                                 (value) {
-                                  print(selectedLine2);
-                                  print(selectedLine1);
+                                  print(selectedLines);
+                                  selectedLines = [];
                                   showModalBottomSheet(
                                     context: context,
                                     shape: const RoundedRectangleBorder(
@@ -408,7 +383,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
                 customStyles: quill.DefaultStyles(
                   paragraph: quill.DefaultTextBlockStyle(
                       GoogleFonts.ebGaramond(
-                          fontSize: 26,
+                          fontSize: 21,
                           fontWeight: FontWeight.w300,
                           color: Colors.black),
                       const quill.VerticalSpacing(0, 6),
@@ -533,8 +508,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
                                             aiTools: _aiTools,
                                             controller: controller,
                                             poetryFeatures: poetryFeatures,
-                                            firstLine: selectedLine1,
-                                            secondLine: selectedLine2,
+                                            selectedLines: selectedLines,
                                           ),
                                   ],
                                 ),
@@ -615,15 +589,13 @@ class AiToolsList extends StatefulWidget {
     required List aiTools,
     required this.controller,
     required this.poetryFeatures,
-    required this.firstLine,
-    required this.secondLine,
+    required this.selectedLines,
   }) : _aiTools = aiTools;
 
   final List _aiTools;
   final quill.QuillController controller;
   final List<String> poetryFeatures;
-  final String firstLine;
-  final String secondLine;
+  final List<String> selectedLines;
   @override
   State<AiToolsList> createState() => _AiToolsListState();
 }
@@ -650,8 +622,7 @@ class _AiToolsListState extends State<AiToolsList> {
                   widget._aiTools[index][0],
                   widget.controller,
                   widget.poetryFeatures,
-                  widget.firstLine,
-                  widget.secondLine,
+                  widget.selectedLines,
                 ).then((response) {
                   // print(response);
                   setState(() {
@@ -731,18 +702,18 @@ class _AiToolsListState extends State<AiToolsList> {
   }
 
   Future<String> aiToolsSelected(
-      int userChoice,
-      quill.QuillController controller,
-      List<String> poetryFeatures,
-      String firstLine,
-      String secondLine) async {
+    int userChoice,
+    quill.QuillController controller,
+    List<String> poetryFeatures,
+    List<String> selectedLines,
+  ) async {
     AiToolsHandler aiToolsHandler = AiToolsHandler();
     switch (userChoice) {
       case 1:
         return await aiToolsHandler.reviewTheFeatures(
             controller, poetryFeatures);
       case 2:
-        return await aiToolsHandler.rhymeSelectedLines(firstLine, secondLine);
+        return await aiToolsHandler.rhymeSelectedLines(selectedLines);
       case 3:
         return await aiToolsHandler.metreHighlighter(controller);
       case 4:
@@ -891,10 +862,9 @@ class AiToolsHandler {
     return response;
   }
 
-  Future<String> rhymeSelectedLines(String firtLine, String secondLine) async {
+  Future<String> rhymeSelectedLines(List<String> selectedLines) async {
     print('Executing RhymeSelectedLines...');
-    String response =
-        await PoetryTools().rhymeTwoSelectedLines(firtLine, secondLine);
+    String response = await PoetryTools().rhymeTwoSelectedLines(selectedLines);
     return response;
   }
 

@@ -130,23 +130,65 @@ class PoetryTools {
     return res;
   }
 
-  Future<String> rhymeTwoSelectedLines(
-      String firstLine, String secondLine) async {
-    print(firstLine);
-    print(secondLine);
+  Future<String> rhymeTwoSelectedLines(List<String> selectedLines) async {
     final chat =
         ChatOpenAI(apiKey: dotenv.env['OPENAI_API_KEY'], temperature: 1);
     const template =
-        '''You are a helpful poetry tutor that helps the student in rhyming two lines of poetry; you rhyme {first} line with {second} line
-        without changing the meaning of the two lines, return two lines which totally rhyme''';
+        '''You are a helpful poetry tutor that helps the student in rhyming two lines of poetry; you rhyme these {selectedLines}, 
+        rhyme these lines without changing the meaning, metre, structure of the two lines, return two lines which totally rhyme''';
     final systemMessagePrompt =
         SystemChatMessagePromptTemplate.fromTemplate(template);
     final chatPrompt =
         ChatPromptTemplate.fromPromptMessages([systemMessagePrompt]);
     final chain = LLMChain(llm: chat, prompt: chatPrompt);
     final res = await chain.run({
-      'first': firstLine,
-      'second': secondLine,
+      'selectedLines': selectedLines,
+    });
+    return res;
+  }
+
+  Future<String> changeLinesToFollowMetre(
+      String lines, String metreFeature) async {
+    final openai =
+        OpenAI(apiKey: dotenv.env['OPENAI_API_KEY'], temperature: 0.9);
+    // final chat =
+    //     ChatOpenAI(apiKey: dotenv.env['OPENAI_API_KEY'], temperature: 1);
+    // const template =
+    //     '''You are a helpful poetry tutor that helps the student in correcting the lines of poetry; you make sure the lines follow the
+    //     required {metreFeature} without changing the whole meaning of the lines''';
+    // final systemMessagePrompt =
+    //     SystemChatMessagePromptTemplate.fromTemplate(template);
+    // const humanTemplate = '{lines}';
+    // final humanMessagePrompt =
+    //     HumanChatMessagePromptTemplate.fromTemplate(humanTemplate);
+    // final chatPrompt = ChatPromptTemplate.fromPromptMessages(
+    //     [systemMessagePrompt, humanMessagePrompt]);
+    // final chain = LLMChain(llm: chat, prompt: chatPrompt);
+    // final res = await chain.run({
+    //   'lines': lines,
+    //   'metreFeature': metreFeature,
+    // });
+    // return res;
+    // An example prompt with one input variable
+    // const oneInputPrompt = PromptTemplate(
+    //   inputVariables: {'metreFeature'},
+    //   template:
+    //       '''You are a helpful poetry tutor that helps the student in correcting the lines of poetry; you make sure the lines follow the
+    //  required {metreFeature} without changing the whole meaning of the lines''',
+    // );
+    // print(oneInputPrompt.format({'metreFeature': 'Iambic Pentameter'}));
+
+// An example prompt with multiple input variables
+    const multipleMetreFormatInput = PromptTemplate(
+      inputVariables: {'lines', 'metreFeature'},
+      template:
+          '''You are a helpful poetry tutor that helps the student in correcting the lines of poetry; you make sure the {lines} follow the
+     required {metreFeature} without changing the whole meaning of the lines''',
+    );
+    final chain = LLMChain(llm: openai, prompt: multipleMetreFormatInput);
+    final res = await chain.run({
+      'lines': lines,
+      'metreFeature': metreFeature,
     });
     return res;
   }
