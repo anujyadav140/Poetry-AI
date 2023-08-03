@@ -58,7 +58,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
     ["zenTokyoZoo", GoogleFonts.zenTokyoZoo().fontFamily!],
   ];
   late List<dynamic> _aiTools;
-  late String poetryMetre;
+  late String poetryMetre = "";
   @override
   void initState() {
     super.initState();
