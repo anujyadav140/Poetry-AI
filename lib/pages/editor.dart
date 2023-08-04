@@ -33,9 +33,11 @@ class PoetryEditor extends StatefulWidget {
   State<PoetryEditor> createState() => _PoetryEditorState();
 }
 
-class _PoetryEditorState extends State<PoetryEditor> {
+class _PoetryEditorState extends State<PoetryEditor>
+    with TickerProviderStateMixin {
   final isOpenDial = ValueNotifier(false);
   final poemListBox = Hive.box('myPoemBox');
+  late AnimationController _animationController;
   quill.QuillController controller = quill.QuillController(
     document: quill.Document(),
     keepStyleOnNewLine: true,
@@ -61,6 +63,12 @@ class _PoetryEditorState extends State<PoetryEditor> {
   late String poetryMetre = "";
   @override
   void initState() {
+    _animationController = AnimationController(
+      duration: const Duration(
+        milliseconds: 800,
+      ),
+      vsync: this,
+    );
     super.initState();
     _scrollController = ScrollController();
     var poemData = poemListBox.getAt(widget.poemIndex) as Map<dynamic, dynamic>;
@@ -161,6 +169,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _animationController.dispose();
     // keyboardSubscription.cancel();
     super.dispose();
   }
@@ -296,7 +305,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
                       color: widget.editorFontColor,
                     ),
                   )
-                : !isFirstLineSelected || !isConvertToMetreSelected
+                : !isFirstLineSelected && !isConvertToMetreSelected
                     ? IconButton(
                         onPressed: () {
                           if (isRhymeSelectedLines) {
@@ -354,8 +363,10 @@ class _PoetryEditorState extends State<PoetryEditor> {
                                   ),
                                   builder: (context) {
                                     return CustomModalBottomSheet(
-                                      title: "Convert To Proper Metre Form",
+                                      title:
+                                          "Convert Your Lines Into $poetryMetre",
                                       content: value,
+                                      animation: _animationController,
                                     );
                                   },
                                 );
@@ -414,6 +425,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
                                       return CustomModalBottomSheet(
                                         title: "Rhyme Selected Lines",
                                         content: value,
+                                        animation: _animationController,
                                       );
                                     },
                                   );
@@ -595,6 +607,7 @@ class _PoetryEditorState extends State<PoetryEditor> {
                                             multiSelectedLines:
                                                 multiSelectedLines,
                                             poetryMetre: poetryMetre,
+                                            animation: _animationController,
                                           ),
                                   ],
                                 ),
@@ -678,6 +691,7 @@ class AiToolsList extends StatefulWidget {
     required this.selectedLines,
     required this.multiSelectedLines,
     required this.poetryMetre,
+    required this.animation,
   }) : _aiTools = aiTools;
 
   final List _aiTools;
@@ -686,6 +700,7 @@ class AiToolsList extends StatefulWidget {
   final List<String> selectedLines;
   final String multiSelectedLines;
   final String poetryMetre;
+  final AnimationController animation;
   @override
   State<AiToolsList> createState() => _AiToolsListState();
 }
@@ -742,6 +757,7 @@ class _AiToolsListState extends State<AiToolsList> {
                               return CustomModalBottomSheet(
                                 title: aiToolsSelectTitle,
                                 content: wordResponse,
+                                animation: widget.animation,
                               );
                             },
                           )
@@ -830,12 +846,17 @@ class _AiToolsListState extends State<AiToolsList> {
 class CustomModalBottomSheet extends StatelessWidget {
   final String title;
   final String content;
+  final AnimationController animation;
 
   const CustomModalBottomSheet(
-      {super.key, required this.title, required this.content});
+      {super.key,
+      required this.title,
+      required this.content,
+      required this.animation});
 
   @override
   Widget build(BuildContext context) {
+    bool isClicked = false;
     return SizedBox(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
@@ -877,6 +898,21 @@ class CustomModalBottomSheet extends StatelessWidget {
                         fontSize: 18,
                       ),
                     ),
+                  ),
+                  IconButton(
+                    // iconSize: 70,
+                    onPressed: () {
+                      if (isClicked) {
+                        animation.forward();
+                        _PoetryEditorState().showToast("Result Added!");
+                      } else {
+                        animation.reverse();
+                        _PoetryEditorState().showToast("Result Removed!");
+                      }
+                      isClicked = !isClicked;
+                    },
+                    icon: AnimatedIcon(
+                        icon: AnimatedIcons.view_list, progress: animation),
                   ),
                 ],
               ),
