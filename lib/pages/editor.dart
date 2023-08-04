@@ -38,6 +38,7 @@ class _PoetryEditorState extends State<PoetryEditor>
     with TickerProviderStateMixin {
   final isOpenDial = ValueNotifier(false);
   final poemListBox = Hive.box('myPoemBox');
+  final savedPoemAi = Hive.box('mySavedAi');
   late AnimationController _animationController;
   quill.QuillController controller = quill.QuillController(
     document: quill.Document(),
@@ -370,6 +371,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                                       title: "Convert Into Proper Metre",
                                       content: value,
                                       animation: _animationController,
+                                      poemIndex: widget.poemIndex,
                                     );
                                   },
                                 );
@@ -429,6 +431,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                                         title: "Rhyme Selected Lines",
                                         content: value,
                                         animation: _animationController,
+                                        poemIndex: widget.poemIndex,
                                       );
                                     },
                                   );
@@ -611,6 +614,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                                                 multiSelectedLines,
                                             poetryMetre: poetryMetre,
                                             animation: _animationController,
+                                            poemIndex: widget.poemIndex,
                                           ),
                                   ],
                                 ),
@@ -695,6 +699,7 @@ class AiToolsList extends StatefulWidget {
     required this.multiSelectedLines,
     required this.poetryMetre,
     required this.animation,
+    required this.poemIndex,
   }) : _aiTools = aiTools;
 
   final List _aiTools;
@@ -704,6 +709,7 @@ class AiToolsList extends StatefulWidget {
   final String multiSelectedLines;
   final String poetryMetre;
   final AnimationController animation;
+  final int poemIndex;
   @override
   State<AiToolsList> createState() => _AiToolsListState();
 }
@@ -761,6 +767,7 @@ class _AiToolsListState extends State<AiToolsList> {
                                 title: aiToolsSelectTitle,
                                 content: wordResponse,
                                 animation: widget.animation,
+                                poemIndex: widget.poemIndex,
                               );
                             },
                           )
@@ -846,20 +853,91 @@ class _AiToolsListState extends State<AiToolsList> {
   }
 }
 
-class CustomModalBottomSheet extends StatelessWidget {
+class SavedPoemAi {
+  int index;
+  List<String> savedPoemGenerations;
+
+  SavedPoemAi(this.index, this.savedPoemGenerations);
+}
+
+class CustomModalBottomSheet extends StatefulWidget {
   final String title;
   final String content;
   final AnimationController animation;
-
+  final int poemIndex;
   const CustomModalBottomSheet(
       {super.key,
       required this.title,
       required this.content,
-      required this.animation});
+      required this.animation,
+      required this.poemIndex});
+
+  @override
+  State<CustomModalBottomSheet> createState() => _CustomModalBottomSheetState();
+}
+
+class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
+  bool isClicked = false;
+  final savedPoemAi = Hive.box('mySavedAi');
+  final List<String> saved = [];
+  void setSavedPoemAi(int poemIndex, List<String> savedPoemGenerations) {
+    var saved = SavedPoemAi(
+      poemIndex,
+      savedPoemGenerations,
+    );
+
+    savedPoemAi.add({
+      'index': saved.index,
+      'savedPoemGenerations': saved.savedPoemGenerations,
+    });
+  }
+
+  void viewSavedPoems() {
+    // Open the Hive box
+    var savedPoemAi = Hive.box('mySavedAi');
+
+    // Retrieve the contents of the box as a List of Map entries
+    List savedEntries = savedPoemAi.values.toList();
+
+    // You can now iterate over the savedEntries to view the contents
+    for (var entry in savedEntries) {
+      int index = entry['index'];
+      List<String> savedPoemGenerations =
+          List<String>.from(entry['savedPoemGenerations']);
+
+      // Do whatever you want to do with the saved data, for example, print it
+      print('Index: $index, Saved Poem Generations: $savedPoemGenerations');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    bool isClicked = false;
+    void saveOrRemovePoem() {
+      if (isClicked) {
+        savedPoemAi.deleteAt(widget.poemIndex);
+        saved.removeLast();
+        Fluttertoast.showToast(
+          msg: "Results removed!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          fontSize: 18.0,
+        );
+      } else {
+        saved.add(widget.content);
+        setSavedPoemAi(widget.poemIndex, saved);
+        viewSavedPoems();
+        Fluttertoast.showToast(
+          msg: "Results saved!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          fontSize: 18.0,
+        );
+      }
+      isClicked = !isClicked;
+    }
+
     return SizedBox(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
@@ -893,7 +971,7 @@ class CustomModalBottomSheet extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    title,
+                    widget.title,
                     style: GoogleFonts.ebGaramond(
                       textStyle: const TextStyle(
                         color: Colors.black,
@@ -904,28 +982,10 @@ class CustomModalBottomSheet extends StatelessWidget {
                   ),
                   IconButton(
                     // iconSize: 70,
-                    onPressed: () {
-                      if (isClicked) {
-                        animation.forward();
-                        Fluttertoast.showToast(
-                            msg: "Results saved!",
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.BOTTOM,
-                            timeInSecForIosWeb: 1,
-                            fontSize: 18.0);
-                      } else {
-                        animation.reverse();
-                        Fluttertoast.showToast(
-                            msg: "Results removed!",
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.BOTTOM,
-                            timeInSecForIosWeb: 1,
-                            fontSize: 18.0);
-                      }
-                      isClicked = !isClicked;
-                    },
+                    onPressed: saveOrRemovePoem,
                     icon: AnimatedIcon(
-                        icon: AnimatedIcons.view_list, progress: animation),
+                        icon: AnimatedIcons.view_list,
+                        progress: widget.animation),
                   ),
                 ],
               ),
@@ -942,7 +1002,7 @@ class CustomModalBottomSheet extends StatelessWidget {
                       padding: const EdgeInsets.only(
                           top: 8.0, left: 20.0, right: 8.0, bottom: 8.0),
                       child: Text(
-                        content,
+                        widget.content,
                         style: GoogleFonts.ebGaramond(
                           textStyle: const TextStyle(
                             color: Colors.black,

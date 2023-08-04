@@ -42,6 +42,7 @@ class _HomePageState extends State<HomePage>
   final globalThemeBox = Hive.box('myThemeBox');
   final poemListBox = Hive.box('myPoemBox');
   final poemListIndexBox = Hive.box('myPoemListIndexBox');
+  final savedPoemAi = Hive.box('mySavedAi');
   PoetryType poetryTypeName = PoetryType("", "", [""], [""], "");
   bool isTemplateClicked = false;
   bool isPoemListNotEmpty = true;
