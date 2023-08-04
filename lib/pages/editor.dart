@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:async';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
@@ -206,8 +207,11 @@ class _PoetryEditorState extends State<PoetryEditor>
   String selectedLine2 = "";
   List<String> selectedLines = [];
   String multiSelectedLines = "";
+
   @override
   Widget build(BuildContext context) {
+    var poemData = poemListBox.getAt(widget.poemIndex) as Map<dynamic, dynamic>;
+    String metre = poemData['meter'] as String;
     final isRhymeSelectedLines =
         context.watch<AuthService>().isRhymeSelectedLines;
     final isConvertToMetre = context.watch<AuthService>().isConvertToMetre;
@@ -350,9 +354,9 @@ class _PoetryEditorState extends State<PoetryEditor>
                                       poetryFeatures,
                                       selectedLines,
                                       multiSelectedLines,
-                                      poetryMetre)
+                                      metre)
                                   .then((value) {
-                                print(poetryMetre);
+                                print(metre);
                                 showModalBottomSheet(
                                   context: context,
                                   shape: const RoundedRectangleBorder(
@@ -363,8 +367,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                                   ),
                                   builder: (context) {
                                     return CustomModalBottomSheet(
-                                      title:
-                                          "Convert Your Lines Into $poetryMetre",
+                                      title: "Convert Into Proper Metre",
                                       content: value,
                                       animation: _animationController,
                                     );
@@ -493,7 +496,7 @@ class _PoetryEditorState extends State<PoetryEditor>
             ),
           ]),
         ),
-        floatingActionButton: !isRhymeSelectedLines
+        floatingActionButton: !isRhymeSelectedLines && !isConvertToMetre
             ? Padding(
                 padding: EdgeInsets.only(
                     top: MediaQuery.of(context).size.height * 0.15),
@@ -904,10 +907,20 @@ class CustomModalBottomSheet extends StatelessWidget {
                     onPressed: () {
                       if (isClicked) {
                         animation.forward();
-                        _PoetryEditorState().showToast("Result Added!");
+                        Fluttertoast.showToast(
+                            msg: "Results saved!",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.BOTTOM,
+                            timeInSecForIosWeb: 1,
+                            fontSize: 18.0);
                       } else {
                         animation.reverse();
-                        _PoetryEditorState().showToast("Result Removed!");
+                        Fluttertoast.showToast(
+                            msg: "Results removed!",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.BOTTOM,
+                            timeInSecForIosWeb: 1,
+                            fontSize: 18.0);
                       }
                       isClicked = !isClicked;
                     },

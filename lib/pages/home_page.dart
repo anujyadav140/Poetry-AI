@@ -184,9 +184,6 @@ class _HomePageState extends State<HomePage>
           setPoemMeter = PoetryTypesData.poetryTypes[index].metre;
           features = PoetryTypesData.getFeaturesByName(poetryTypeName.name);
           icons = PoetryTypesData.getIconsByName(poetryTypeName.name);
-          print(setPoemMeter);
-          // print(features);
-          // print(icons);
         }
       });
     }

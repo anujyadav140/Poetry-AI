@@ -182,8 +182,8 @@ class PoetryTools {
     const multipleMetreFormatInput = PromptTemplate(
       inputVariables: {'lines', 'metreFeature'},
       template:
-          '''You are a helpful poetry tutor that helps the student in converting the {lines} of poetry to {metreFeature};
-           you make sure the {lines} follow the required {metreFeature} metre, without chaning the meaning of the lines''',
+          '''You are a helpful poetry tutor that helps the student in converting the following lines: "{lines}" of poetry to {metreFeature};
+           you make sure the "{lines}" follow the required {metreFeature} metre, without chaning the meaning of the lines''',
     );
     print(multipleMetreFormatInput
         .format({'metreFeature': metreFeature, 'lines': lines}));
