@@ -26,8 +26,10 @@ class Poem {
   List<String> features;
   String poetry;
   String meter;
+  List<String> bookmarks;
 
-  Poem(this.title, this.type, this.features, this.poetry, this.meter);
+  Poem(this.title, this.type, this.features, this.poetry, this.meter,
+      this.bookmarks);
 }
 
 class _HomePageState extends State<HomePage>
@@ -42,7 +44,6 @@ class _HomePageState extends State<HomePage>
   final globalThemeBox = Hive.box('myThemeBox');
   final poemListBox = Hive.box('myPoemBox');
   final poemListIndexBox = Hive.box('myPoemListIndexBox');
-  final savedPoemAi = Hive.box('mySavedAi');
   PoetryType poetryTypeName = PoetryType("", "", [""], [""], "");
   bool isTemplateClicked = false;
   bool isPoemListNotEmpty = true;
@@ -96,13 +97,14 @@ class _HomePageState extends State<HomePage>
   ];
 
   void setPoemList(String poemTitle, String poemType, List<String> poemFeatures,
-      String poetry, String meter) {
+      String poetry, String meter, List<String> bookmarks) {
     var poem = Poem(
       poemTitle,
       poemType,
       poemFeatures,
       poetry,
       meter,
+      bookmarks,
     );
 
     poemListBox.add({
@@ -111,6 +113,7 @@ class _HomePageState extends State<HomePage>
       'features': poem.features,
       'poem': poem.poetry,
       'meter': poem.meter,
+      'bookmarks': poem.bookmarks
     });
   }
 
@@ -696,12 +699,7 @@ class _HomePageState extends State<HomePage>
             var setPoemTitle =
                 "Untitled-${poemListIndexBox.get('poemIndex')}  $setPoemType";
             setPoemList(
-              setPoemTitle,
-              setPoemType,
-              features,
-              "",
-              setPoemMeter,
-            );
+                setPoemTitle, setPoemType, features, "", setPoemMeter, [""]);
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(

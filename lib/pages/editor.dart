@@ -38,7 +38,6 @@ class _PoetryEditorState extends State<PoetryEditor>
     with TickerProviderStateMixin {
   final isOpenDial = ValueNotifier(false);
   final poemListBox = Hive.box('myPoemBox');
-  final savedPoemAi = Hive.box('mySavedAi');
   late AnimationController _animationController;
   quill.QuillController controller = quill.QuillController(
     document: quill.Document(),
@@ -870,31 +869,21 @@ class CustomModalBottomSheet extends StatefulWidget {
 }
 
 class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
+  final poemListBox = Hive.box('myPoemBox');
   bool isClicked = false;
-  final savedPoemAi = Hive.box('mySavedAi');
+  List<String> bookmark = [];
+  @override
+  void initState() {
+    var poemData = poemListBox.getAt(widget.poemIndex) as Map<dynamic, dynamic>;
+    bookmark = poemData['bookmarks'];
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    void displaySavedPoems() {
-      savedPoemAi.keys.forEach((key) {
-        final dynamic value = savedPoemAi.get(key);
-
-        if (value is String) {
-          print('Key: $key - Value: $value');
-        } else if (value is List<String>) {
-          print('Key: $key - Values:');
-          value.forEach((item) {
-            print('  $item');
-          });
-        } else {
-          print('Key: $key - Unknown value type: ${value.runtimeType}');
-        }
-      });
-    }
-
     void saveOrRemovePoem() {
       if (isClicked) {
-        savedPoemAi.delete(widget.poemIndex);
+        bookmark.removeLast();
         Fluttertoast.showToast(
           msg: "Results removed!",
           toastLength: Toast.LENGTH_SHORT,
@@ -903,18 +892,16 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
           fontSize: 18.0,
         );
       } else {
-        List<dynamic> existingPoemList =
-            savedPoemAi.get(widget.poemIndex, defaultValue: []);
-
-        // Convert the list to List<String> (if it's not already) before modifying it
-        List<String> poemList = existingPoemList.cast<String>();
-
-        // Append the new poem content to the list
-        poemList.add(widget.content);
-
-        // Save the updated list under the poemIndex key in savedPoemAi
-        savedPoemAi.put(widget.poemIndex, poemList);
-        displaySavedPoems();
+        bookmark.add(widget.content);
+        var poemData =
+            poemListBox.getAt(widget.poemIndex) as Map<dynamic, dynamic>;
+        poemData['bookmarks'] = bookmark;
+        poemListBox.putAt(widget.poemIndex, poemData);
+        var poemBookmarks = poemData['bookmarks'] as List<String>;
+        for (var i = 0; i < poemBookmarks.length; i++) {
+          var bookm = poemBookmarks[i];
+          print("bookmark $i : $bookm");
+        }
         Fluttertoast.showToast(
           msg: "Results saved!",
           toastLength: Toast.LENGTH_SHORT,
@@ -923,7 +910,6 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
           fontSize: 18.0,
         );
       }
-      // Toggle the isClicked state
       setState(() {
         isClicked = !isClicked;
       });
@@ -938,7 +924,7 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
             topLeft: Radius.circular(20.0),
             topRight: Radius.circular(20.0),
           ),
-          color: Colors.white, // You can change this color as needed
+          color: Colors.white,
         ),
         child: Column(
           children: [
