@@ -853,13 +853,6 @@ class _AiToolsListState extends State<AiToolsList> {
   }
 }
 
-class SavedPoemAi {
-  int index;
-  List<String> savedPoemGenerations;
-
-  SavedPoemAi(this.index, this.savedPoemGenerations);
-}
-
 class CustomModalBottomSheet extends StatefulWidget {
   final String title;
   final String content;
@@ -879,43 +872,29 @@ class CustomModalBottomSheet extends StatefulWidget {
 class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
   bool isClicked = false;
   final savedPoemAi = Hive.box('mySavedAi');
-  final List<String> saved = [];
-  void setSavedPoemAi(int poemIndex, List<String> savedPoemGenerations) {
-    var saved = SavedPoemAi(
-      poemIndex,
-      savedPoemGenerations,
-    );
-
-    savedPoemAi.add({
-      'index': saved.index,
-      'savedPoemGenerations': saved.savedPoemGenerations,
-    });
-  }
-
-  void viewSavedPoems() {
-    // Open the Hive box
-    var savedPoemAi = Hive.box('mySavedAi');
-
-    // Retrieve the contents of the box as a List of Map entries
-    List savedEntries = savedPoemAi.values.toList();
-
-    // You can now iterate over the savedEntries to view the contents
-    for (var entry in savedEntries) {
-      int index = entry['index'];
-      List<String> savedPoemGenerations =
-          List<String>.from(entry['savedPoemGenerations']);
-
-      // Do whatever you want to do with the saved data, for example, print it
-      print('Index: $index, Saved Poem Generations: $savedPoemGenerations');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
+    void displaySavedPoems() {
+      savedPoemAi.keys.forEach((key) {
+        final dynamic value = savedPoemAi.get(key);
+
+        if (value is String) {
+          print('Key: $key - Value: $value');
+        } else if (value is List<String>) {
+          print('Key: $key - Values:');
+          value.forEach((item) {
+            print('  $item');
+          });
+        } else {
+          print('Key: $key - Unknown value type: ${value.runtimeType}');
+        }
+      });
+    }
+
     void saveOrRemovePoem() {
       if (isClicked) {
-        savedPoemAi.deleteAt(widget.poemIndex);
-        saved.removeLast();
+        savedPoemAi.delete(widget.poemIndex);
         Fluttertoast.showToast(
           msg: "Results removed!",
           toastLength: Toast.LENGTH_SHORT,
@@ -924,9 +903,18 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
           fontSize: 18.0,
         );
       } else {
-        saved.add(widget.content);
-        setSavedPoemAi(widget.poemIndex, saved);
-        viewSavedPoems();
+        List<dynamic> existingPoemList =
+            savedPoemAi.get(widget.poemIndex, defaultValue: []);
+
+        // Convert the list to List<String> (if it's not already) before modifying it
+        List<String> poemList = existingPoemList.cast<String>();
+
+        // Append the new poem content to the list
+        poemList.add(widget.content);
+
+        // Save the updated list under the poemIndex key in savedPoemAi
+        savedPoemAi.put(widget.poemIndex, poemList);
+        displaySavedPoems();
         Fluttertoast.showToast(
           msg: "Results saved!",
           toastLength: Toast.LENGTH_SHORT,
@@ -935,7 +923,10 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
           fontSize: 18.0,
         );
       }
-      isClicked = !isClicked;
+      // Toggle the isClicked state
+      setState(() {
+        isClicked = !isClicked;
+      });
     }
 
     return SizedBox(
