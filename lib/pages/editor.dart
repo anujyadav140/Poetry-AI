@@ -61,6 +61,11 @@ class _PoetryEditorState extends State<PoetryEditor>
   ];
   late List<dynamic> _aiTools;
   late String poetryMetre = "";
+
+  double _currentSheetHeight = 0.3;
+  double _initialDragOffset = 0.0;
+  double _minChildSize = 0.3;
+
   @override
   void initState() {
     _animationController = AnimationController(
@@ -198,6 +203,7 @@ class _PoetryEditorState extends State<PoetryEditor>
     final isRhymeSelectedLines =
         context.watch<AuthService>().isRhymeSelectedLines;
     final isConvertToMetre = context.watch<AuthService>().isConvertToMetre;
+
     return WillPopScope(
       onWillPop: () async {
         if (isOpenDial.value) {
@@ -497,14 +503,15 @@ class _PoetryEditorState extends State<PoetryEditor>
                     child: DraggableScrollableActuator(
                       child: DraggableScrollableSheet(
                         initialChildSize: 0.3,
-                        minChildSize: 0.0,
+                        minChildSize: 0.3,
                         maxChildSize: 1,
+                        snap: true,
                         builder: (context, scrollController) {
                           return CustomScrollView(
                             controller: scrollController,
                             slivers: [
                               SliverAppBar(
-                                leading: Icon(
+                                leading: const Icon(
                                   Icons.bookmark_added,
                                   color: Colors.black,
                                 ),
@@ -535,8 +542,8 @@ class _PoetryEditorState extends State<PoetryEditor>
                                     // Your content inside the DraggableScrollableSheet
                                     // Replace these containers with your actual content
                                     return Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 20.0),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 20.0),
                                       child: Container(
                                         height: 200.0,
                                         width:
