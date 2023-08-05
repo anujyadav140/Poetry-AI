@@ -371,6 +371,8 @@ class _PoetryEditorState extends State<PoetryEditor>
                                       content: value,
                                       animation: _animationController,
                                       poemIndex: widget.poemIndex,
+                                      buttonColor: widget.editorAppbarColor,
+                                      fontColor: widget.editorFontColor,
                                     );
                                   },
                                 );
@@ -431,6 +433,8 @@ class _PoetryEditorState extends State<PoetryEditor>
                                         content: value,
                                         animation: _animationController,
                                         poemIndex: widget.poemIndex,
+                                        buttonColor: widget.editorAppbarColor,
+                                        fontColor: widget.editorFontColor,
                                       );
                                     },
                                   );
@@ -614,6 +618,9 @@ class _PoetryEditorState extends State<PoetryEditor>
                                             poetryMetre: poetryMetre,
                                             animation: _animationController,
                                             poemIndex: widget.poemIndex,
+                                            primaryColor:
+                                                widget.editorAppbarColor,
+                                            fontColor: widget.editorFontColor,
                                           ),
                                   ],
                                 ),
@@ -699,6 +706,8 @@ class AiToolsList extends StatefulWidget {
     required this.poetryMetre,
     required this.animation,
     required this.poemIndex,
+    required this.primaryColor,
+    required this.fontColor,
   }) : _aiTools = aiTools;
 
   final List _aiTools;
@@ -709,6 +718,8 @@ class AiToolsList extends StatefulWidget {
   final String poetryMetre;
   final AnimationController animation;
   final int poemIndex;
+  final Color primaryColor;
+  final Color fontColor;
   @override
   State<AiToolsList> createState() => _AiToolsListState();
 }
@@ -767,6 +778,8 @@ class _AiToolsListState extends State<AiToolsList> {
                                 content: wordResponse,
                                 animation: widget.animation,
                                 poemIndex: widget.poemIndex,
+                                buttonColor: widget.primaryColor,
+                                fontColor: widget.fontColor,
                               );
                             },
                           )
@@ -857,12 +870,16 @@ class CustomModalBottomSheet extends StatefulWidget {
   final String content;
   final AnimationController animation;
   final int poemIndex;
+  final Color buttonColor;
+  final Color fontColor;
   const CustomModalBottomSheet(
       {super.key,
       required this.title,
       required this.content,
       required this.animation,
-      required this.poemIndex});
+      required this.poemIndex,
+      required this.buttonColor,
+      required this.fontColor});
 
   @override
   State<CustomModalBottomSheet> createState() => _CustomModalBottomSheetState();
@@ -1008,7 +1025,24 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
                           ),
                         ),
                       ),
-                    )
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 25.0),
+                      child: SizedBox(
+                          width: 60,
+                          height: 60,
+                          child: ElevatedButton(
+                            style: ButtonStyle(
+                                foregroundColor:
+                                    MaterialStateProperty.all(widget.fontColor),
+                                iconColor:
+                                    MaterialStateProperty.all(widget.fontColor),
+                                backgroundColor: MaterialStateProperty.all(
+                                    widget.buttonColor)),
+                            onPressed: () {},
+                            child: const Icon(Icons.autorenew, size: 25),
+                          )),
+                    ),
                   ],
                 ),
               ),
