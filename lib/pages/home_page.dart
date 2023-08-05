@@ -699,7 +699,7 @@ class _HomePageState extends State<HomePage>
             var setPoemTitle =
                 "Untitled-${poemListIndexBox.get('poemIndex')}  $setPoemType";
             setPoemList(
-                setPoemTitle, setPoemType, features, "", setPoemMeter, [""]);
+                setPoemTitle, setPoemType, features, "", setPoemMeter, []);
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(

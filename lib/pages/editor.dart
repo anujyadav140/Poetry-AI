@@ -869,6 +869,8 @@ class CustomModalBottomSheet extends StatefulWidget {
 }
 
 class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
+  late StateMachineController? _riveController;
+  SMIInput<bool>? isRiveClicked;
   final poemListBox = Hive.box('myPoemBox');
   bool isClicked = false;
   List<String> bookmark = [];
@@ -957,13 +959,31 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
                       ),
                     ),
                   ),
-                  IconButton(
-                    // iconSize: 70,
-                    onPressed: saveOrRemovePoem,
-                    icon: AnimatedIcon(
-                        icon: AnimatedIcons.view_list,
-                        progress: widget.animation),
-                  ),
+                  GestureDetector(
+                    onTap: () {
+                      if (isRiveClicked == null) return;
+                      final isClick = isRiveClicked?.value ?? false;
+                      isRiveClicked?.change(!isClick);
+                      saveOrRemovePoem();
+                    },
+                    child: SizedBox(
+                      width: 50,
+                      height: 50,
+                      child: RiveAnimation.asset(
+                        'assets/bookmark.riv',
+                        fit: BoxFit.cover,
+                        stateMachines: const ['Bookmark State Machine'],
+                        onInit: (artboard) {
+                          _riveController = StateMachineController.fromArtboard(
+                              artboard, "Bookmark State Machine");
+                          if (_riveController == null) return;
+                          artboard.addController(_riveController!);
+                          isRiveClicked =
+                              _riveController?.findInput<bool>("Marked");
+                        },
+                      ),
+                    ),
+                  )
                 ],
               ),
             ),
