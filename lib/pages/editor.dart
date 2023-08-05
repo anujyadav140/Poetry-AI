@@ -45,9 +45,8 @@ class _PoetryEditorState extends State<PoetryEditor>
     selection: const TextSelection.collapsed(offset: 0),
   );
   bool _isRhymeLines = false;
-  // bool _isKeyboardVisible = false;
   bool _isInfoClicked = false;
-  // late StreamSubscription<bool> keyboardSubscription;
+  bool showBookmarkModal = false;
   late String poemTitle = "";
   List<String> poetryFeatures = [];
   late ScrollController _scrollController;
@@ -136,22 +135,6 @@ class _PoetryEditorState extends State<PoetryEditor>
         _isFirstFocus = false;
       }
     });
-
-    // print(poemListBox.get(widget.poemIndex));
-
-    // // poemForm = poemData['form'] as String;
-    // var keyboardVisibilityController = KeyboardVisibilityController();
-    // print(
-    //     'Keyboard visibility direct query: ${keyboardVisibilityController.isVisible}');
-
-    // // Subscribe
-    // keyboardSubscription =
-    //     keyboardVisibilityController.onChange.listen((bool visible) {
-    //   print('Keyboard visibility update. Is visible: $visible');
-    //   setState(() {
-    //     _isKeyboardVisible = visible;
-    //   });
-    // });
   }
 
   void _scrollToCursor() {
@@ -477,28 +460,107 @@ class _PoetryEditorState extends State<PoetryEditor>
               },
             ),
             Expanded(
-              child: quill.QuillEditor(
-                placeholder: "Write your poetry here ...",
-                controller: controller,
-                focusNode: _focusNode,
-                autoFocus: true,
-                scrollController: _scrollController,
-                scrollable: true,
-                customStyles: quill.DefaultStyles(
-                  paragraph: quill.DefaultTextBlockStyle(
-                      GoogleFonts.ebGaramond(
-                          fontSize: 21,
-                          fontWeight: FontWeight.w300,
-                          color: Colors.black),
-                      const quill.VerticalSpacing(0, 6),
-                      const quill.VerticalSpacing(0, 6),
-                      null),
+              child: Stack(children: [
+                quill.QuillEditor(
+                  placeholder: "Write your poetry here ...",
+                  controller: controller,
+                  focusNode: _focusNode,
+                  autoFocus: true,
+                  scrollController: _scrollController,
+                  scrollable: true,
+                  customStyles: quill.DefaultStyles(
+                    paragraph: quill.DefaultTextBlockStyle(
+                        GoogleFonts.ebGaramond(
+                            fontSize: 21,
+                            fontWeight: FontWeight.w300,
+                            color: Colors.black),
+                        const quill.VerticalSpacing(0, 6),
+                        const quill.VerticalSpacing(0, 6),
+                        null),
+                  ),
+                  padding: const EdgeInsets.all(15.0),
+                  readOnly: false,
+                  expands: true,
+                  textCapitalization: TextCapitalization.sentences,
                 ),
-                padding: const EdgeInsets.all(15.0),
-                readOnly: false,
-                expands: true,
-                textCapitalization: TextCapitalization.sentences,
-              ),
+                Visibility(
+                  visible: showBookmarkModal,
+                  child: NotificationListener<DraggableScrollableNotification>(
+                    onNotification: (notification) {
+                      if (notification.extent == notification.minExtent) {
+                        setState(() {
+                          showBookmarkModal = false;
+                        });
+                      }
+                      return false;
+                    },
+                    child: DraggableScrollableActuator(
+                      child: DraggableScrollableSheet(
+                        initialChildSize: 0.3,
+                        minChildSize: 0.0,
+                        maxChildSize: 1,
+                        builder: (context, scrollController) {
+                          return CustomScrollView(
+                            controller: scrollController,
+                            slivers: [
+                              SliverAppBar(
+                                leading: Icon(
+                                  Icons.bookmark_added,
+                                  color: Colors.black,
+                                ),
+                                shape: const ContinuousRectangleBorder(
+                                  borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(25),
+                                  ),
+                                ),
+                                pinned: true,
+                                backgroundColor: widget.editorAppbarColor,
+                                expandedHeight: 50, // Adjust as needed
+                                flexibleSpace: FlexibleSpaceBar(
+                                  title: Text(
+                                    "Bookmarks",
+                                    style: GoogleFonts.ebGaramond(
+                                      textStyle: const TextStyle(
+                                        color: Colors.black,
+                                        letterSpacing: .5,
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SliverList(
+                                delegate: SliverChildBuilderDelegate(
+                                  (context, index) {
+                                    // Your content inside the DraggableScrollableSheet
+                                    // Replace these containers with your actual content
+                                    return Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 20.0),
+                                      child: Container(
+                                        height: 200.0,
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        decoration: const BoxDecoration(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(20.0)),
+                                          color: Colors.blue,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  childCount:
+                                      5, // Number of items you want to show
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              ]),
             ),
           ]),
         ),
@@ -507,6 +569,11 @@ class _PoetryEditorState extends State<PoetryEditor>
                 padding: EdgeInsets.only(
                     top: MediaQuery.of(context).size.height * 0.15),
                 child: SpeedDial(
+                  onOpen: () {
+                    setState(() {
+                      FocusScope.of(context).unfocus();
+                    });
+                  },
                   animatedIcon: AnimatedIcons.menu_close,
                   foregroundColor: widget.editorFontColor,
                   backgroundColor: widget.editorAppbarColor,
@@ -519,120 +586,129 @@ class _PoetryEditorState extends State<PoetryEditor>
                   openCloseDial: isOpenDial,
                   children: [
                     SpeedDialChild(
-                      child: const Icon(Icons.mail),
-                      label: 'AI Poetry Tool',
-                      labelStyle: GoogleFonts.ebGaramond(
-                        textStyle: const TextStyle(
-                          color: Colors.black,
-                          letterSpacing: .5,
-                          fontSize: 15,
+                        child: const Icon(Icons.mail),
+                        label: 'AI Poetry Tool',
+                        labelStyle: GoogleFonts.ebGaramond(
+                          textStyle: const TextStyle(
+                            color: Colors.black,
+                            letterSpacing: .5,
+                            fontSize: 15,
+                          ),
                         ),
-                      ),
-                      backgroundColor: widget.editorAppbarColor,
-                      onTap: () => showModalBottomSheet(
-                        backgroundColor: Colors.transparent,
-                        context: context,
-                        builder: (context) {
-                          return StatefulBuilder(
-                            builder: (context, setState) {
-                              return Card(
-                                shadowColor: Colors.white,
-                                margin: EdgeInsets.zero,
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(15.0),
-                                    topRight: Radius.circular(15.0),
-                                  ),
-                                ),
-                                child: Column(
-                                  children: [
-                                    Align(
-                                      alignment: Alignment.topCenter,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 8.0),
-                                        child: Container(
-                                          height: 5,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.1,
-                                          decoration: BoxDecoration(
-                                            color: Colors.grey,
-                                            borderRadius:
-                                                BorderRadius.circular(2.5),
-                                          ),
+                        backgroundColor: widget.editorAppbarColor,
+                        onTap: () {
+                          setState(() {
+                            showBookmarkModal = false;
+                          });
+                          showModalBottomSheet(
+                              backgroundColor: Colors.transparent,
+                              context: context,
+                              builder: (context) {
+                                return StatefulBuilder(
+                                  builder: (context, setState) {
+                                    return Card(
+                                      shadowColor: Colors.white,
+                                      margin: EdgeInsets.zero,
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(15.0),
+                                          topRight: Radius.circular(15.0),
                                         ),
                                       ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.fromLTRB(
-                                          10, 20, 10, 10),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                      child: Column(
                                         children: [
-                                          Text(
-                                            _isInfoClicked
-                                                ? 'Information:'
-                                                : 'AI Tools:',
-                                            style: GoogleFonts.ebGaramond(
-                                              textStyle: const TextStyle(
-                                                color: Colors.black,
-                                                letterSpacing: .5,
-                                                fontSize: 18,
+                                          Align(
+                                            alignment: Alignment.topCenter,
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 8.0),
+                                              child: Container(
+                                                height: 5,
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.1,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.grey,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          2.5),
+                                                ),
                                               ),
                                             ),
                                           ),
-                                          GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                _isInfoClicked =
-                                                    !_isInfoClicked;
-                                              });
-                                            },
-                                            child: Icon(
-                                              _isInfoClicked
-                                                  ? Icons.arrow_back
-                                                  : Icons.info_outline,
-                                              color: Colors.black,
-                                              size: 24,
+                                          Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                10, 20, 10, 10),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  _isInfoClicked
+                                                      ? 'How To Get Started'
+                                                      : 'AI Tools:',
+                                                  style: GoogleFonts.ebGaramond(
+                                                    textStyle: const TextStyle(
+                                                      color: Colors.black,
+                                                      letterSpacing: .5,
+                                                      fontSize: 18,
+                                                    ),
+                                                  ),
+                                                ),
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      _isInfoClicked =
+                                                          !_isInfoClicked;
+                                                    });
+                                                  },
+                                                  child: Icon(
+                                                    _isInfoClicked
+                                                        ? Icons.arrow_back
+                                                        : Icons.info_outline,
+                                                    color: Colors.black,
+                                                    size: 24,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
+                                          const Divider(
+                                            height: 1,
+                                            color: Colors.grey,
+                                          ),
+                                          _isInfoClicked
+                                              ? const InfoPage()
+                                              : AiToolsList(
+                                                  aiTools: _aiTools,
+                                                  controller: controller,
+                                                  poetryFeatures:
+                                                      poetryFeatures,
+                                                  selectedLines: selectedLines,
+                                                  multiSelectedLines:
+                                                      multiSelectedLines,
+                                                  poetryMetre: poetryMetre,
+                                                  animation:
+                                                      _animationController,
+                                                  poemIndex: widget.poemIndex,
+                                                  primaryColor:
+                                                      widget.editorAppbarColor,
+                                                  fontColor:
+                                                      widget.editorFontColor,
+                                                ),
                                         ],
                                       ),
-                                    ),
-                                    const Divider(
-                                      height: 1,
-                                      color: Colors.grey,
-                                    ),
-                                    _isInfoClicked
-                                        ? const InfoPage()
-                                        : AiToolsList(
-                                            aiTools: _aiTools,
-                                            controller: controller,
-                                            poetryFeatures: poetryFeatures,
-                                            selectedLines: selectedLines,
-                                            multiSelectedLines:
-                                                multiSelectedLines,
-                                            poetryMetre: poetryMetre,
-                                            animation: _animationController,
-                                            poemIndex: widget.poemIndex,
-                                            primaryColor:
-                                                widget.editorAppbarColor,
-                                            fontColor: widget.editorFontColor,
-                                          ),
-                                  ],
-                                ),
-                              );
-                            },
-                          );
-                        },
-                      ),
-                    ),
+                                    );
+                                  },
+                                );
+                              });
+                        }),
                     SpeedDialChild(
                       child: const Icon(Icons.shutter_speed_outlined),
-                      label: 'Previous AI Tool Analysis',
+                      label: 'Saved Bookmarks',
                       labelStyle: GoogleFonts.ebGaramond(
                         textStyle: const TextStyle(
                           color: Colors.black,
@@ -642,40 +718,16 @@ class _PoetryEditorState extends State<PoetryEditor>
                       ),
                       backgroundColor: widget.editorAppbarColor,
                       onTap: () async {
-                        // PoetryTools().helloWorld(
-                        //     'What is the rhyme for the words SNEED and FEED? Look at the dice coefficient from the tool agent and give your own analysis on it');
-                        // final wordToPronunciation =
-                        //     await PoetryTools().parseCmuDict();
-
-                        // // Query a specific word (make sure it's transformed to lowercase)
-                        // String word = "example";
-                        // String? pronunciation =
-                        //     wordToPronunciation[word.toLowerCase()];
-
-                        // if (pronunciation != null) {
-                        //   print("The pronunciation of '$word' is: $pronunciation");
-                        // } else {
-                        //   print("Word not found in CMUdict.");
-                        // }
-                        // Input with multiple words
-                        // const String word = "On whose eyes I might approve";
-                        // // var syl = syllables(word);
-                        // // print(syl);
-                        // final stressPattern = PoetryTools()
-                        //     .findStressPattern(word, wordToPronunciation);
-
-                        // print("Stress pattern for '$word': $stressPattern");
-                        // print(rhyme);
-                        // PoetryTools().rhymeAgent();
+                        setState(() {
+                          FocusScope.of(context).unfocus();
+                          showBookmarkModal = !showBookmarkModal;
+                        });
                       },
                     ),
                   ],
                 ),
               )
             : null,
-        // floatingActionButtonLocation: !_isKeyboardVisible
-        //     ? FloatingActionButtonLocation.endFloat
-        //     : FloatingActionButtonLocation.endTop,
         floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
       ),
     );
@@ -805,6 +857,7 @@ class _AiToolsListState extends State<AiToolsList> {
                           color: Colors.black,
                           letterSpacing: .5,
                           fontSize: 15,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
@@ -865,6 +918,8 @@ class _AiToolsListState extends State<AiToolsList> {
   }
 }
 
+class BookmarkBottomSheet {}
+
 class CustomModalBottomSheet extends StatefulWidget {
   final String title;
   final String content;
@@ -904,11 +959,13 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
       if (isClicked) {
         bookmark.removeLast();
         Fluttertoast.showToast(
-          msg: "Results removed!",
+          msg: "Bookmark removed!",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
           fontSize: 18.0,
+          backgroundColor: widget.buttonColor,
+          textColor: widget.fontColor,
         );
       } else {
         bookmark.add(widget.content);
@@ -922,11 +979,13 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
           print("bookmark $i : $bookm");
         }
         Fluttertoast.showToast(
-          msg: "Results saved!",
+          msg: "Bookmarked!",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
           fontSize: 18.0,
+          backgroundColor: widget.buttonColor,
+          textColor: widget.fontColor,
         );
       }
       setState(() {
