@@ -58,7 +58,8 @@ dependencies:
   fluttertoast: ^8.2.2
   flutter_speed_dial: ^7.0.0
   string_similarity: ^2.0.0
-
+  read_more_text: ^0.0.5
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter

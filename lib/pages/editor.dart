@@ -16,6 +16,7 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:english_words/english_words.dart';
 import 'package:provider/provider.dart';
+import 'package:read_more_text/read_more_text.dart';
 
 class PoetryEditor extends StatefulWidget {
   final int poemIndex;
@@ -50,6 +51,8 @@ class _PoetryEditorState extends State<PoetryEditor>
   bool scrollToBottomOfBookmark = false;
   bool isScrollingUp = false;
   bool reachedTheBottom = true;
+  bool isExpanded = false;
+  Timer? _scrollTimer;
   late String poemTitle = "";
   List<String> poetryFeatures = [];
   late ScrollController _scrollController;
@@ -590,6 +593,8 @@ class _PoetryEditorState extends State<PoetryEditor>
                                       var poemData =
                                           poemListBox.getAt(widget.poemIndex)
                                               as Map<dynamic, dynamic>;
+                                      String content =
+                                          poemData['bookmarks'][index];
                                       return Column(
                                         children: [
                                           Padding(
@@ -598,11 +603,31 @@ class _PoetryEditorState extends State<PoetryEditor>
                                                 horizontal: 16.0),
                                             child: Container(
                                               color: Colors.white,
-                                              child: ListTile(
-                                                title: Text(
-                                                    poemData['bookmarks']
-                                                        [index]),
-                                                tileColor: Colors.white,
+                                              child: ReadMoreText.selectable(
+                                                content,
+                                                numLines: 2,
+                                                style: GoogleFonts.ebGaramond(
+                                                  textStyle: const TextStyle(
+                                                    color: Colors.black,
+                                                    letterSpacing: .5,
+                                                    fontSize: 18,
+                                                  ),
+                                                ),
+                                                readMoreTextStyle:
+                                                    GoogleFonts.ebGaramond(
+                                                  textStyle: const TextStyle(
+                                                    color: Colors.black,
+                                                    letterSpacing: .5,
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 15,
+                                                  ),
+                                                ),
+                                                readMoreIconColor: Colors.black,
+                                                readMoreText: 'Read more',
+                                                readLessText: 'Read less',
+                                                readMoreAlign:
+                                                    AlignmentDirectional
+                                                        .bottomStart,
                                               ),
                                             ),
                                           ),
