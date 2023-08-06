@@ -4,6 +4,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -39,6 +40,7 @@ class _PoetryEditorState extends State<PoetryEditor>
     with TickerProviderStateMixin {
   final isOpenDial = ValueNotifier(false);
   final poemListBox = Hive.box('myPoemBox');
+  final poemListIndexBox = Hive.box('myPoemListIndexBox');
   late AnimationController _animationController;
   quill.QuillController controller = quill.QuillController(
     document: quill.Document(),
@@ -601,42 +603,107 @@ class _PoetryEditorState extends State<PoetryEditor>
                                               as Map<dynamic, dynamic>;
                                       String content =
                                           poemData['bookmarks'][index];
+                                      List<String> bookmark =
+                                          poemData['bookmarks'];
                                       return Column(
                                         children: [
                                           Padding(
                                             padding: const EdgeInsets.symmetric(
                                                 vertical: 8.0,
                                                 horizontal: 16.0),
-                                            child: Container(
-                                              color: Colors.white,
-                                              child: ListTile(
-                                                title: ReadMoreText.selectable(
-                                                  content,
-                                                  numLines: 2,
-                                                  style: GoogleFonts.ebGaramond(
-                                                    textStyle: const TextStyle(
-                                                      color: Colors.black,
-                                                      letterSpacing: .5,
-                                                      fontSize: 18,
-                                                    ),
+                                            child: Slidable(
+                                              key: const ValueKey(0),
+                                              endActionPane: ActionPane(
+                                                motion: const ScrollMotion(),
+                                                children: [
+                                                  // SlidableAction(
+                                                  //   onPressed: (context) {},
+                                                  //   backgroundColor:
+                                                  //       const Color(0xFF21B7CA),
+                                                  //   foregroundColor:
+                                                  //       Colors.white,
+                                                  //   icon: Icons.share,
+                                                  //   label: 'Share',
+                                                  // ),
+                                                  SlidableAction(
+                                                    onPressed: (context) {
+                                                      setState(() {
+                                                        bookmark
+                                                            .removeAt(index);
+                                                      });
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
+                                                        SnackBar(
+                                                          backgroundColor: widget
+                                                              .editorAppbarColor,
+                                                          content: Text(
+                                                            'Bookmark deleted.',
+                                                            style: TextStyle(
+                                                                color: widget
+                                                                    .editorFontColor),
+                                                          ),
+                                                          action:
+                                                              SnackBarAction(
+                                                            backgroundColor: widget
+                                                                .editorPrimaryColor,
+                                                            label: 'Undo',
+                                                            textColor: widget
+                                                                .editorFontColor,
+                                                            onPressed: () {
+                                                              setState(() {
+                                                                bookmark.add(
+                                                                    content);
+                                                              });
+                                                            },
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                    backgroundColor:
+                                                        const Color(0xFFFE4A49),
+                                                    foregroundColor:
+                                                        Colors.white,
+                                                    icon: Icons.delete,
+                                                    label: 'Delete',
                                                   ),
-                                                  readMoreTextStyle:
-                                                      GoogleFonts.ebGaramond(
-                                                    textStyle: const TextStyle(
-                                                      color: Colors.black,
-                                                      letterSpacing: .5,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      fontSize: 15,
+                                                ],
+                                              ),
+                                              child: Container(
+                                                color: Colors.white,
+                                                child: ListTile(
+                                                  title:
+                                                      ReadMoreText.selectable(
+                                                    content,
+                                                    numLines: 2,
+                                                    style:
+                                                        GoogleFonts.ebGaramond(
+                                                      textStyle:
+                                                          const TextStyle(
+                                                        color: Colors.black,
+                                                        letterSpacing: .5,
+                                                        fontSize: 18,
+                                                      ),
                                                     ),
+                                                    readMoreTextStyle:
+                                                        GoogleFonts.ebGaramond(
+                                                      textStyle:
+                                                          const TextStyle(
+                                                        color: Colors.black,
+                                                        letterSpacing: .5,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 15,
+                                                      ),
+                                                    ),
+                                                    readMoreIconColor:
+                                                        Colors.black,
+                                                    readMoreText: 'Read more',
+                                                    readLessText: 'Read less',
+                                                    readMoreAlign:
+                                                        AlignmentDirectional
+                                                            .bottomStart,
                                                   ),
-                                                  readMoreIconColor:
-                                                      Colors.black,
-                                                  readMoreText: 'Read more',
-                                                  readLessText: 'Read less',
-                                                  readMoreAlign:
-                                                      AlignmentDirectional
-                                                          .bottomStart,
                                                 ),
                                               ),
                                             ),
