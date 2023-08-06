@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -70,7 +71,7 @@ class _PoetryEditorState extends State<PoetryEditor>
   ];
   late List<dynamic> _aiTools;
   late String poetryMetre = "";
-
+  bool _dialVisible = true;
   double _currentSheetHeight = 0.3;
   double _initialDragOffset = 0.0;
   double _minChildSize = 0.3;
@@ -499,27 +500,41 @@ class _PoetryEditorState extends State<PoetryEditor>
             Expanded(
               flex: 1,
               child: Stack(children: [
-                quill.QuillEditor(
-                  placeholder: "Write your poetry here ...",
-                  controller: controller,
-                  focusNode: _focusNode,
-                  autoFocus: true,
-                  scrollController: _scrollController,
-                  scrollable: true,
-                  customStyles: quill.DefaultStyles(
-                    paragraph: quill.DefaultTextBlockStyle(
-                        GoogleFonts.ebGaramond(
-                            fontSize: 21,
-                            fontWeight: FontWeight.w300,
-                            color: Colors.black),
-                        const quill.VerticalSpacing(0, 6),
-                        const quill.VerticalSpacing(0, 6),
-                        null),
+                NotificationListener(
+                  onNotification: (scrollNotification) {
+                    if (scrollNotification is ScrollStartNotification) {
+                      setState(() {
+                        _dialVisible = false;
+                      });
+                    } else if (scrollNotification is ScrollEndNotification) {
+                      setState(() {
+                        _dialVisible = true;
+                      });
+                    }
+                    return true;
+                  },
+                  child: quill.QuillEditor(
+                    placeholder: "Write your poetry here ...",
+                    controller: controller,
+                    focusNode: _focusNode,
+                    autoFocus: true,
+                    scrollController: _scrollController,
+                    scrollable: true,
+                    customStyles: quill.DefaultStyles(
+                      paragraph: quill.DefaultTextBlockStyle(
+                          GoogleFonts.ebGaramond(
+                              fontSize: 21,
+                              fontWeight: FontWeight.w300,
+                              color: Colors.black),
+                          const quill.VerticalSpacing(0, 6),
+                          const quill.VerticalSpacing(0, 6),
+                          null),
+                    ),
+                    padding: const EdgeInsets.all(15.0),
+                    readOnly: false,
+                    expands: true,
+                    textCapitalization: TextCapitalization.sentences,
                   ),
-                  padding: const EdgeInsets.all(15.0),
-                  readOnly: false,
-                  expands: true,
-                  textCapitalization: TextCapitalization.sentences,
                 ),
                 Visibility(
                   visible: showBookmarkModal,
@@ -598,6 +613,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                                 SliverList(
                                   delegate: SliverChildBuilderDelegate(
                                     (context, index) {
+                                      bool readMoreClicked = true;
                                       var poemData =
                                           poemListBox.getAt(widget.poemIndex)
                                               as Map<dynamic, dynamic>;
@@ -605,70 +621,67 @@ class _PoetryEditorState extends State<PoetryEditor>
                                           poemData['bookmarks'][index];
                                       List<String> bookmark =
                                           poemData['bookmarks'];
-                                      return Column(
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 8.0,
-                                                horizontal: 16.0),
-                                            child: Slidable(
-                                              key: const ValueKey(0),
-                                              endActionPane: ActionPane(
-                                                motion: const ScrollMotion(),
-                                                children: [
-                                                  // SlidableAction(
-                                                  //   onPressed: (context) {},
-                                                  //   backgroundColor:
-                                                  //       const Color(0xFF21B7CA),
-                                                  //   foregroundColor:
-                                                  //       Colors.white,
-                                                  //   icon: Icons.share,
-                                                  //   label: 'Share',
-                                                  // ),
-                                                  SlidableAction(
-                                                    onPressed: (context) {
-                                                      setState(() {
-                                                        bookmark
-                                                            .removeAt(index);
-                                                      });
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(
-                                                        SnackBar(
-                                                          backgroundColor: widget
-                                                              .editorAppbarColor,
-                                                          content: Text(
-                                                            'Bookmark deleted.',
-                                                            style: TextStyle(
-                                                                color: widget
-                                                                    .editorFontColor),
-                                                          ),
-                                                          action:
-                                                              SnackBarAction(
-                                                            backgroundColor: widget
-                                                                .editorPrimaryColor,
-                                                            label: 'Undo',
-                                                            textColor: widget
-                                                                .editorFontColor,
-                                                            onPressed: () {
-                                                              setState(() {
-                                                                bookmark.add(
-                                                                    content);
-                                                              });
-                                                            },
-                                                          ),
-                                                        ),
-                                                      );
-                                                    },
-                                                    backgroundColor:
-                                                        const Color(0xFFFE4A49),
-                                                    foregroundColor:
-                                                        Colors.white,
-                                                    icon: Icons.delete,
-                                                    label: 'Delete',
+                                      return Slidable(
+                                        key: const ValueKey(0),
+                                        enabled: readMoreClicked,
+                                        endActionPane: ActionPane(
+                                          motion: const ScrollMotion(),
+                                          children: [
+                                            // SlidableAction(
+                                            //   onPressed: (context) {},
+                                            //   backgroundColor:
+                                            //       const Color(0xFF21B7CA),
+                                            //   foregroundColor:
+                                            //       Colors.white,
+                                            //   icon: Icons.share,
+                                            //   label: 'Share',
+                                            // ),
+                                            SlidableAction(
+                                              onPressed: (context) {
+                                                setState(() {
+                                                  bookmark.removeAt(index);
+                                                });
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                    backgroundColor: widget
+                                                        .editorAppbarColor,
+                                                    content: Text(
+                                                      'Bookmark deleted.',
+                                                      style: TextStyle(
+                                                          color: widget
+                                                              .editorFontColor),
+                                                    ),
+                                                    action: SnackBarAction(
+                                                      backgroundColor: widget
+                                                          .editorPrimaryColor,
+                                                      label: 'Undo',
+                                                      textColor: widget
+                                                          .editorFontColor,
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          bookmark.add(content);
+                                                        });
+                                                      },
+                                                    ),
                                                   ),
-                                                ],
-                                              ),
+                                                );
+                                              },
+                                              backgroundColor:
+                                                  const Color(0xFFFE4A49),
+                                              foregroundColor: Colors.white,
+                                              icon: Icons.delete,
+                                              label: 'Delete',
+                                            ),
+                                          ],
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 8.0,
+                                                      horizontal: 16.0),
                                               child: Container(
                                                 color: Colors.white,
                                                 child: ListTile(
@@ -699,6 +712,11 @@ class _PoetryEditorState extends State<PoetryEditor>
                                                     readMoreIconColor:
                                                         Colors.black,
                                                     readMoreText: 'Read more',
+                                                    onReadMoreClicked: () =>
+                                                        setState(() {
+                                                      readMoreClicked =
+                                                          !readMoreClicked;
+                                                    }),
                                                     readLessText: 'Read less',
                                                     readMoreAlign:
                                                         AlignmentDirectional
@@ -707,12 +725,12 @@ class _PoetryEditorState extends State<PoetryEditor>
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                          const Divider(
-                                            height: 1,
-                                            color: Colors.grey,
-                                          ),
-                                        ],
+                                            const Divider(
+                                              height: 1,
+                                              color: Colors.grey,
+                                            ),
+                                          ],
+                                        ),
                                       );
                                     },
                                     childCount: poemBookmarks.length,
@@ -764,6 +782,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                           FocusScope.of(context).unfocus();
                         });
                       },
+                      visible: _dialVisible,
                       animatedIcon: AnimatedIcons.menu_close,
                       foregroundColor: widget.editorFontColor,
                       backgroundColor: widget.editorAppbarColor,
