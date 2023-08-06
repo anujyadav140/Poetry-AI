@@ -462,7 +462,7 @@ class _PoetryEditorState extends State<PoetryEditor>
           child: Column(children: [
             quill.QuillToolbar.basic(
               controller: controller,
-              toolbarIconSize: 15,
+              toolbarIconSize: 18,
               showQuote: false,
               showIndent: false,
               showDividers: false,
@@ -475,6 +475,12 @@ class _PoetryEditorState extends State<PoetryEditor>
               showInlineCode: false,
               showSearchButton: false,
               showLink: false,
+              showCodeBlock: false,
+              showColorButton: false,
+              showBackgroundColorButton: false,
+              showStrikeThrough: false,
+              showAlignmentButtons: false,
+              showClearFormat: false,
               color: Colors.grey,
               showFontSize: true,
               showFontFamily: true,
@@ -603,31 +609,35 @@ class _PoetryEditorState extends State<PoetryEditor>
                                                 horizontal: 16.0),
                                             child: Container(
                                               color: Colors.white,
-                                              child: ReadMoreText.selectable(
-                                                content,
-                                                numLines: 2,
-                                                style: GoogleFonts.ebGaramond(
-                                                  textStyle: const TextStyle(
-                                                    color: Colors.black,
-                                                    letterSpacing: .5,
-                                                    fontSize: 18,
+                                              child: ListTile(
+                                                title: ReadMoreText.selectable(
+                                                  content,
+                                                  numLines: 2,
+                                                  style: GoogleFonts.ebGaramond(
+                                                    textStyle: const TextStyle(
+                                                      color: Colors.black,
+                                                      letterSpacing: .5,
+                                                      fontSize: 18,
+                                                    ),
                                                   ),
-                                                ),
-                                                readMoreTextStyle:
-                                                    GoogleFonts.ebGaramond(
-                                                  textStyle: const TextStyle(
-                                                    color: Colors.black,
-                                                    letterSpacing: .5,
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 15,
+                                                  readMoreTextStyle:
+                                                      GoogleFonts.ebGaramond(
+                                                    textStyle: const TextStyle(
+                                                      color: Colors.black,
+                                                      letterSpacing: .5,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontSize: 15,
+                                                    ),
                                                   ),
+                                                  readMoreIconColor:
+                                                      Colors.black,
+                                                  readMoreText: 'Read more',
+                                                  readLessText: 'Read less',
+                                                  readMoreAlign:
+                                                      AlignmentDirectional
+                                                          .bottomStart,
                                                 ),
-                                                readMoreIconColor: Colors.black,
-                                                readMoreText: 'Read more',
-                                                readLessText: 'Read less',
-                                                readMoreAlign:
-                                                    AlignmentDirectional
-                                                        .bottomStart,
                                               ),
                                             ),
                                           ),
@@ -699,7 +709,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                       openCloseDial: isOpenDial,
                       children: [
                         SpeedDialChild(
-                            child: const Icon(Icons.mail),
+                            child: const Icon(Icons.smart_button_sharp),
                             label: 'AI Poetry Tool',
                             labelStyle: GoogleFonts.ebGaramond(
                               textStyle: const TextStyle(
@@ -826,7 +836,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                                   });
                             }),
                         SpeedDialChild(
-                          child: const Icon(Icons.shutter_speed_outlined),
+                          child: const Icon(Icons.bookmark_added_rounded),
                           label: 'Saved Bookmarks',
                           labelStyle: GoogleFonts.ebGaramond(
                             textStyle: const TextStyle(
