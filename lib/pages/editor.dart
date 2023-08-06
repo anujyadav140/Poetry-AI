@@ -47,9 +47,13 @@ class _PoetryEditorState extends State<PoetryEditor>
   bool _isRhymeLines = false;
   bool _isInfoClicked = false;
   bool showBookmarkModal = false;
+  bool scrollToBottomOfBookmark = false;
+  bool isScrollingUp = false;
+  bool reachedTheBottom = true;
   late String poemTitle = "";
   List<String> poetryFeatures = [];
   late ScrollController _scrollController;
+  ScrollController _sheetScrollController = ScrollController();
   final FocusNode _focusNode = FocusNode();
   final List<dynamic> _googleFonts = [
     ["ebGaramond", GoogleFonts.ebGaramond().fontFamily!],
@@ -188,6 +192,21 @@ class _PoetryEditorState extends State<PoetryEditor>
     return '';
   }
 
+  String formatNumber(int number) {
+    if (number < 1000) {
+      return number.toString();
+    } else if (number < 1000000) {
+      int kValue = (number ~/ 1000);
+      return '${kValue}k';
+    } else if (number < 1000000000) {
+      int mValue = (number ~/ 1000000);
+      return '${mValue}m';
+    } else {
+      int bValue = (number ~/ 1000000000);
+      return '${bValue}b';
+    }
+  }
+
   bool isFirstLineSelected = false;
   bool isSecondLineSelected = false;
   bool isConvertToMetreSelected = false;
@@ -196,6 +215,7 @@ class _PoetryEditorState extends State<PoetryEditor>
   List<String> selectedLines = [];
   String multiSelectedLines = "";
 
+  bool tester = false;
   @override
   Widget build(BuildContext context) {
     var poemData = poemListBox.getAt(widget.poemIndex) as Map<dynamic, dynamic>;
@@ -466,6 +486,7 @@ class _PoetryEditorState extends State<PoetryEditor>
               },
             ),
             Expanded(
+              flex: 1,
               child: Stack(children: [
                 quill.QuillEditor(
                   placeholder: "Write your poetry here ...",
@@ -491,76 +512,112 @@ class _PoetryEditorState extends State<PoetryEditor>
                 ),
                 Visibility(
                   visible: showBookmarkModal,
-                  child: NotificationListener<DraggableScrollableNotification>(
+                  // child: NotificationListener<DraggableScrollableNotification>(
+                  //   onNotification: (notification) {
+                  //     if (notification.extent == notification.minExtent) {
+                  //       setState(() {
+                  //         // showBookmarkModal = false;
+                  //         // tester = true;
+                  //       });
+                  //     }
+                  //     return false;
+                  //   },
+                  child: NotificationListener<ScrollNotification>(
                     onNotification: (notification) {
-                      if (notification.extent == notification.minExtent) {
-                        setState(() {
-                          showBookmarkModal = false;
-                        });
+                      if (notification is ScrollStartNotification) {
+                        if (notification.metrics.axis == Axis.vertical) {
+                          setState(() {
+                            reachedTheBottom = true;
+                          });
+                        }
                       }
                       return false;
                     },
                     child: DraggableScrollableActuator(
                       child: DraggableScrollableSheet(
-                        initialChildSize: 0.3,
-                        minChildSize: 0.3,
+                        initialChildSize: 0.5,
+                        minChildSize: 0.5,
                         maxChildSize: 1,
                         snap: true,
                         builder: (context, scrollController) {
-                          return CustomScrollView(
-                            controller: scrollController,
-                            slivers: [
-                              SliverAppBar(
-                                leading: const Icon(
-                                  Icons.bookmark_added,
-                                  color: Colors.black,
-                                ),
-                                shape: const ContinuousRectangleBorder(
-                                  borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(25),
+                          _sheetScrollController = scrollController;
+                          var poemBookmarks =
+                              poemData['bookmarks'] as List<String>;
+                          int count = poemBookmarks.length;
+                          String formattedCount = formatNumber(count);
+                          return Container(
+                            color: Colors.white,
+                            child: CustomScrollView(
+                              controller: scrollController,
+                              slivers: [
+                                SliverAppBar(
+                                  actions: [
+                                    IconButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            showBookmarkModal = false;
+                                            reachedTheBottom = true;
+                                          });
+                                        },
+                                        icon: const Icon(
+                                          Icons.close,
+                                          color: Colors.black,
+                                        ))
+                                  ],
+                                  leading: const Icon(
+                                    Icons.bookmark_added,
+                                    color: Colors.black,
                                   ),
-                                ),
-                                pinned: true,
-                                backgroundColor: widget.editorAppbarColor,
-                                expandedHeight: 50, // Adjust as needed
-                                flexibleSpace: FlexibleSpaceBar(
-                                  title: Text(
-                                    "Bookmarks",
-                                    style: GoogleFonts.ebGaramond(
-                                      textStyle: const TextStyle(
-                                        color: Colors.black,
-                                        letterSpacing: .5,
-                                        fontSize: 18,
+                                  pinned: true,
+                                  backgroundColor: widget.editorAppbarColor,
+                                  expandedHeight: 50, // Adjust as needed
+                                  flexibleSpace: FlexibleSpaceBar(
+                                    title: Text(
+                                      "Bookmarks-$formattedCount",
+                                      style: GoogleFonts.ebGaramond(
+                                        textStyle: const TextStyle(
+                                          color: Colors.black,
+                                          letterSpacing: .5,
+                                          fontSize: 18,
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              SliverList(
-                                delegate: SliverChildBuilderDelegate(
-                                  (context, index) {
-                                    // Your content inside the DraggableScrollableSheet
-                                    // Replace these containers with your actual content
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 20.0),
-                                      child: Container(
-                                        height: 200.0,
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        decoration: const BoxDecoration(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(20.0)),
-                                          color: Colors.blue,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  childCount:
-                                      5, // Number of items you want to show
+                                SliverList(
+                                  delegate: SliverChildBuilderDelegate(
+                                    (context, index) {
+                                      var poemData =
+                                          poemListBox.getAt(widget.poemIndex)
+                                              as Map<dynamic, dynamic>;
+                                      return Column(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 8.0,
+                                                horizontal: 16.0),
+                                            child: Container(
+                                              color: Colors.white,
+                                              child: ListTile(
+                                                title: Text(
+                                                    poemData['bookmarks']
+                                                        [index]),
+                                                tileColor: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                          const Divider(
+                                            height: 1,
+                                            color: Colors.grey,
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                    childCount: poemBookmarks.length,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           );
                         },
                       ),
@@ -571,171 +628,203 @@ class _PoetryEditorState extends State<PoetryEditor>
             ),
           ]),
         ),
-        floatingActionButton: !isRhymeSelectedLines && !isConvertToMetre
-            ? Padding(
-                padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * 0.15),
-                child: SpeedDial(
-                  onOpen: () {
-                    setState(() {
-                      FocusScope.of(context).unfocus();
-                    });
-                  },
-                  animatedIcon: AnimatedIcons.menu_close,
-                  foregroundColor: widget.editorFontColor,
+        floatingActionButton: showBookmarkModal
+            ? Visibility(
+                visible: reachedTheBottom,
+                child: FloatingActionButton.small(
                   backgroundColor: widget.editorAppbarColor,
-                  overlayColor: widget.editorAppbarColor,
-                  overlayOpacity: 0.4,
-                  spacing: 9,
-                  spaceBetweenChildren: 9,
-                  closeManually: false,
-                  direction: SpeedDialDirection.down,
-                  openCloseDial: isOpenDial,
-                  children: [
-                    SpeedDialChild(
-                        child: const Icon(Icons.mail),
-                        label: 'AI Poetry Tool',
-                        labelStyle: GoogleFonts.ebGaramond(
-                          textStyle: const TextStyle(
-                            color: Colors.black,
-                            letterSpacing: .5,
-                            fontSize: 15,
-                          ),
-                        ),
-                        backgroundColor: widget.editorAppbarColor,
-                        onTap: () {
-                          setState(() {
-                            showBookmarkModal = false;
-                          });
-                          showModalBottomSheet(
-                              backgroundColor: Colors.transparent,
-                              context: context,
-                              builder: (context) {
-                                return StatefulBuilder(
-                                  builder: (context, setState) {
-                                    return Card(
-                                      shadowColor: Colors.white,
-                                      margin: EdgeInsets.zero,
-                                      shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(15.0),
-                                          topRight: Radius.circular(15.0),
-                                        ),
-                                      ),
-                                      child: Column(
-                                        children: [
-                                          Align(
-                                            alignment: Alignment.topCenter,
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 8.0),
-                                              child: Container(
-                                                height: 5,
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.1,
-                                                decoration: BoxDecoration(
-                                                  color: Colors.grey,
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          2.5),
-                                                ),
-                                              ),
+                  child: Icon(
+                    Icons.arrow_downward,
+                    color: widget.editorFontColor,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      scrollToBottomOfBookmark = true;
+                    });
+                    if (scrollToBottomOfBookmark) {
+                      _sheetScrollController.animateTo(
+                        _sheetScrollController.position.maxScrollExtent,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                      );
+                      reachedTheBottom = false;
+                    }
+                  },
+                ),
+              )
+            : !isRhymeSelectedLines && !isConvertToMetre
+                ? Padding(
+                    padding: EdgeInsets.only(
+                        top: MediaQuery.of(context).size.height * 0.15),
+                    child: SpeedDial(
+                      onOpen: () {
+                        setState(() {
+                          FocusScope.of(context).unfocus();
+                        });
+                      },
+                      animatedIcon: AnimatedIcons.menu_close,
+                      foregroundColor: widget.editorFontColor,
+                      backgroundColor: widget.editorAppbarColor,
+                      overlayColor: widget.editorAppbarColor,
+                      overlayOpacity: 0.4,
+                      spacing: 9,
+                      spaceBetweenChildren: 9,
+                      closeManually: false,
+                      direction: SpeedDialDirection.down,
+                      openCloseDial: isOpenDial,
+                      children: [
+                        SpeedDialChild(
+                            child: const Icon(Icons.mail),
+                            label: 'AI Poetry Tool',
+                            labelStyle: GoogleFonts.ebGaramond(
+                              textStyle: const TextStyle(
+                                color: Colors.black,
+                                letterSpacing: .5,
+                                fontSize: 15,
+                              ),
+                            ),
+                            backgroundColor: widget.editorAppbarColor,
+                            onTap: () {
+                              setState(() {
+                                showBookmarkModal = false;
+                              });
+                              showModalBottomSheet(
+                                  backgroundColor: Colors.transparent,
+                                  context: context,
+                                  builder: (context) {
+                                    return StatefulBuilder(
+                                      builder: (context, setState) {
+                                        return Card(
+                                          shadowColor: Colors.white,
+                                          margin: EdgeInsets.zero,
+                                          shape: const RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(15.0),
+                                              topRight: Radius.circular(15.0),
                                             ),
                                           ),
-                                          Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                                10, 20, 10, 10),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(
-                                                  _isInfoClicked
-                                                      ? 'How To Get Started'
-                                                      : 'AI Tools:',
-                                                  style: GoogleFonts.ebGaramond(
-                                                    textStyle: const TextStyle(
-                                                      color: Colors.black,
-                                                      letterSpacing: .5,
-                                                      fontSize: 18,
+                                          child: Column(
+                                            children: [
+                                              Align(
+                                                alignment: Alignment.topCenter,
+                                                child: Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(vertical: 8.0),
+                                                  child: Container(
+                                                    height: 5,
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.1,
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.grey,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              2.5),
                                                     ),
                                                   ),
                                                 ),
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      _isInfoClicked =
-                                                          !_isInfoClicked;
-                                                    });
-                                                  },
-                                                  child: Icon(
-                                                    _isInfoClicked
-                                                        ? Icons.arrow_back
-                                                        : Icons.info_outline,
-                                                    color: Colors.black,
-                                                    size: 24,
-                                                  ),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.fromLTRB(
+                                                        10, 20, 10, 10),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      _isInfoClicked
+                                                          ? 'How To Get Started'
+                                                          : 'AI Tools:',
+                                                      style: GoogleFonts
+                                                          .ebGaramond(
+                                                        textStyle:
+                                                            const TextStyle(
+                                                          color: Colors.black,
+                                                          letterSpacing: .5,
+                                                          fontSize: 18,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        setState(() {
+                                                          _isInfoClicked =
+                                                              !_isInfoClicked;
+                                                        });
+                                                      },
+                                                      child: Icon(
+                                                        _isInfoClicked
+                                                            ? Icons.arrow_back
+                                                            : Icons
+                                                                .info_outline,
+                                                        color: Colors.black,
+                                                        size: 24,
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
-                                              ],
-                                            ),
+                                              ),
+                                              const Divider(
+                                                height: 1,
+                                                color: Colors.grey,
+                                              ),
+                                              _isInfoClicked
+                                                  ? const InfoPage()
+                                                  : AiToolsList(
+                                                      aiTools: _aiTools,
+                                                      controller: controller,
+                                                      poetryFeatures:
+                                                          poetryFeatures,
+                                                      selectedLines:
+                                                          selectedLines,
+                                                      multiSelectedLines:
+                                                          multiSelectedLines,
+                                                      poetryMetre: poetryMetre,
+                                                      animation:
+                                                          _animationController,
+                                                      poemIndex:
+                                                          widget.poemIndex,
+                                                      primaryColor: widget
+                                                          .editorAppbarColor,
+                                                      fontColor: widget
+                                                          .editorFontColor,
+                                                    ),
+                                            ],
                                           ),
-                                          const Divider(
-                                            height: 1,
-                                            color: Colors.grey,
-                                          ),
-                                          _isInfoClicked
-                                              ? const InfoPage()
-                                              : AiToolsList(
-                                                  aiTools: _aiTools,
-                                                  controller: controller,
-                                                  poetryFeatures:
-                                                      poetryFeatures,
-                                                  selectedLines: selectedLines,
-                                                  multiSelectedLines:
-                                                      multiSelectedLines,
-                                                  poetryMetre: poetryMetre,
-                                                  animation:
-                                                      _animationController,
-                                                  poemIndex: widget.poemIndex,
-                                                  primaryColor:
-                                                      widget.editorAppbarColor,
-                                                  fontColor:
-                                                      widget.editorFontColor,
-                                                ),
-                                        ],
-                                      ),
+                                        );
+                                      },
                                     );
-                                  },
-                                );
-                              });
-                        }),
-                    SpeedDialChild(
-                      child: const Icon(Icons.shutter_speed_outlined),
-                      label: 'Saved Bookmarks',
-                      labelStyle: GoogleFonts.ebGaramond(
-                        textStyle: const TextStyle(
-                          color: Colors.black,
-                          letterSpacing: .5,
-                          fontSize: 15,
+                                  });
+                            }),
+                        SpeedDialChild(
+                          child: const Icon(Icons.shutter_speed_outlined),
+                          label: 'Saved Bookmarks',
+                          labelStyle: GoogleFonts.ebGaramond(
+                            textStyle: const TextStyle(
+                              color: Colors.black,
+                              letterSpacing: .5,
+                              fontSize: 15,
+                            ),
+                          ),
+                          backgroundColor: widget.editorAppbarColor,
+                          onTap: () async {
+                            setState(() {
+                              FocusScope.of(context).unfocus();
+                              showBookmarkModal = !showBookmarkModal;
+                            });
+                          },
                         ),
-                      ),
-                      backgroundColor: widget.editorAppbarColor,
-                      onTap: () async {
-                        setState(() {
-                          FocusScope.of(context).unfocus();
-                          showBookmarkModal = !showBookmarkModal;
-                        });
-                      },
+                      ],
                     ),
-                  ],
-                ),
-              )
-            : null,
-        floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+                  )
+                : null,
+        floatingActionButtonLocation: showBookmarkModal
+            ? FloatingActionButtonLocation.miniEndFloat
+            : FloatingActionButtonLocation.endTop,
       ),
     );
   }
