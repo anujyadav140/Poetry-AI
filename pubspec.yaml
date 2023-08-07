@@ -59,7 +59,8 @@ dependencies:
   flutter_speed_dial: ^7.0.0
   string_similarity: ^2.0.0
   read_more_text: ^0.0.5
-  
+  flutter_animate: ^4.2.0+1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -89,6 +90,7 @@ flutter:
     - images/
     - assets/
     - assets/data/cmudict.dict
+    - assets/parallax/
     - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
