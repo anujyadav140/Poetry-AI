@@ -30,7 +30,7 @@ class _QuickModeState extends State<QuickMode> {
   late ScrollController _scrollController;
   bool _isScrolledToBottom = false;
   bool _isAnimatingToBottom = false;
-
+  bool textChanged = false;
   @override
   void initState() {
     super.initState();
@@ -68,37 +68,42 @@ class _QuickModeState extends State<QuickMode> {
   Widget build(BuildContext context) {
     return KeyboardVisibilityBuilder(
       builder: (p0, isKeyboardVisible) {
+        if (!isKeyboardVisible) {
+          textChanged = false;
+        }
         return Scaffold(
           body: SafeArea(
             child: NotificationListener(
               onNotification: (notif) {
-                if (!_isAnimatingToBottom && isKeyboardVisible) {
-                  // Animate to the bottom of the page
-                  _scrollController.animateTo(
-                    _scrollController.position.maxScrollExtent,
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.easeInOut,
-                  );
+                // if (!_isAnimatingToBottom && isKeyboardVisible) {
+                //   // Animate to the bottom of the page
+                //   _scrollController.animateTo(
+                //     _scrollController.position.maxScrollExtent,
+                //     duration: const Duration(milliseconds: 500),
+                //     curve: Curves.easeInOut,
+                //   );
 
-                  // Mark the animation as started
-                  setState(() {
-                    _isAnimatingToBottom = true;
-                  });
-                }
+                //   // Mark the animation as started
+                //   setState(() {
+                //     _isAnimatingToBottom = true;
+                //   });
+                // }
                 if (notif is ScrollUpdateNotification) {
                   if (notif.scrollDelta == null) return true;
                   setState(() {
-                    topEleven -= notif.scrollDelta! / 1.7;
-                    topTen -= notif.scrollDelta! / 1.9;
-                    topNine -= notif.scrollDelta! / 1.8;
-                    topEight -= notif.scrollDelta! / 1.7;
-                    topSeven -= notif.scrollDelta! / 1.6;
-                    topSix -= notif.scrollDelta! / 1.5;
-                    topFive -= notif.scrollDelta! / 1.4;
-                    topFour -= notif.scrollDelta! / 1.3;
-                    topThree -= notif.scrollDelta! / 1.2;
-                    topTwo -= notif.scrollDelta! / 1.2;
-                    topOne -= notif.scrollDelta! / 1;
+                    if (!textChanged) {
+                      topEleven -= notif.scrollDelta! / 1.7;
+                      topTen -= notif.scrollDelta! / 1.9;
+                      topNine -= notif.scrollDelta! / 1.8;
+                      topEight -= notif.scrollDelta! / 1.7;
+                      topSeven -= notif.scrollDelta! / 1.6;
+                      topSix -= notif.scrollDelta! / 1.5;
+                      topFive -= notif.scrollDelta! / 1.4;
+                      topFour -= notif.scrollDelta! / 1.3;
+                      topThree -= notif.scrollDelta! / 1.2;
+                      topTwo -= notif.scrollDelta! / 1.2;
+                      topOne -= notif.scrollDelta! / 1;
+                    }
                   });
                 }
                 return true;
@@ -152,11 +157,9 @@ class _QuickModeState extends State<QuickMode> {
                   ),
                   SingleChildScrollView(
                     controller: _scrollController,
-                    physics: _isAnimatingToBottom
-                        ? const NeverScrollableScrollPhysics()
-                        : !isKeyboardVisible
-                            ? const ClampingScrollPhysics()
-                            : const NeverScrollableScrollPhysics(),
+                    physics: !textChanged
+                        ? const ClampingScrollPhysics()
+                        : const NeverScrollableScrollPhysics(),
                     child: Column(
                       children: [
                         SizedBox(
@@ -223,90 +226,18 @@ class _QuickModeState extends State<QuickMode> {
                                 padding: const EdgeInsets.only(
                                     left: 20.0, right: 20.0),
                                 child: TextField(
-                                  maxLines: null,
+                                  // maxLines: null,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      textChanged = true;
+                                    });
+                                  },
                                   autofocus: false,
                                   maxLength: 100,
+                                  enableInteractiveSelection: false,
                                   textCapitalization: TextCapitalization.words,
                                   scrollController: ScrollController(),
-                                  scrollPhysics: isKeyboardVisible
-                                      ? const NeverScrollableScrollPhysics()
-                                      : const ClampingScrollPhysics(),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleLarge
-                                      ?.copyWith(
-                                          color: Colors.white,
-                                          fontFamily: GoogleFonts.ebGaramond()
-                                              .fontFamily),
-                                  cursorColor: Colors.white,
-                                  decoration: const InputDecoration(
-                                    focusedBorder: UnderlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Colors.white),
-                                    ),
-                                    enabledBorder: UnderlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Colors.white),
-                                    ),
-                                    // labelText:
-                                    //     "Write your first line ...",
-                                    hintText: "Write your first line ...",
-                                    labelStyle: TextStyle(color: Colors.white),
-                                    hintStyle: TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                alignment: Alignment.topLeft,
-                                padding: const EdgeInsets.only(
-                                    left: 20.0, right: 20.0),
-                                child: TextField(
-                                  maxLines: null,
-                                  autofocus: false,
-                                  maxLength: 100,
-                                  textCapitalization: TextCapitalization.words,
-                                  scrollController: ScrollController(),
-                                  scrollPhysics: isKeyboardVisible
-                                      ? const NeverScrollableScrollPhysics()
-                                      : const ClampingScrollPhysics(),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleLarge
-                                      ?.copyWith(
-                                          color: Colors.white,
-                                          fontFamily: GoogleFonts.ebGaramond()
-                                              .fontFamily),
-                                  cursorColor: Colors.white,
-                                  decoration: const InputDecoration(
-                                    focusedBorder: UnderlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Colors.white),
-                                    ),
-                                    enabledBorder: UnderlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Colors.white),
-                                    ),
-                                    // labelText:
-                                    //     "Write your first line ...",
-                                    hintText: "Write your first line ...",
-                                    labelStyle: TextStyle(color: Colors.white),
-                                    hintStyle: TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                alignment: Alignment.topLeft,
-                                padding: const EdgeInsets.only(
-                                    left: 20.0, right: 20.0),
-                                child: TextField(
-                                  maxLines: null,
-                                  autofocus: false,
-                                  maxLength: 100,
-                                  textCapitalization: TextCapitalization.words,
-                                  scrollController: ScrollController(),
-                                  scrollPhysics: isKeyboardVisible
-                                      ? const NeverScrollableScrollPhysics()
-                                      : const ClampingScrollPhysics(),
+                                  scrollPhysics: const ClampingScrollPhysics(),
                                   style: Theme.of(context)
                                       .textTheme
                                       .titleLarge
