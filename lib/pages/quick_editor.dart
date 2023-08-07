@@ -27,28 +27,41 @@ class _QuickModeState extends State<QuickMode> {
   double topOne = 0;
 
   late StreamSubscription<bool> keyboardSubscription;
-  final FocusNode globalFocus = FocusNode();
-  final Duration _delayDuration = const Duration(milliseconds: 500);
+  late ScrollController _scrollController;
+  bool _isScrolledToBottom = false;
+  bool _isAnimatingToBottom = false;
 
   @override
   void initState() {
     super.initState();
 
-    var keyboardVisibilityController = KeyboardVisibilityController();
+    _scrollController = ScrollController();
 
-    print(
-        'Keyboard visibility direct query: ${keyboardVisibilityController.isVisible}');
-
-    keyboardSubscription =
-        keyboardVisibilityController.onChange.listen((bool visible) {
-      print('Keyboard visibility update. Is visible: $visible');
-    });
+    // Add a listener to the scroll controller to track the scroll position
+    _scrollController.addListener(_onScroll);
   }
 
   @override
   void dispose() {
-    keyboardSubscription.cancel();
+    // Dispose of the scroll controller to avoid memory leaks
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  // Callback function to be executed whenever the user scrolls
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent) {
+      // The user has reached the bottom of the page
+      setState(() {
+        _isScrolledToBottom = true;
+      });
+    } else {
+      // The user is not at the bottom of the page
+      setState(() {
+        _isScrolledToBottom = false;
+      });
+    }
   }
 
   @override
@@ -59,6 +72,19 @@ class _QuickModeState extends State<QuickMode> {
           body: SafeArea(
             child: NotificationListener(
               onNotification: (notif) {
+                if (!_isAnimatingToBottom && isKeyboardVisible) {
+                  // Animate to the bottom of the page
+                  _scrollController.animateTo(
+                    _scrollController.position.maxScrollExtent,
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeInOut,
+                  );
+
+                  // Mark the animation as started
+                  setState(() {
+                    _isAnimatingToBottom = true;
+                  });
+                }
                 if (notif is ScrollUpdateNotification) {
                   if (notif.scrollDelta == null) return true;
                   setState(() {
@@ -125,7 +151,12 @@ class _QuickModeState extends State<QuickMode> {
                     asset: "assets/parallax/top-parallax-1-g.png",
                   ),
                   SingleChildScrollView(
-                    physics: const ClampingScrollPhysics(),
+                    controller: _scrollController,
+                    physics: _isAnimatingToBottom
+                        ? const NeverScrollableScrollPhysics()
+                        : !isKeyboardVisible
+                            ? const ClampingScrollPhysics()
+                            : const NeverScrollableScrollPhysics(),
                     child: Column(
                       children: [
                         SizedBox(
@@ -187,35 +218,118 @@ class _QuickModeState extends State<QuickMode> {
                               const SizedBox(
                                 height: 25,
                               ),
-                              TextField(
-                                maxLines: null,
-                                autofocus: false,
-                                maxLength: 100,
-                                textCapitalization: TextCapitalization.words,
-                                scrollController: ScrollController(),
-                                scrollPhysics: isKeyboardVisible
-                                    ? const NeverScrollableScrollPhysics()
-                                    : const ClampingScrollPhysics(),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleLarge
-                                    ?.copyWith(
-                                        color: Colors.white,
-                                        fontFamily: GoogleFonts.ebGaramond()
-                                            .fontFamily),
-                                cursorColor: Colors.white,
-                                decoration: const InputDecoration(
-                                  focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.white),
+                              Container(
+                                alignment: Alignment.topLeft,
+                                padding: const EdgeInsets.only(
+                                    left: 20.0, right: 20.0),
+                                child: TextField(
+                                  maxLines: null,
+                                  autofocus: false,
+                                  maxLength: 100,
+                                  textCapitalization: TextCapitalization.words,
+                                  scrollController: ScrollController(),
+                                  scrollPhysics: isKeyboardVisible
+                                      ? const NeverScrollableScrollPhysics()
+                                      : const ClampingScrollPhysics(),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleLarge
+                                      ?.copyWith(
+                                          color: Colors.white,
+                                          fontFamily: GoogleFonts.ebGaramond()
+                                              .fontFamily),
+                                  cursorColor: Colors.white,
+                                  decoration: const InputDecoration(
+                                    focusedBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.white),
+                                    ),
+                                    enabledBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.white),
+                                    ),
+                                    // labelText:
+                                    //     "Write your first line ...",
+                                    hintText: "Write your first line ...",
+                                    labelStyle: TextStyle(color: Colors.white),
+                                    hintStyle: TextStyle(color: Colors.white),
                                   ),
-                                  enabledBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.white),
+                                ),
+                              ),
+                              Container(
+                                alignment: Alignment.topLeft,
+                                padding: const EdgeInsets.only(
+                                    left: 20.0, right: 20.0),
+                                child: TextField(
+                                  maxLines: null,
+                                  autofocus: false,
+                                  maxLength: 100,
+                                  textCapitalization: TextCapitalization.words,
+                                  scrollController: ScrollController(),
+                                  scrollPhysics: isKeyboardVisible
+                                      ? const NeverScrollableScrollPhysics()
+                                      : const ClampingScrollPhysics(),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleLarge
+                                      ?.copyWith(
+                                          color: Colors.white,
+                                          fontFamily: GoogleFonts.ebGaramond()
+                                              .fontFamily),
+                                  cursorColor: Colors.white,
+                                  decoration: const InputDecoration(
+                                    focusedBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.white),
+                                    ),
+                                    enabledBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.white),
+                                    ),
+                                    // labelText:
+                                    //     "Write your first line ...",
+                                    hintText: "Write your first line ...",
+                                    labelStyle: TextStyle(color: Colors.white),
+                                    hintStyle: TextStyle(color: Colors.white),
                                   ),
-                                  // labelText:
-                                  //     "Write your first line ...",
-                                  hintText: "Write your first line ...",
-                                  labelStyle: TextStyle(color: Colors.white),
-                                  hintStyle: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                              Container(
+                                alignment: Alignment.topLeft,
+                                padding: const EdgeInsets.only(
+                                    left: 20.0, right: 20.0),
+                                child: TextField(
+                                  maxLines: null,
+                                  autofocus: false,
+                                  maxLength: 100,
+                                  textCapitalization: TextCapitalization.words,
+                                  scrollController: ScrollController(),
+                                  scrollPhysics: isKeyboardVisible
+                                      ? const NeverScrollableScrollPhysics()
+                                      : const ClampingScrollPhysics(),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleLarge
+                                      ?.copyWith(
+                                          color: Colors.white,
+                                          fontFamily: GoogleFonts.ebGaramond()
+                                              .fontFamily),
+                                  cursorColor: Colors.white,
+                                  decoration: const InputDecoration(
+                                    focusedBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.white),
+                                    ),
+                                    enabledBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.white),
+                                    ),
+                                    // labelText:
+                                    //     "Write your first line ...",
+                                    hintText: "Write your first line ...",
+                                    labelStyle: TextStyle(color: Colors.white),
+                                    hintStyle: TextStyle(color: Colors.white),
+                                  ),
                                 ),
                               ),
                             ],
