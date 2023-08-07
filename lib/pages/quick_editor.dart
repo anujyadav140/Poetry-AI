@@ -25,11 +25,9 @@ class _QuickModeState extends State<QuickMode> {
   double topThree = 0;
   double topTwo = 0;
   double topOne = 0;
-  bool isListViewContentScrolling = false;
 
   late StreamSubscription<bool> keyboardSubscription;
   final FocusNode globalFocus = FocusNode();
-  final ScrollController _myListScrollController = ScrollController();
   final Duration _delayDuration = const Duration(milliseconds: 500);
 
   @override
@@ -57,22 +55,13 @@ class _QuickModeState extends State<QuickMode> {
   Widget build(BuildContext context) {
     return KeyboardVisibilityBuilder(
       builder: (p0, isKeyboardVisible) {
-        late bool isFocus = false;
-        if (globalFocus.hasFocus) {
-          isFocus = true;
-        }
-        if (!isKeyboardVisible) {
-          globalFocus.unfocus();
-
-          isFocus = false;
-        }
         return Scaffold(
           body: SafeArea(
             child: NotificationListener(
               onNotification: (notif) {
                 if (notif is ScrollUpdateNotification) {
                   if (notif.scrollDelta == null) return true;
-                  if (!isKeyboardVisible && !isListViewContentScrolling) {
+                  if (!isKeyboardVisible) {
                     setState(() {
                       topEleven -= notif.scrollDelta! / 1.7;
                       topTen -= notif.scrollDelta! / 1.9;
@@ -85,20 +74,6 @@ class _QuickModeState extends State<QuickMode> {
                       topThree -= notif.scrollDelta! / 1.2;
                       topTwo -= notif.scrollDelta! / 1.2;
                       topOne -= notif.scrollDelta! / 1;
-                    });
-                  }
-                  if (!isKeyboardVisible &&
-                      (notif.metrics.axis == Axis.vertical) &&
-                      (notif.metrics.maxScrollExtent ==
-                          _myListScrollController.position.maxScrollExtent) &&
-                      (notif.metrics.minScrollExtent ==
-                          _myListScrollController.position.minScrollExtent)) {
-                    setState(() {
-                      isListViewContentScrolling = true;
-                    });
-                  } else {
-                    setState(() {
-                      isListViewContentScrolling = false;
                     });
                   }
                 }
@@ -152,9 +127,7 @@ class _QuickModeState extends State<QuickMode> {
                     asset: "assets/parallax/top-parallax-1-g.png",
                   ),
                   SingleChildScrollView(
-                    physics: isFocus
-                        ? const NeverScrollableScrollPhysics()
-                        : const ClampingScrollPhysics(),
+                    physics: const ClampingScrollPhysics(),
                     child: Column(
                       children: [
                         SizedBox(
@@ -216,63 +189,34 @@ class _QuickModeState extends State<QuickMode> {
                               const SizedBox(
                                 height: 25,
                               ),
-                              Expanded(
-                                child: ListView.builder(
-                                  itemCount: 10,
-                                  scrollDirection: Axis.vertical,
-                                  controller: _myListScrollController,
-                                  itemBuilder: (context, index) {
-                                    final textFocus = FocusNode();
-                                    final textEditingController =
-                                        TextEditingController();
-                                    return Container(
-                                      height: 100,
-                                      width: MediaQuery.of(context).size.width,
-                                      alignment: Alignment.topLeft,
-                                      padding: const EdgeInsets.only(
-                                          left: 20.0, right: 20.0),
-                                      child: TextField(
-                                        // maxLines: null,
-                                        autofocus: false,
-                                        focusNode: textFocus,
-                                        enableInteractiveSelection: false,
-                                        controller: textEditingController,
-                                        scrollController: ScrollController(),
-                                        scrollPhysics:
-                                            const ClampingScrollPhysics(),
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleLarge
-                                            ?.copyWith(
-                                                color: Colors.white,
-                                                fontFamily:
-                                                    GoogleFonts.ebGaramond()
-                                                        .fontFamily),
-                                        cursorColor: Colors.white,
-                                        decoration: const InputDecoration(
-                                          focusedBorder: UnderlineInputBorder(
-                                            borderSide:
-                                                BorderSide(color: Colors.white),
-                                          ),
-                                          enabledBorder: UnderlineInputBorder(
-                                            borderSide:
-                                                BorderSide(color: Colors.white),
-                                          ),
-                                          // labelText:
-                                          //     "Write your first line ...",
-                                          hintText: "Write your first line ...",
-                                          labelStyle:
-                                              TextStyle(color: Colors.white),
-                                          hintStyle:
-                                              TextStyle(color: Colors.white),
-                                        ),
-                                      ),
-                                    ).animate().fadeIn(
-                                        duration: 1000.ms,
-                                        curve: Curves.easeIn);
-                                  },
+                              TextField(
+                                maxLines: null,
+                                autofocus: false,
+                                enableInteractiveSelection: false,
+                                scrollController: ScrollController(),
+                                scrollPhysics: const ClampingScrollPhysics(),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge
+                                    ?.copyWith(
+                                        color: Colors.white,
+                                        fontFamily: GoogleFonts.ebGaramond()
+                                            .fontFamily),
+                                cursorColor: Colors.white,
+                                decoration: const InputDecoration(
+                                  focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.white),
+                                  ),
+                                  enabledBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.white),
+                                  ),
+                                  // labelText:
+                                  //     "Write your first line ...",
+                                  hintText: "Write your first line ...",
+                                  labelStyle: TextStyle(color: Colors.white),
+                                  hintStyle: TextStyle(color: Colors.white),
                                 ),
-                              )
+                              ),
                             ],
                           ),
                         ),
