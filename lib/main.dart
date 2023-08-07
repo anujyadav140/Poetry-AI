@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:poetry_ai/firebase_options.dart';
 import 'package:poetry_ai/pages/quick_editor.dart';
@@ -12,6 +13,7 @@ void main() async {
   //initialize hive
   await Hive.initFlutter();
   //open hive box
+  Animate.restartOnHotReload = true;
   var themeBox = await Hive.openBox('myThemeBox');
   var templateBoolBox = await Hive.openBox('myIsTemplateClickedBox');
   var poemListBox = await Hive.openBox('myPoemBox');
@@ -51,8 +53,8 @@ class MyApp extends StatelessWidget {
         // primarySwatch: Colors.green,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: const AuthGate(),
-      // home: const QuickMode(),
+      // home: const AuthGate(),
+      home: const QuickMode(),
     );
   }
 }

@@ -17,7 +17,7 @@ class ParallaxBackground extends StatelessWidget {
       left: 0,
       right: 0,
       child: SizedBox(
-        height: 351,
+        height: MediaQuery.of(context).size.height * 0.3,
         child: Image(
           image: AssetImage(asset),
           fit: BoxFit.cover,
