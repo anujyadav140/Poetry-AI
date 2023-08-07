@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:poetry_ai/pages/parallax_bg.dart';
 
@@ -120,7 +121,9 @@ class _QuickModeState extends State<QuickMode> {
                                       fontFamily:
                                           GoogleFonts.ebGaramond().fontFamily),
                             ),
-                          ),
+                          )
+                              .animate()
+                              .fadeIn(duration: 400.ms, curve: Curves.easeIn),
                           Container(
                             alignment: Alignment.topLeft,
                             padding: const EdgeInsets.only(left: 20.0),
@@ -134,7 +137,9 @@ class _QuickModeState extends State<QuickMode> {
                                       fontFamily:
                                           GoogleFonts.ebGaramond().fontFamily),
                             ),
-                          ),
+                          )
+                              .animate()
+                              .fadeIn(duration: 800.ms, curve: Curves.easeIn),
                           Container(
                             alignment: Alignment.topLeft,
                             padding: const EdgeInsets.only(left: 20.0),
@@ -148,10 +153,48 @@ class _QuickModeState extends State<QuickMode> {
                                       fontFamily:
                                           GoogleFonts.ebGaramond().fontFamily),
                             ),
+                          )
+                              .animate()
+                              .fadeIn(duration: 800.ms, curve: Curves.easeIn),
+                          const SizedBox(
+                            height: 25,
                           ),
+                          Column(
+                            children: [
+                              Container(
+                                alignment: Alignment.topLeft,
+                                padding: const EdgeInsets.only(
+                                    left: 20.0, right: 20.0),
+                                child: TextField(
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleLarge
+                                      ?.copyWith(
+                                          color: Colors.white,
+                                          fontFamily: GoogleFonts.ebGaramond()
+                                              .fontFamily),
+                                  cursorColor: Colors.white,
+                                  decoration: const InputDecoration(
+                                    focusedBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.white),
+                                    ),
+                                    enabledBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.white),
+                                    ),
+                                    labelText: "Write your first line ...",
+                                    labelStyle: TextStyle(color: Colors.white),
+                                    hintStyle: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ).animate().fadeIn(
+                                  duration: 1000.ms, curve: Curves.easeIn),
+                            ],
+                          )
                         ],
                       ),
-                    )
+                    ),
                   ],
                 ),
               )
