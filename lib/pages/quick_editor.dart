@@ -25,11 +25,8 @@ class _QuickModeState extends State<QuickMode> {
   double topThree = 0;
   double topTwo = 0;
   double topOne = 0;
-  late FocusNode lastTextFieldFocusNode;
   late StreamSubscription<bool> keyboardSubscription;
   late ScrollController _scrollController;
-  bool _isScrolledToBottom = false;
-  bool _isAnimatingToBottom = false;
   bool isTextChanged = false;
   bool isListScrolling = false;
   @override
@@ -37,47 +34,23 @@ class _QuickModeState extends State<QuickMode> {
     super.initState();
 
     _scrollController = ScrollController();
-    lastTextFieldFocusNode = FocusNode();
-    lastTextFieldFocusNode.addListener(_scrollToBottomWhenFocused);
-
-    // Add a listener to the scroll controller to track the scroll position
-    _scrollController.addListener(_onScroll);
   }
 
   @override
   void dispose() {
-    // Dispose of the scroll controller and FocusNode to avoid memory leaks
     _scrollController.dispose();
-    lastTextFieldFocusNode.removeListener(_scrollToBottomWhenFocused);
-    lastTextFieldFocusNode.dispose();
     super.dispose();
   }
 
-  // Callback function to be executed whenever the user scrolls
-  void _onScroll() {
-    if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent) {
-      // The user has reached the bottom of the page
-      setState(() {
-        _isScrolledToBottom = true;
-      });
-    } else {
-      // The user is not at the bottom of the page
-      setState(() {
-        _isScrolledToBottom = false;
-      });
-    }
-  }
-
-  void _scrollToBottomWhenFocused() {
-    if (lastTextFieldFocusNode.hasFocus) {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-    }
-  }
+  // void _scrollToBottomWhenFocused() {
+  //   if (lastTextFieldFocusNode.hasFocus) {
+  //     _scrollController.animateTo(
+  //       _scrollController.position.maxScrollExtent,
+  //       duration: const Duration(milliseconds: 300),
+  //       curve: Curves.easeOut,
+  //     );
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +69,7 @@ class _QuickModeState extends State<QuickMode> {
                 if (notif is ScrollUpdateNotification) {
                   if (notif.scrollDelta == null) return true;
                   setState(() {
-                    if (!isTextChanged && isListScrolling) {
+                    if (!isTextChanged && !isListScrolling) {
                       topEleven -= notif.scrollDelta! / 1.7;
                       topTen -= notif.scrollDelta! / 1.9;
                       topNine -= notif.scrollDelta! / 1.8;
@@ -232,12 +205,12 @@ class _QuickModeState extends State<QuickMode> {
                                     if (scrollNotification
                                         is ScrollStartNotification) {
                                       setState(() {
-                                        isListScrolling = false;
+                                        isListScrolling = true;
                                       });
                                     } else if (scrollNotification
                                         is ScrollEndNotification) {
                                       setState(() {
-                                        isListScrolling = true;
+                                        isListScrolling = false;
                                       });
                                     }
                                     return true;
@@ -246,12 +219,13 @@ class _QuickModeState extends State<QuickMode> {
                                     itemCount: 4,
                                     scrollDirection: Axis.vertical,
                                     itemBuilder: (context, index) {
+                                      final FocusNode focusNode = FocusNode();
                                       return Container(
                                         alignment: Alignment.topLeft,
                                         padding: const EdgeInsets.only(
                                             left: 20.0, right: 20.0),
                                         child: TextField(
-                                          // maxLines: null,
+                                          focusNode: focusNode,
                                           onChanged: (value) {
                                             setState(() {
                                               isTextChanged = true;
@@ -261,7 +235,7 @@ class _QuickModeState extends State<QuickMode> {
                                           maxLength: 100,
                                           enableInteractiveSelection: false,
                                           textCapitalization:
-                                              TextCapitalization.words,
+                                              TextCapitalization.sentences,
                                           scrollController: ScrollController(),
                                           scrollPhysics:
                                               const ClampingScrollPhysics(),
