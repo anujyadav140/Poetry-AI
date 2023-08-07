@@ -155,10 +155,10 @@ class _QuickModeState extends State<QuickMode> {
                                 alignment: Alignment.topLeft,
                                 padding: const EdgeInsets.only(left: 20.0),
                                 child: Text(
-                                  "Verse By Verse Editor",
+                                  "Verse By Verse",
                                   style: Theme.of(context)
                                       .textTheme
-                                      .headlineMedium
+                                      .headlineSmall
                                       ?.copyWith(
                                           color: Colors.white,
                                           fontFamily: GoogleFonts.ebGaramond()
@@ -173,7 +173,7 @@ class _QuickModeState extends State<QuickMode> {
                                   "Poem Structure",
                                   style: Theme.of(context)
                                       .textTheme
-                                      .titleLarge
+                                      .titleMedium
                                       ?.copyWith(
                                           color: Colors.white,
                                           fontFamily: GoogleFonts.ebGaramond()
@@ -188,7 +188,7 @@ class _QuickModeState extends State<QuickMode> {
                                   "Quatrain, 9 syllable count, ABAB rhyme pattern",
                                   style: Theme.of(context)
                                       .textTheme
-                                      .titleMedium
+                                      .titleSmall
                                       ?.copyWith(
                                           color: Colors.white,
                                           fontFamily: GoogleFonts.ebGaramond()
@@ -269,7 +269,8 @@ class _QuickModeState extends State<QuickMode> {
                                         ),
                                       );
                                     },
-                                  ),
+                                  ).animate().fadeIn(
+                                      duration: 800.ms, curve: Curves.easeIn),
                                 ),
                               )
                             ],
