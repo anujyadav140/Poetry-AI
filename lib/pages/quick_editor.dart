@@ -61,21 +61,19 @@ class _QuickModeState extends State<QuickMode> {
               onNotification: (notif) {
                 if (notif is ScrollUpdateNotification) {
                   if (notif.scrollDelta == null) return true;
-                  if (!isKeyboardVisible) {
-                    setState(() {
-                      topEleven -= notif.scrollDelta! / 1.7;
-                      topTen -= notif.scrollDelta! / 1.9;
-                      topNine -= notif.scrollDelta! / 1.8;
-                      topEight -= notif.scrollDelta! / 1.7;
-                      topSeven -= notif.scrollDelta! / 1.6;
-                      topSix -= notif.scrollDelta! / 1.5;
-                      topFive -= notif.scrollDelta! / 1.4;
-                      topFour -= notif.scrollDelta! / 1.3;
-                      topThree -= notif.scrollDelta! / 1.2;
-                      topTwo -= notif.scrollDelta! / 1.2;
-                      topOne -= notif.scrollDelta! / 1;
-                    });
-                  }
+                  setState(() {
+                    topEleven -= notif.scrollDelta! / 1.7;
+                    topTen -= notif.scrollDelta! / 1.9;
+                    topNine -= notif.scrollDelta! / 1.8;
+                    topEight -= notif.scrollDelta! / 1.7;
+                    topSeven -= notif.scrollDelta! / 1.6;
+                    topSix -= notif.scrollDelta! / 1.5;
+                    topFive -= notif.scrollDelta! / 1.4;
+                    topFour -= notif.scrollDelta! / 1.3;
+                    topThree -= notif.scrollDelta! / 1.2;
+                    topTwo -= notif.scrollDelta! / 1.2;
+                    topOne -= notif.scrollDelta! / 1;
+                  });
                 }
                 return true;
               },
@@ -192,9 +190,12 @@ class _QuickModeState extends State<QuickMode> {
                               TextField(
                                 maxLines: null,
                                 autofocus: false,
-                                enableInteractiveSelection: false,
+                                maxLength: 100,
+                                textCapitalization: TextCapitalization.words,
                                 scrollController: ScrollController(),
-                                scrollPhysics: const ClampingScrollPhysics(),
+                                scrollPhysics: isKeyboardVisible
+                                    ? const NeverScrollableScrollPhysics()
+                                    : const ClampingScrollPhysics(),
                                 style: Theme.of(context)
                                     .textTheme
                                     .titleLarge
