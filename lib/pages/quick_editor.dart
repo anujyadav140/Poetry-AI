@@ -144,7 +144,7 @@ class _QuickModeState extends State<QuickMode> {
                             height: MediaQuery.of(context).size.height * 0.3),
                         Container(
                           height: MediaQuery.of(context).size.height -
-                              MediaQuery.of(context).size.height * 0.15,
+                              MediaQuery.of(context).size.height * 0.05,
                           width: MediaQuery.of(context).size.width,
                           // color: const Color(0xff372d3b),
                           color: const Color(0xFF303030),
@@ -196,9 +196,10 @@ class _QuickModeState extends State<QuickMode> {
                                 ),
                               ).animate().fadeIn(
                                   duration: 800.ms, curve: Curves.easeIn),
-                              const SizedBox(
-                                height: 25,
-                              ),
+                              // SizedBox(
+                              //   height:
+                              //       MediaQuery.of(context).size.height * 0.004,
+                              // ),
                               Expanded(
                                 child: NotificationListener(
                                   onNotification: (scrollNotification) {
@@ -219,13 +220,13 @@ class _QuickModeState extends State<QuickMode> {
                                     itemCount: 4,
                                     scrollDirection: Axis.vertical,
                                     itemBuilder: (context, index) {
-                                      final FocusNode focusNode = FocusNode();
+                                      // final FocusNode focusNode = FocusNode();
                                       return Container(
                                         alignment: Alignment.topLeft,
                                         padding: const EdgeInsets.only(
                                             left: 20.0, right: 20.0),
                                         child: TextField(
-                                          focusNode: focusNode,
+                                          // focusNode: focusNode,
                                           onChanged: (value) {
                                             setState(() {
                                               isTextChanged = true;
@@ -241,7 +242,7 @@ class _QuickModeState extends State<QuickMode> {
                                               const ClampingScrollPhysics(),
                                           style: Theme.of(context)
                                               .textTheme
-                                              .titleLarge
+                                              .titleMedium
                                               ?.copyWith(
                                                   color: Colors.white,
                                                   fontFamily:
@@ -259,6 +260,8 @@ class _QuickModeState extends State<QuickMode> {
                                             ),
                                             // labelText:
                                             //     "Write your first line ...",
+                                            counterStyle:
+                                                TextStyle(color: Colors.white),
                                             hintText:
                                                 "Write your first line ...",
                                             labelStyle:
