@@ -32,6 +32,7 @@ class _QuickModeState extends State<QuickMode> {
   late ScrollController _scrollController;
   bool isTextChanged = false;
   bool isListScrolling = false;
+  bool expandTheVerseSpace = false;
   List<TextEditingController> textControllers =
       List.generate(4, (_) => TextEditingController());
 
@@ -214,136 +215,182 @@ class _QuickModeState extends State<QuickMode> {
                                   },
                                   child: SingleChildScrollView(
                                     child: Column(
-                                      children: List.generate(4, (index) {
-                                        final isCurrentFieldEnabled =
-                                            textFieldEnabledStates[index];
-                                        String hintText = "";
-                                        if (isCurrentFieldEnabled) {
-                                          if (index == 0) {
-                                            hintText =
-                                                "Write your first line ...";
-                                          } else {
-                                            hintText =
-                                                "Continue or generate a suggestion";
-                                          }
-                                        } else {
-                                          hintText = "Verse ${index + 1}";
-                                        }
+                                      children: [
+                                        Column(
+                                          children: List.generate(4, (index) {
+                                            final isCurrentFieldEnabled =
+                                                textFieldEnabledStates[index];
+                                            String hintText = "";
+                                            if (isCurrentFieldEnabled) {
+                                              if (index == 0) {
+                                                hintText =
+                                                    "Write your first line ...";
+                                              } else {
+                                                hintText =
+                                                    "Continue writing or generate suggestions";
+                                              }
+                                            } else {
+                                              hintText = "Verse ${index + 1}";
+                                            }
 
-                                        return Container(
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          height: MediaQuery.of(context)
+                                            return Container(
+                                              width: MediaQuery.of(context)
                                                   .size
-                                                  .height *
-                                              0.11,
-                                          alignment: Alignment.topLeft,
-                                          padding: const EdgeInsets.only(
-                                              left: 20.0, right: 20.0),
-                                          child: Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Expanded(
-                                                child: TextField(
-                                                  focusNode: focusNodes[index],
-                                                  controller:
-                                                      textControllers[index],
-                                                  onChanged: (value) {
-                                                    setState(() {
-                                                      isTextChanged = true;
-                                                      if (index < 3) {
-                                                        textFieldEnabledStates[
-                                                            index + 1] = true;
-                                                      }
-                                                    });
-                                                  },
-                                                  enabled:
-                                                      isCurrentFieldEnabled,
-                                                  autofocus: false,
-                                                  maxLength: 100,
-                                                  enableInteractiveSelection:
-                                                      false,
-                                                  textCapitalization:
-                                                      TextCapitalization
-                                                          .sentences,
-                                                  scrollController:
-                                                      ScrollController(),
-                                                  scrollPhysics:
-                                                      const ClampingScrollPhysics(),
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .titleMedium
-                                                      ?.copyWith(
-                                                        color: Colors.white,
-                                                        fontFamily: GoogleFonts
-                                                                .ebGaramond()
-                                                            .fontFamily,
+                                                  .width,
+                                              // height:
+                                              //     MediaQuery.of(context).size.height *
+                                              //         0.11,
+                                              alignment: Alignment.topLeft,
+                                              padding: const EdgeInsets.only(
+                                                  left: 20.0, right: 20.0),
+                                              child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Expanded(
+                                                    child: TextField(
+                                                      focusNode:
+                                                          focusNodes[index],
+                                                      controller:
+                                                          textControllers[
+                                                              index],
+                                                      onChanged: (value) {
+                                                        setState(() {
+                                                          isTextChanged = true;
+                                                          if (index < 3) {
+                                                            textFieldEnabledStates[
+                                                                    index + 1] =
+                                                                true;
+                                                          }
+                                                        });
+                                                        setState(() {
+                                                          if (value.length >
+                                                              50) {
+                                                            expandTheVerseSpace =
+                                                                true;
+                                                          }
+                                                        });
+                                                        setState(() {
+                                                          if (value.length <
+                                                              50) {
+                                                            expandTheVerseSpace =
+                                                                false;
+                                                          }
+                                                        });
+                                                      },
+                                                      // minLines: 3,
+                                                      maxLines: null,
+                                                      enabled:
+                                                          isCurrentFieldEnabled,
+                                                      autofocus: false,
+                                                      maxLength: 100,
+                                                      // enableInteractiveSelection:
+                                                      //     false,
+                                                      textCapitalization:
+                                                          TextCapitalization
+                                                              .sentences,
+                                                      scrollController:
+                                                          ScrollController(),
+                                                      scrollPhysics:
+                                                          const ClampingScrollPhysics(),
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .titleMedium
+                                                          ?.copyWith(
+                                                            color: Colors.white,
+                                                            fontFamily: GoogleFonts
+                                                                    .ebGaramond()
+                                                                .fontFamily,
+                                                          ),
+                                                      cursorColor: Colors.white,
+                                                      decoration:
+                                                          InputDecoration(
+                                                        focusedBorder:
+                                                            const UnderlineInputBorder(
+                                                          borderSide:
+                                                              BorderSide(
+                                                                  color: Colors
+                                                                      .white),
+                                                        ),
+                                                        enabledBorder:
+                                                            const UnderlineInputBorder(
+                                                          borderSide:
+                                                              BorderSide(
+                                                                  color: Colors
+                                                                      .white),
+                                                        ),
+                                                        labelText: hintText,
+                                                        counterStyle:
+                                                            const TextStyle(
+                                                                color: Colors
+                                                                    .white),
+                                                        labelStyle:
+                                                            const TextStyle(
+                                                                color: Colors
+                                                                    .white),
+                                                        hintStyle:
+                                                            Theme.of(context)
+                                                                .textTheme
+                                                                .labelSmall
+                                                                ?.copyWith(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontFamily: GoogleFonts
+                                                                          .ebGaramond()
+                                                                      .fontFamily,
+                                                                ),
                                                       ),
-                                                  cursorColor: Colors.white,
-                                                  decoration: InputDecoration(
-                                                    focusedBorder:
-                                                        const UnderlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                          color: Colors.white),
+                                                      onTap: () {
+                                                        setState(() {
+                                                          focusedTextFieldIndex =
+                                                              index;
+                                                        });
+                                                      },
                                                     ),
-                                                    enabledBorder:
-                                                        const UnderlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                          color: Colors.white),
-                                                    ),
-                                                    labelText: hintText,
-                                                    counterStyle:
-                                                        const TextStyle(
+                                                  ),
+                                                  if (isCurrentFieldEnabled &&
+                                                      focusedTextFieldIndex ==
+                                                          index &&
+                                                      textControllers[index]
+                                                          .text
+                                                          .isNotEmpty)
+                                                    Container(
+                                                      alignment:
+                                                          Alignment.centerRight,
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              top: 10,
+                                                              left: 0,
+                                                              right: 0),
+                                                      child: IconButton(
+                                                        icon: const Icon(
+                                                            Icons
+                                                                .replay_outlined,
                                                             color:
                                                                 Colors.white),
-                                                    labelStyle: const TextStyle(
-                                                        color: Colors.white),
-                                                    hintStyle: Theme.of(context)
-                                                        .textTheme
-                                                        .labelSmall
-                                                        ?.copyWith(
-                                                          color: Colors.white,
-                                                          fontFamily: GoogleFonts
-                                                                  .ebGaramond()
-                                                              .fontFamily,
-                                                        ),
-                                                  ),
-                                                  onTap: () {
-                                                    setState(() {
-                                                      focusedTextFieldIndex =
-                                                          index;
-                                                    });
-                                                  },
-                                                ),
+                                                        onPressed: () {
+                                                          print(
+                                                              "Button pressed for text field $index");
+                                                        },
+                                                      ),
+                                                    ),
+                                                ],
                                               ),
-                                              if (isCurrentFieldEnabled &&
-                                                  focusedTextFieldIndex ==
-                                                      index &&
-                                                  textControllers[index]
-                                                      .text
-                                                      .isNotEmpty)
-                                                Container(
-                                                  alignment: Alignment.centerRight,
-                                                  padding: const EdgeInsets.only(
-                                                      top: 10, left: 0, right: 0),
-                                                  child: IconButton(
-                                                    icon: const Icon(
-                                                        Icons.replay_outlined,
-                                                        color: Colors.white),
-                                                    onPressed: () {
-                                                      print(
-                                                          "Button pressed for text field $index");
-                                                    },
-                                                  ),
-                                                ),
-                                            ],
-                                          ),
-                                        );
-                                      }).animate().fadeIn(
-                                            duration: 800.ms,
-                                            curve: Curves.easeIn,
-                                          ),
+                                            );
+                                          }).animate().fadeIn(
+                                                duration: 800.ms,
+                                                curve: Curves.easeIn,
+                                              ),
+                                        ),
+                                        expandTheVerseSpace
+                                            ? SizedBox(
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    0.5,
+                                              )
+                                            : Container(),
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -370,25 +417,25 @@ class _QuickModeState extends State<QuickMode> {
                   onPressed: () {},
                 ),
               ),
-              Container(
-                alignment: Alignment.bottomRight,
-                padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).size.height * 0.06),
-                child: FloatingActionButton(
-                  backgroundColor: Colors.white,
-                  child:
-                      const Icon(Icons.abc, size: 50, color: Color(0xFF303030)),
-                  onPressed: () {
-                    poemLines.clear();
-                    for (var controller in textControllers) {
-                      setState(() {
-                        poemLines.add(controller.text);
-                      });
-                      print(poemLines);
-                    }
-                  },
-                ),
-              ),
+              // Container(
+              //   alignment: Alignment.bottomRight,
+              //   padding: EdgeInsets.only(
+              //       bottom: MediaQuery.of(context).size.height * 0.06),
+              //   child: FloatingActionButton(
+              //     backgroundColor: Colors.white,
+              //     child:
+              //         const Icon(Icons.abc, size: 50, color: Color(0xFF303030)),
+              //     onPressed: () {
+              //       poemLines.clear();
+              //       for (var controller in textControllers) {
+              //         setState(() {
+              //           poemLines.add(controller.text);
+              //         });
+              //         print(poemLines);
+              //       }
+              //     },
+              //   ),
+              // ),
             ],
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
