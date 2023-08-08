@@ -58,3 +58,18 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+                                      //  Positioned(
+                                      //     right: 0,
+                                      //     bottom: 25,
+                                      //     child: IconButton(
+                                      //       icon: const Icon(
+                                      //           Icons.replay_outlined,
+                                      //           color: Colors.white),
+                                      //       onPressed: isCurrentFieldEnabled
+                                      //           ? () {
+                                      //               print(
+                                      //                   "Button pressed for text field $index");
+                                      //             }
+                                      //           : null,
+                                      //     ),
+                                      //   )
