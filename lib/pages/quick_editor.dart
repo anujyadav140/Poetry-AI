@@ -379,15 +379,7 @@ class _QuickModeState extends State<QuickMode> {
                                                         },
                                                       ),
                                                     ),
-                                                    // if (index != 0 &&
-                                                    //     isCurrentFieldEnabled &&
-                                                    //     focusedTextFieldIndex ==
-                                                    //         index &&
-                                                    //     textControllers[index]
-                                                    //         .text
-                                                    //         .isNotEmpty)
-                                                    if (index !=
-                                                            0 && // Check if it's not the first text field
+                                                    if (index != 0 &&
                                                         isCurrentFieldEnabled &&
                                                         focusedTextFieldIndex ==
                                                             index)
@@ -645,13 +637,13 @@ class _QuickModeState extends State<QuickMode> {
                             tooltip: "Add Another Stanza",
                             backgroundColor: Colors.white,
                             onPressed: () {
-                              poemLines.clear();
-                              for (var controller in textControllers) {
-                                setState(() {
-                                  poemLines.add(controller.text);
-                                });
-                              }
-                              print(poemLines);
+                              // poemLines.clear();
+                              // for (var controller in textControllers) {
+                              //   setState(() {
+                              //     poemLines.add(controller.text);
+                              //   });
+                              // }
+                              // print(poemLines);
                             },
                           ),
                         ),
