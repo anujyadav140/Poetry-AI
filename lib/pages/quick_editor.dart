@@ -33,6 +33,7 @@ class _QuickModeState extends State<QuickMode> {
   bool isTextChanged = false;
   bool isListScrolling = false;
   bool expandTheVerseSpace = false;
+  bool clickAnimation = false;
   List<TextEditingController> textControllers =
       List.generate(4, (_) => TextEditingController());
 
@@ -237,9 +238,6 @@ class _QuickModeState extends State<QuickMode> {
                                               width: MediaQuery.of(context)
                                                   .size
                                                   .width,
-                                              // height:
-                                              //     MediaQuery.of(context).size.height *
-                                              //         0.11,
                                               alignment: Alignment.topLeft,
                                               padding: const EdgeInsets.only(
                                                   left: 20.0, right: 20.0),
@@ -359,19 +357,37 @@ class _QuickModeState extends State<QuickMode> {
                                                           Alignment.centerRight,
                                                       padding:
                                                           const EdgeInsets.only(
-                                                              top: 10,
+                                                              top: 20,
                                                               left: 0,
                                                               right: 0),
-                                                      child: IconButton(
-                                                        icon: const Icon(
-                                                            Icons
-                                                                .replay_outlined,
-                                                            color:
-                                                                Colors.white),
-                                                        onPressed: () {
-                                                          print(
-                                                              "Button pressed for text field $index");
-                                                        },
+                                                      child: CircleAvatar(
+                                                        backgroundColor:
+                                                            const Color(
+                                                                0xFF252525),
+                                                        child: IconButton(
+                                                          icon: const Icon(
+                                                              Icons
+                                                                  .replay_outlined,
+                                                              color:
+                                                                  Colors.white),
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              clickAnimation =
+                                                                  !clickAnimation;
+                                                            });
+                                                            print(
+                                                                "Button pressed for text field $index");
+                                                          },
+                                                        )
+                                                            .animate(
+                                                                target:
+                                                                    clickAnimation
+                                                                        ? 1
+                                                                        : 0)
+                                                            .shake(
+                                                                duration:
+                                                                    400.ms,
+                                                                rotation: 0.5),
                                                       ),
                                                     ),
                                                 ],
@@ -382,14 +398,17 @@ class _QuickModeState extends State<QuickMode> {
                                                 curve: Curves.easeIn,
                                               ),
                                         ),
-                                        expandTheVerseSpace
-                                            ? SizedBox(
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    0.5,
-                                              )
-                                            : Container(),
+                                        SizedBox(
+                                          height: expandTheVerseSpace
+                                              ? MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.5
+                                              : MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.3,
+                                        ),
                                       ],
                                     ),
                                   ),
