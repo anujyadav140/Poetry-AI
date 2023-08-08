@@ -37,6 +37,7 @@ class _QuickModeState extends State<QuickMode> {
   bool clickAnimation = false;
   bool favorite = false;
   int selectedChipIndex = -1;
+  String putLinesInTextfield = "";
   List<String> generatedPoemLines = [
     "To be or not to be ...",
     "To thee I send this written embassage",
@@ -244,7 +245,21 @@ class _QuickModeState extends State<QuickMode> {
                                               } else {
                                                 hintText = "Verse ${index + 1}";
                                               }
-                                  
+                                              if (isCurrentFieldEnabled &&
+                                                  focusedTextFieldIndex ==
+                                                      index &&
+                                                  textControllers[index]
+                                                      .text
+                                                      .isNotEmpty) {
+                                                if (putLinesInTextfield
+                                                    .isNotEmpty) {
+                                                  textControllers[index].text =
+                                                      "";
+                                                  textControllers[index].text =
+                                                      putLinesInTextfield;
+                                                  putLinesInTextfield = "";
+                                                }
+                                              }
                                               return Container(
                                                 width: MediaQuery.of(context)
                                                     .size
@@ -264,17 +279,19 @@ class _QuickModeState extends State<QuickMode> {
                                                             textControllers[
                                                                 index],
                                                         onChanged: (value) {
+                                                          setState(() {});
                                                           setState(() {
-                                                            isTextChanged = true;
+                                                            isTextChanged =
+                                                                true;
                                                             if (index < 3) {
                                                               textFieldEnabledStates[
-                                                                      index + 1] =
-                                                                  true;
+                                                                  index +
+                                                                      1] = true;
                                                             }
                                                           });
                                                           setState(() {
                                                             if (value.length >
-                                                                50) {
+                                                                20) {
                                                               expandTheVerseSpace =
                                                                   true;
                                                             }
@@ -306,12 +323,14 @@ class _QuickModeState extends State<QuickMode> {
                                                             .textTheme
                                                             .titleMedium
                                                             ?.copyWith(
-                                                              color: Colors.white,
+                                                              color:
+                                                                  Colors.white,
                                                               fontFamily: GoogleFonts
                                                                       .ebGaramond()
                                                                   .fontFamily,
                                                             ),
-                                                        cursorColor: Colors.white,
+                                                        cursorColor:
+                                                            Colors.white,
                                                         decoration:
                                                             InputDecoration(
                                                           focusedBorder:
@@ -344,9 +363,9 @@ class _QuickModeState extends State<QuickMode> {
                                                                   ?.copyWith(
                                                                     color: Colors
                                                                         .white,
-                                                                    fontFamily: GoogleFonts
-                                                                            .ebGaramond()
-                                                                        .fontFamily,
+                                                                    fontFamily:
+                                                                        GoogleFonts.ebGaramond()
+                                                                            .fontFamily,
                                                                   ),
                                                         ),
                                                         onTap: () {
@@ -364,10 +383,11 @@ class _QuickModeState extends State<QuickMode> {
                                                             .text
                                                             .isNotEmpty)
                                                       Container(
-                                                        alignment:
-                                                            Alignment.centerRight,
+                                                        alignment: Alignment
+                                                            .centerRight,
                                                         padding:
-                                                            const EdgeInsets.only(
+                                                            const EdgeInsets
+                                                                    .only(
                                                                 top: 20,
                                                                 left: 0,
                                                                 right: 0),
@@ -379,8 +399,8 @@ class _QuickModeState extends State<QuickMode> {
                                                             icon: const Icon(
                                                                 Icons
                                                                     .replay_outlined,
-                                                                color:
-                                                                    Colors.white),
+                                                                color: Colors
+                                                                    .white),
                                                             onPressed: () {
                                                               setState(() {
                                                                 clickAnimation =
@@ -398,7 +418,8 @@ class _QuickModeState extends State<QuickMode> {
                                                               .shake(
                                                                   duration:
                                                                       400.ms,
-                                                                  rotation: 0.5),
+                                                                  rotation:
+                                                                      0.5),
                                                         ),
                                                       ),
                                                   ],
@@ -455,6 +476,14 @@ class _QuickModeState extends State<QuickMode> {
                                                               generatedPoemLines[
                                                                   index]),
                                                           onPressed: () {
+                                                            setState(() {
+                                                              putLinesInTextfield =
+                                                                  generatedPoemLines[
+                                                                          index]
+                                                                      .toString();
+                                                            });
+                                                            print(
+                                                                putLinesInTextfield);
                                                             setState(() {
                                                               selectedChipIndex =
                                                                   isSelected
