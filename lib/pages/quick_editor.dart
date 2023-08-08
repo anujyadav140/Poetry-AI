@@ -30,10 +30,20 @@ class _QuickModeState extends State<QuickMode> {
   int focusedTextFieldIndex = 0;
   List<FocusNode> focusNodes = List.generate(4, (_) => FocusNode());
   late ScrollController _scrollController;
+  late ScrollController lineController;
   bool isTextChanged = false;
   bool isListScrolling = false;
   bool expandTheVerseSpace = false;
   bool clickAnimation = false;
+  bool favorite = false;
+  int selectedChipIndex = -1;
+  List<String> generatedPoemLines = [
+    "To be or not to be ...",
+    "To thee I send this written embassage",
+    "May make seem bare, in wanting words to show it",
+    "To show me worthy of thy sweet respect",
+    "Till then, not show my head where thou mayst prove me."
+  ];
   List<TextEditingController> textControllers =
       List.generate(4, (_) => TextEditingController());
 
@@ -41,7 +51,7 @@ class _QuickModeState extends State<QuickMode> {
   @override
   void initState() {
     super.initState();
-
+    lineController = ScrollController();
     _scrollController = ScrollController();
   }
 
@@ -214,202 +224,254 @@ class _QuickModeState extends State<QuickMode> {
                                     }
                                     return true;
                                   },
-                                  child: SingleChildScrollView(
-                                    child: Column(
-                                      children: [
-                                        Column(
-                                          children: List.generate(4, (index) {
-                                            final isCurrentFieldEnabled =
-                                                textFieldEnabledStates[index];
-                                            String hintText = "";
-                                            if (isCurrentFieldEnabled) {
-                                              if (index == 0) {
-                                                hintText =
-                                                    "Write your first line ...";
+                                  child: Scrollbar(
+                                    child: SingleChildScrollView(
+                                      child: Column(
+                                        children: [
+                                          Column(
+                                            children: List.generate(4, (index) {
+                                              final isCurrentFieldEnabled =
+                                                  textFieldEnabledStates[index];
+                                              String hintText = "";
+                                              if (isCurrentFieldEnabled) {
+                                                if (index == 0) {
+                                                  hintText =
+                                                      "Write your first line ...";
+                                                } else {
+                                                  hintText =
+                                                      "Continue writing or generate suggestions";
+                                                }
                                               } else {
-                                                hintText =
-                                                    "Continue writing or generate suggestions";
+                                                hintText = "Verse ${index + 1}";
                                               }
-                                            } else {
-                                              hintText = "Verse ${index + 1}";
-                                            }
-
-                                            return Container(
-                                              width: MediaQuery.of(context)
-                                                  .size
-                                                  .width,
-                                              alignment: Alignment.topLeft,
-                                              padding: const EdgeInsets.only(
-                                                  left: 20.0, right: 20.0),
-                                              child: Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Expanded(
-                                                    child: TextField(
-                                                      focusNode:
-                                                          focusNodes[index],
-                                                      controller:
-                                                          textControllers[
-                                                              index],
-                                                      onChanged: (value) {
-                                                        setState(() {
-                                                          isTextChanged = true;
-                                                          if (index < 3) {
-                                                            textFieldEnabledStates[
-                                                                    index + 1] =
-                                                                true;
-                                                          }
-                                                        });
-                                                        setState(() {
-                                                          if (value.length >
-                                                              50) {
-                                                            expandTheVerseSpace =
-                                                                true;
-                                                          }
-                                                        });
-                                                        setState(() {
-                                                          if (value.length <
-                                                              50) {
-                                                            expandTheVerseSpace =
-                                                                false;
-                                                          }
-                                                        });
-                                                      },
-                                                      // minLines: 3,
-                                                      maxLines: null,
-                                                      enabled:
-                                                          isCurrentFieldEnabled,
-                                                      autofocus: false,
-                                                      maxLength: 100,
-                                                      // enableInteractiveSelection:
-                                                      //     false,
-                                                      textCapitalization:
-                                                          TextCapitalization
-                                                              .sentences,
-                                                      scrollController:
-                                                          ScrollController(),
-                                                      scrollPhysics:
-                                                          const ClampingScrollPhysics(),
-                                                      style: Theme.of(context)
-                                                          .textTheme
-                                                          .titleMedium
-                                                          ?.copyWith(
-                                                            color: Colors.white,
-                                                            fontFamily: GoogleFonts
-                                                                    .ebGaramond()
-                                                                .fontFamily,
+                                  
+                                              return Container(
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                alignment: Alignment.topLeft,
+                                                padding: const EdgeInsets.only(
+                                                    left: 20.0, right: 20.0),
+                                                child: Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Expanded(
+                                                      child: TextField(
+                                                        focusNode:
+                                                            focusNodes[index],
+                                                        controller:
+                                                            textControllers[
+                                                                index],
+                                                        onChanged: (value) {
+                                                          setState(() {
+                                                            isTextChanged = true;
+                                                            if (index < 3) {
+                                                              textFieldEnabledStates[
+                                                                      index + 1] =
+                                                                  true;
+                                                            }
+                                                          });
+                                                          setState(() {
+                                                            if (value.length >
+                                                                50) {
+                                                              expandTheVerseSpace =
+                                                                  true;
+                                                            }
+                                                          });
+                                                          // setState(() {
+                                                          //   if (value.length <
+                                                          //       50) {
+                                                          //     expandTheVerseSpace =
+                                                          //         false;
+                                                          //   }
+                                                          // });
+                                                        },
+                                                        // minLines: 3,
+                                                        maxLines: null,
+                                                        enabled:
+                                                            isCurrentFieldEnabled,
+                                                        autofocus: false,
+                                                        maxLength: 100,
+                                                        // enableInteractiveSelection:
+                                                        //     false,
+                                                        textCapitalization:
+                                                            TextCapitalization
+                                                                .sentences,
+                                                        scrollController:
+                                                            ScrollController(),
+                                                        scrollPhysics:
+                                                            const ClampingScrollPhysics(),
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .titleMedium
+                                                            ?.copyWith(
+                                                              color: Colors.white,
+                                                              fontFamily: GoogleFonts
+                                                                      .ebGaramond()
+                                                                  .fontFamily,
+                                                            ),
+                                                        cursorColor: Colors.white,
+                                                        decoration:
+                                                            InputDecoration(
+                                                          focusedBorder:
+                                                              const UnderlineInputBorder(
+                                                            borderSide:
+                                                                BorderSide(
+                                                                    color: Colors
+                                                                        .white),
                                                           ),
-                                                      cursorColor: Colors.white,
-                                                      decoration:
-                                                          InputDecoration(
-                                                        focusedBorder:
-                                                            const UnderlineInputBorder(
-                                                          borderSide:
-                                                              BorderSide(
+                                                          enabledBorder:
+                                                              const UnderlineInputBorder(
+                                                            borderSide:
+                                                                BorderSide(
+                                                                    color: Colors
+                                                                        .white),
+                                                          ),
+                                                          labelText: hintText,
+                                                          counterStyle:
+                                                              const TextStyle(
                                                                   color: Colors
                                                                       .white),
-                                                        ),
-                                                        enabledBorder:
-                                                            const UnderlineInputBorder(
-                                                          borderSide:
-                                                              BorderSide(
+                                                          labelStyle:
+                                                              const TextStyle(
                                                                   color: Colors
                                                                       .white),
+                                                          hintStyle:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .labelSmall
+                                                                  ?.copyWith(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    fontFamily: GoogleFonts
+                                                                            .ebGaramond()
+                                                                        .fontFamily,
+                                                                  ),
                                                         ),
-                                                        labelText: hintText,
-                                                        counterStyle:
-                                                            const TextStyle(
-                                                                color: Colors
-                                                                    .white),
-                                                        labelStyle:
-                                                            const TextStyle(
-                                                                color: Colors
-                                                                    .white),
-                                                        hintStyle:
-                                                            Theme.of(context)
-                                                                .textTheme
-                                                                .labelSmall
-                                                                ?.copyWith(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontFamily: GoogleFonts
-                                                                          .ebGaramond()
-                                                                      .fontFamily,
-                                                                ),
+                                                        onTap: () {
+                                                          setState(() {
+                                                            focusedTextFieldIndex =
+                                                                index;
+                                                          });
+                                                        },
                                                       ),
-                                                      onTap: () {
-                                                        setState(() {
-                                                          focusedTextFieldIndex =
-                                                              index;
-                                                        });
+                                                    ),
+                                                    if (isCurrentFieldEnabled &&
+                                                        focusedTextFieldIndex ==
+                                                            index &&
+                                                        textControllers[index]
+                                                            .text
+                                                            .isNotEmpty)
+                                                      Container(
+                                                        alignment:
+                                                            Alignment.centerRight,
+                                                        padding:
+                                                            const EdgeInsets.only(
+                                                                top: 20,
+                                                                left: 0,
+                                                                right: 0),
+                                                        child: CircleAvatar(
+                                                          backgroundColor:
+                                                              const Color(
+                                                                  0xFF252525),
+                                                          child: IconButton(
+                                                            icon: const Icon(
+                                                                Icons
+                                                                    .replay_outlined,
+                                                                color:
+                                                                    Colors.white),
+                                                            onPressed: () {
+                                                              setState(() {
+                                                                clickAnimation =
+                                                                    !clickAnimation;
+                                                              });
+                                                              print(
+                                                                  "Button pressed for text field $index");
+                                                            },
+                                                          )
+                                                              .animate(
+                                                                  target:
+                                                                      clickAnimation
+                                                                          ? 1
+                                                                          : 0)
+                                                              .shake(
+                                                                  duration:
+                                                                      400.ms,
+                                                                  rotation: 0.5),
+                                                        ),
+                                                      ),
+                                                  ],
+                                                ),
+                                              );
+                                            }).animate().fadeIn(
+                                                  duration: 800.ms,
+                                                  curve: Curves.easeIn,
+                                                ),
+                                          ),
+                                          SizedBox(
+                                            height: expandTheVerseSpace
+                                                ? MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    0.5
+                                                : MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    0.3,
+                                            child: Column(
+                                              children: [
+                                                Text(
+                                                  "Here are a few suggestions ...",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .headlineSmall
+                                                      ?.copyWith(
+                                                          color: Colors.white,
+                                                          fontFamily: GoogleFonts
+                                                                  .ebGaramond()
+                                                              .fontFamily),
+                                                ),
+                                                Expanded(
+                                                  child: Scrollbar(
+                                                    child: ListView.builder(
+                                                      itemCount: 5,
+                                                      itemBuilder:
+                                                          (context, index) {
+                                                        bool isSelected =
+                                                            selectedChipIndex ==
+                                                                index;
+                                                        return ActionChip(
+                                                          avatar: Icon(
+                                                            isSelected
+                                                                ? Icons.favorite
+                                                                : Icons
+                                                                    .favorite_border,
+                                                            color: isSelected
+                                                                ? Colors.red
+                                                                : null,
+                                                          ),
+                                                          label: Text(
+                                                              generatedPoemLines[
+                                                                  index]),
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              selectedChipIndex =
+                                                                  isSelected
+                                                                      ? -1
+                                                                      : index;
+                                                            });
+                                                          },
+                                                        );
                                                       },
                                                     ),
                                                   ),
-                                                  if (isCurrentFieldEnabled &&
-                                                      focusedTextFieldIndex ==
-                                                          index &&
-                                                      textControllers[index]
-                                                          .text
-                                                          .isNotEmpty)
-                                                    Container(
-                                                      alignment:
-                                                          Alignment.centerRight,
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              top: 20,
-                                                              left: 0,
-                                                              right: 0),
-                                                      child: CircleAvatar(
-                                                        backgroundColor:
-                                                            const Color(
-                                                                0xFF252525),
-                                                        child: IconButton(
-                                                          icon: const Icon(
-                                                              Icons
-                                                                  .replay_outlined,
-                                                              color:
-                                                                  Colors.white),
-                                                          onPressed: () {
-                                                            setState(() {
-                                                              clickAnimation =
-                                                                  !clickAnimation;
-                                                            });
-                                                            print(
-                                                                "Button pressed for text field $index");
-                                                          },
-                                                        )
-                                                            .animate(
-                                                                target:
-                                                                    clickAnimation
-                                                                        ? 1
-                                                                        : 0)
-                                                            .shake(
-                                                                duration:
-                                                                    400.ms,
-                                                                rotation: 0.5),
-                                                      ),
-                                                    ),
-                                                ],
-                                              ),
-                                            );
-                                          }).animate().fadeIn(
-                                                duration: 800.ms,
-                                                curve: Curves.easeIn,
-                                              ),
-                                        ),
-                                        SizedBox(
-                                          height: expandTheVerseSpace
-                                              ? MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.5
-                                              : MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.3,
-                                        ),
-                                      ],
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
