@@ -446,46 +446,6 @@ class _QuickModeState extends State<QuickMode> {
                                                                 isGenerationClicked =
                                                                     true;
                                                               });
-                                                              // PoetryTools()
-                                                              //     .generateQuickLines(
-                                                              //         "To be or not to be ...",
-                                                              //         [
-                                                              //       "To be or not to be ...",
-                                                              //       "To thee I send this written embassage",
-                                                              //       "May make seem bare, in wanting words to show it",
-                                                              //       "To show me worthy of thy sweet respect",
-                                                              //       "Till then, not show my head where thou mayst prove me."
-                                                              //     ]).then(
-                                                              //         (value) {
-                                                              //   generatedPoemLines =
-                                                              //       [];
-
-                                                              //   print(value);
-                                                              //   List<String>
-                                                              //       responseLines =
-                                                              //       value.split(
-                                                              //           '\n');
-                                                              //   for (String line
-                                                              //       in responseLines) {
-                                                              //     // Trim the line to remove leading and trailing whitespace
-                                                              //     String
-                                                              //         trimmedLine =
-                                                              //         line.trim();
-
-                                                              //     // Check if the trimmed line is not empty and not just a colon
-                                                              //     if (trimmedLine
-                                                              //             .isNotEmpty &&
-                                                              //         trimmedLine !=
-                                                              //             ":") {
-                                                              //       setState(
-                                                              //           () {
-                                                              //         generatedPoemLines
-                                                              //             .add(
-                                                              //                 trimmedLine);
-                                                              //       });
-                                                              //     }
-                                                              //   }
-                                                              // });
                                                               PoetryTools()
                                                                   .generateQuickLines(
                                                                       previousLine,
