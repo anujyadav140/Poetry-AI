@@ -376,12 +376,18 @@ class _QuickModeState extends State<QuickMode> {
                                                         },
                                                       ),
                                                     ),
-                                                    if (isCurrentFieldEnabled &&
+                                                    // if (index != 0 &&
+                                                    //     isCurrentFieldEnabled &&
+                                                    //     focusedTextFieldIndex ==
+                                                    //         index &&
+                                                    //     textControllers[index]
+                                                    //         .text
+                                                    //         .isNotEmpty)
+                                                    if (index !=
+                                                            0 && // Check if it's not the first text field
+                                                        isCurrentFieldEnabled &&
                                                         focusedTextFieldIndex ==
-                                                            index &&
-                                                        textControllers[index]
-                                                            .text
-                                                            .isNotEmpty)
+                                                            index)
                                                       Container(
                                                         alignment: Alignment
                                                             .centerRight,
