@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:poetry_ai/pages/parallax_bg.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:poetry_ai/services/ai/poetry_tools.dart';
 
 class QuickMode extends StatefulWidget {
   const QuickMode({super.key});
@@ -35,16 +36,12 @@ class _QuickModeState extends State<QuickMode> {
   bool isListScrolling = false;
   bool expandTheVerseSpace = false;
   bool clickAnimation = false;
-  bool favorite = false;
+  bool isGenerationClicked = false;
+  bool finished = false;
+  bool isSelected = false;
   int selectedChipIndex = -1;
   String putLinesInTextfield = "";
-  List<String> generatedPoemLines = [
-    "To be or not to be ...",
-    "To thee I send this written embassage",
-    "May make seem bare, in wanting words to show it",
-    "To show me worthy of thy sweet respect",
-    "Till then, not show my head where thou mayst prove me."
-  ];
+  List<String> generatedPoemLines = [];
   List<TextEditingController> textControllers =
       List.generate(4, (_) => TextEditingController());
 
@@ -231,6 +228,7 @@ class _QuickModeState extends State<QuickMode> {
                                         children: [
                                           Column(
                                             children: List.generate(4, (index) {
+                                              String previousLine = "";
                                               final isCurrentFieldEnabled =
                                                   textFieldEnabledStates[index];
                                               String hintText = "";
@@ -245,16 +243,13 @@ class _QuickModeState extends State<QuickMode> {
                                               } else {
                                                 hintText = "Verse ${index + 1}";
                                               }
-                                              if (isCurrentFieldEnabled &&
+                                              if (index !=
+                                                      0 && // Check if it's not the first text field
+                                                  isCurrentFieldEnabled &&
                                                   focusedTextFieldIndex ==
-                                                      index &&
-                                                  textControllers[index]
-                                                      .text
-                                                      .isNotEmpty) {
+                                                      index) {
                                                 if (putLinesInTextfield
                                                     .isNotEmpty) {
-                                                  textControllers[index].text =
-                                                      "";
                                                   textControllers[index].text =
                                                       putLinesInTextfield;
                                                   putLinesInTextfield = "";
@@ -279,7 +274,6 @@ class _QuickModeState extends State<QuickMode> {
                                                             textControllers[
                                                                 index],
                                                         onChanged: (value) {
-                                                          setState(() {});
                                                           setState(() {
                                                             isTextChanged =
                                                                 true;
@@ -409,11 +403,116 @@ class _QuickModeState extends State<QuickMode> {
                                                                     .white),
                                                             onPressed: () {
                                                               setState(() {
+                                                                isSelected =
+                                                                    false;
+                                                                selectedChipIndex =
+                                                                    -1;
+                                                              });
+                                                              setState(() {
                                                                 clickAnimation =
                                                                     !clickAnimation;
                                                               });
                                                               print(
                                                                   "Button pressed for text field $index");
+                                                              setState(() {
+                                                                poemLines
+                                                                    .clear();
+                                                                for (var controller
+                                                                    in textControllers) {
+                                                                  setState(() {
+                                                                    poemLines.add(
+                                                                        controller
+                                                                            .text);
+                                                                  });
+                                                                }
+                                                              });
+                                                              setState(() {
+                                                                previousLine =
+                                                                    textControllers[
+                                                                            index -
+                                                                                1]
+                                                                        .text;
+                                                              });
+                                                              setState(() {
+                                                                isGenerationClicked =
+                                                                    true;
+                                                              });
+                                                              // PoetryTools()
+                                                              //     .generateQuickLines(
+                                                              //         "To be or not to be ...",
+                                                              //         [
+                                                              //       "To be or not to be ...",
+                                                              //       "To thee I send this written embassage",
+                                                              //       "May make seem bare, in wanting words to show it",
+                                                              //       "To show me worthy of thy sweet respect",
+                                                              //       "Till then, not show my head where thou mayst prove me."
+                                                              //     ]).then(
+                                                              //         (value) {
+                                                              //   generatedPoemLines =
+                                                              //       [];
+
+                                                              //   print(value);
+                                                              //   List<String>
+                                                              //       responseLines =
+                                                              //       value.split(
+                                                              //           '\n');
+                                                              //   for (String line
+                                                              //       in responseLines) {
+                                                              //     // Trim the line to remove leading and trailing whitespace
+                                                              //     String
+                                                              //         trimmedLine =
+                                                              //         line.trim();
+
+                                                              //     // Check if the trimmed line is not empty and not just a colon
+                                                              //     if (trimmedLine
+                                                              //             .isNotEmpty &&
+                                                              //         trimmedLine !=
+                                                              //             ":") {
+                                                              //       setState(
+                                                              //           () {
+                                                              //         generatedPoemLines
+                                                              //             .add(
+                                                              //                 trimmedLine);
+                                                              //       });
+                                                              //     }
+                                                              //   }
+                                                              // });
+                                                              PoetryTools()
+                                                                  .generateQuickLines(
+                                                                      previousLine,
+                                                                      poemLines)
+                                                                  .then(
+                                                                      (value) {
+                                                                generatedPoemLines =
+                                                                    [];
+                                                                print(value);
+                                                                List<String>
+                                                                    responseLines =
+                                                                    value.split(
+                                                                        '\n');
+                                                                for (String line
+                                                                    in responseLines) {
+                                                                  // Trim the line to remove leading and trailing whitespace
+                                                                  String
+                                                                      trimmedLine =
+                                                                      line.trim();
+
+                                                                  // Check if the trimmed line is not empty and not just a colon
+                                                                  if (trimmedLine
+                                                                          .isNotEmpty &&
+                                                                      trimmedLine !=
+                                                                          ":" &&
+                                                                      trimmedLine !=
+                                                                          "-") {
+                                                                    setState(
+                                                                        () {
+                                                                      generatedPoemLines
+                                                                          .add(
+                                                                              trimmedLine);
+                                                                    });
+                                                                  }
+                                                                }
+                                                              });
                                                             },
                                                           )
                                                               .animate(
@@ -448,58 +547,77 @@ class _QuickModeState extends State<QuickMode> {
                                                     0.3,
                                             child: Column(
                                               children: [
-                                                Text(
-                                                  "Here are a few suggestions ...",
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .headlineSmall
-                                                      ?.copyWith(
-                                                          color: Colors.white,
-                                                          fontFamily: GoogleFonts
-                                                                  .ebGaramond()
-                                                              .fontFamily),
-                                                ),
+                                                isGenerationClicked
+                                                    ? Text(
+                                                        "Here are a few suggestions ...",
+                                                        style: Theme.of(context)
+                                                            .textTheme
+                                                            .headlineSmall
+                                                            ?.copyWith(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontFamily: GoogleFonts
+                                                                        .ebGaramond()
+                                                                    .fontFamily),
+                                                      )
+                                                    : Container(),
                                                 Expanded(
                                                   child: Scrollbar(
-                                                    child: ListView.builder(
-                                                      itemCount: 5,
-                                                      itemBuilder:
-                                                          (context, index) {
-                                                        bool isSelected =
-                                                            selectedChipIndex ==
-                                                                index;
-                                                        return ActionChip(
-                                                          avatar: Icon(
-                                                            isSelected
-                                                                ? Icons.favorite
-                                                                : Icons
-                                                                    .favorite_border,
-                                                            color: isSelected
-                                                                ? Colors.red
-                                                                : null,
-                                                          ),
-                                                          label: Text(
-                                                              generatedPoemLines[
-                                                                  index]),
-                                                          onPressed: () {
-                                                            setState(() {
-                                                              putLinesInTextfield =
-                                                                  generatedPoemLines[
-                                                                          index]
-                                                                      .toString();
-                                                            });
-                                                            print(
-                                                                putLinesInTextfield);
-                                                            setState(() {
-                                                              selectedChipIndex =
+                                                    child: generatedPoemLines
+                                                                .isEmpty &&
+                                                            isGenerationClicked
+                                                        ? const SizedBox(
+                                                            width: 200,
+                                                            child:
+                                                                CircularProgressIndicator(
+                                                              color:
+                                                                  Colors.white,
+                                                              semanticsLabel:
+                                                                  "Loading ...",
+                                                            ))
+                                                        : ListView.builder(
+                                                            itemCount:
+                                                                generatedPoemLines
+                                                                    .length,
+                                                            itemBuilder:
+                                                                (context,
+                                                                    index) {
+                                                              isSelected =
+                                                                  selectedChipIndex ==
+                                                                      index;
+                                                              return ActionChip(
+                                                                avatar: Icon(
                                                                   isSelected
-                                                                      ? -1
-                                                                      : index;
-                                                            });
-                                                          },
-                                                        );
-                                                      },
-                                                    ),
+                                                                      ? Icons
+                                                                          .favorite
+                                                                      : Icons
+                                                                          .favorite_border,
+                                                                  color: isSelected
+                                                                      ? Colors
+                                                                          .red
+                                                                      : null,
+                                                                ),
+                                                                label: Text(
+                                                                    generatedPoemLines[
+                                                                        index]),
+                                                                onPressed: () {
+                                                                  setState(() {
+                                                                    putLinesInTextfield =
+                                                                        generatedPoemLines[
+                                                                            index];
+                                                                  });
+                                                                  print(
+                                                                      putLinesInTextfield);
+                                                                  setState(() {
+                                                                    selectedChipIndex =
+                                                                        isSelected
+                                                                            ? -1
+                                                                            : index;
+                                                                  });
+                                                                },
+                                                              );
+                                                            },
+                                                          ),
                                                   ),
                                                 )
                                               ],
@@ -533,25 +651,28 @@ class _QuickModeState extends State<QuickMode> {
                   onPressed: () {},
                 ),
               ),
-              // Container(
-              //   alignment: Alignment.bottomRight,
-              //   padding: EdgeInsets.only(
-              //       bottom: MediaQuery.of(context).size.height * 0.06),
-              //   child: FloatingActionButton(
-              //     backgroundColor: Colors.white,
-              //     child:
-              //         const Icon(Icons.abc, size: 50, color: Color(0xFF303030)),
-              //     onPressed: () {
-              //       poemLines.clear();
-              //       for (var controller in textControllers) {
-              //         setState(() {
-              //           poemLines.add(controller.text);
-              //         });
-              //         print(poemLines);
-              //       }
-              //     },
-              //   ),
-              // ),
+              finished
+                  ? Container(
+                      alignment: Alignment.bottomRight,
+                      padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).size.height * 0.06),
+                      child: FloatingActionButton(
+                        tooltip: "Finish",
+                        backgroundColor: Colors.white,
+                        child: const Icon(Icons.navigate_next,
+                            size: 50, color: Color(0xFF303030)),
+                        onPressed: () {
+                          poemLines.clear();
+                          for (var controller in textControllers) {
+                            setState(() {
+                              poemLines.add(controller.text);
+                            });
+                            print(poemLines);
+                          }
+                        },
+                      ),
+                    )
+                  : Container(),
             ],
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,

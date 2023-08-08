@@ -147,6 +147,29 @@ class PoetryTools {
     return res;
   }
 
+  Future<String> generateQuickLines(
+      String previousLine, List<String> lineContext) async {
+    // , List<String> quickFeatures
+    final openai = OpenAI(apiKey: dotenv.env['OPENAI_API_KEY'], temperature: 1);
+    const multipleMetreFormatInput = PromptTemplate(
+      inputVariables: {'previousLine', 'lineContext'},
+      template:
+          '''You are a helpful AI poet who helps the user by suggesting multiple poetry lines- verse by verse,
+       that can come after the previous line, this is the "{previousLine}" and these are the other lines in the poetry {lineContext}
+       suggest multiple, different lines that can come after the previous line while fitting the whole context and intention
+       of the poetry, return only 5 lines- without labelling or numbering them''',
+    );
+    print(multipleMetreFormatInput
+        .format({'previousLine': previousLine, 'lineContext': lineContext}));
+    final chain = LLMChain(llm: openai, prompt: multipleMetreFormatInput);
+    final res = await chain.run({
+      'previousLine': previousLine,
+      'lineContext': lineContext,
+    });
+    // print(res);
+    return res;
+  }
+
   Future<String> changeLinesToFollowMetre(
       String lines, String metreFeature) async {
     // final openai =
