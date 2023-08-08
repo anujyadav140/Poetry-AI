@@ -255,6 +255,15 @@ class _QuickModeState extends State<QuickMode> {
                                                   putLinesInTextfield = "";
                                                 }
                                               }
+                                              for (TextEditingController controller
+                                                  in textControllers) {
+                                                if (controller.text.isEmpty) {
+                                                  finished = false;
+                                                  break; // No need to continue checking once an empty field is found
+                                                } else {
+                                                  finished = true;
+                                                }
+                                              }
                                               return Container(
                                                 width: MediaQuery.of(context)
                                                     .size
@@ -656,11 +665,19 @@ class _QuickModeState extends State<QuickMode> {
                       alignment: Alignment.bottomRight,
                       padding: EdgeInsets.only(
                           bottom: MediaQuery.of(context).size.height * 0.06),
-                      child: FloatingActionButton(
+                      child: FloatingActionButton.extended(
+                        label: Text(
+                          "Finish",
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineSmall
+                              ?.copyWith(
+                                  color: const Color(0xFF303030),
+                                  fontFamily:
+                                      GoogleFonts.ebGaramond().fontFamily),
+                        ),
                         tooltip: "Finish",
                         backgroundColor: Colors.white,
-                        child: const Icon(Icons.navigate_next,
-                            size: 50, color: Color(0xFF303030)),
                         onPressed: () {
                           poemLines.clear();
                           for (var controller in textControllers) {
