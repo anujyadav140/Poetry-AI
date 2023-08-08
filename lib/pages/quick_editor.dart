@@ -661,33 +661,68 @@ class _QuickModeState extends State<QuickMode> {
                 ),
               ),
               finished
-                  ? Container(
-                      alignment: Alignment.bottomRight,
-                      padding: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).size.height * 0.06),
-                      child: FloatingActionButton.extended(
-                        label: Text(
-                          "Finish",
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineSmall
-                              ?.copyWith(
-                                  color: const Color(0xFF303030),
-                                  fontFamily:
-                                      GoogleFonts.ebGaramond().fontFamily),
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          alignment: Alignment.bottomRight,
+                          padding: EdgeInsets.only(
+                              bottom:
+                                  MediaQuery.of(context).size.height * 0.06, left: 20),
+                          child: FloatingActionButton.extended(
+                            label: Text(
+                              "Add Another Stanza",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleSmall
+                                  ?.copyWith(
+                                      color: const Color(0xFF303030),
+                                      fontFamily:
+                                          GoogleFonts.ebGaramond().fontFamily),
+                            ),
+                            tooltip: "Add Another Stanza",
+                            backgroundColor: Colors.white,
+                            onPressed: () {
+                              poemLines.clear();
+                              for (var controller in textControllers) {
+                                setState(() {
+                                  poemLines.add(controller.text);
+                                });
+                                print(poemLines);
+                              }
+                            },
+                          ),
                         ),
-                        tooltip: "Finish",
-                        backgroundColor: Colors.white,
-                        onPressed: () {
-                          poemLines.clear();
-                          for (var controller in textControllers) {
-                            setState(() {
-                              poemLines.add(controller.text);
-                            });
-                            print(poemLines);
-                          }
-                        },
-                      ),
+                        Container(
+                          alignment: Alignment.bottomRight,
+                          padding: EdgeInsets.only(
+                              bottom:
+                                  MediaQuery.of(context).size.height * 0.06),
+                          child: FloatingActionButton.extended(
+                            label: Text(
+                              "Finish",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                      color: const Color(0xFF303030),
+                                      fontFamily:
+                                          GoogleFonts.ebGaramond().fontFamily),
+                            ),
+                            tooltip: "Finish",
+                            backgroundColor: Colors.white,
+                            onPressed: () {
+                              poemLines.clear();
+                              for (var controller in textControllers) {
+                                setState(() {
+                                  poemLines.add(controller.text);
+                                });
+                                print(poemLines);
+                              }
+                            },
+                          ),
+                        ),
+                      ],
                     )
                   : Container(),
             ],
