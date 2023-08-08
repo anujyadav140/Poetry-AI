@@ -26,6 +26,7 @@ class _QuickModeState extends State<QuickMode> {
   double topTwo = 0;
   double topOne = 0;
   late StreamSubscription<bool> keyboardSubscription;
+  List<bool> textFieldEnabledStates = [true, false, false, false];
   late ScrollController _scrollController;
   bool isTextChanged = false;
   bool isListScrolling = false;
@@ -212,56 +213,88 @@ class _QuickModeState extends State<QuickMode> {
                                   child: SingleChildScrollView(
                                       child: Column(
                                     children: List.generate(4, (index) {
+                                      final isCurrentFieldEnabled =
+                                          isTextChanged || index == 0;
+                                      final hintText = isCurrentFieldEnabled
+                                          ? "Write your line ..."
+                                          : "Verse ${index + 1}";
+
                                       return Container(
                                         alignment: Alignment.topLeft,
                                         padding: const EdgeInsets.only(
                                             left: 20.0, right: 20.0),
-                                        child: TextField(
-                                          controller: textControllers[index],
-                                          onChanged: (value) {
-                                            setState(() {
-                                              isTextChanged = true;
-                                            });
-                                          },
-                                          autofocus: false,
-                                          maxLength: 100,
-                                          enableInteractiveSelection: false,
-                                          textCapitalization:
-                                              TextCapitalization.sentences,
-                                          scrollController: ScrollController(),
-                                          scrollPhysics:
-                                              const ClampingScrollPhysics(),
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .titleMedium
-                                              ?.copyWith(
-                                                color: Colors.white,
-                                                fontFamily:
-                                                    GoogleFonts.ebGaramond()
-                                                        .fontFamily,
+                                        child: Stack(
+                                          children: [
+                                            TextField(
+                                              controller:
+                                                  textControllers[index],
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  isTextChanged = true;
+                                                });
+                                              },
+                                              enabled: isCurrentFieldEnabled,
+                                              autofocus: false,
+                                              maxLength: 100,
+                                              enableInteractiveSelection: false,
+                                              textCapitalization:
+                                                  TextCapitalization.sentences,
+                                              scrollController:
+                                                  ScrollController(),
+                                              scrollPhysics:
+                                                  const ClampingScrollPhysics(),
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .titleMedium
+                                                  ?.copyWith(
+                                                    color: Colors.white,
+                                                    fontFamily:
+                                                        GoogleFonts.ebGaramond()
+                                                            .fontFamily,
+                                                  ),
+                                              cursorColor: Colors.white,
+                                              decoration: InputDecoration(
+                                                focusedBorder:
+                                                    UnderlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Colors.white),
+                                                ),
+                                                enabledBorder:
+                                                    UnderlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Colors.white),
+                                                ),
+                                                labelText: hintText,
+                                                counterStyle: TextStyle(
+                                                    color: Colors.white),
+                                                labelStyle: TextStyle(
+                                                    color: Colors.white),
+                                                hintStyle: TextStyle(
+                                                    color: Colors.white),
                                               ),
-                                          cursorColor: Colors.white,
-                                          decoration: const InputDecoration(
-                                            focusedBorder: UnderlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: Colors.white),
                                             ),
-                                            enabledBorder: UnderlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: Colors.white),
+                                            Positioned(
+                                              right: 0,
+                                              bottom: 25,
+                                              child: IconButton(
+                                                icon: const Icon(
+                                                    Icons.replay_outlined,
+                                                    color: Colors.white),
+                                                onPressed: isCurrentFieldEnabled
+                                                    ? () {
+                                                        print(
+                                                            "Button pressed for text field $index");
+                                                      }
+                                                    : null,
+                                              ),
                                             ),
-                                            labelText: "Write your line ...",
-                                            counterStyle:
-                                                TextStyle(color: Colors.white),
-                                            labelStyle:
-                                                TextStyle(color: Colors.white),
-                                            hintStyle:
-                                                TextStyle(color: Colors.white),
-                                          ),
+                                          ],
                                         ),
                                       );
                                     }).animate().fadeIn(
-                                        duration: 800.ms, curve: Curves.easeIn),
+                                          duration: 800.ms,
+                                          curve: Curves.easeIn,
+                                        ),
                                   )),
                                 ),
                               ),
