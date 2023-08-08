@@ -512,7 +512,9 @@ class _QuickModeState extends State<QuickMode> {
                                                                       trimmedLine !=
                                                                           ":" &&
                                                                       trimmedLine !=
-                                                                          "-") {
+                                                                          "-" &&
+                                                                      trimmedLine !=
+                                                                          ".") {
                                                                     setState(
                                                                         () {
                                                                       generatedPoemLines
@@ -667,8 +669,8 @@ class _QuickModeState extends State<QuickMode> {
                         Container(
                           alignment: Alignment.bottomRight,
                           padding: EdgeInsets.only(
-                              bottom:
-                                  MediaQuery.of(context).size.height * 0.06, left: 20),
+                              bottom: MediaQuery.of(context).size.height * 0.06,
+                              left: 20),
                           child: FloatingActionButton.extended(
                             label: Text(
                               "Add Another Stanza",
@@ -688,8 +690,8 @@ class _QuickModeState extends State<QuickMode> {
                                 setState(() {
                                   poemLines.add(controller.text);
                                 });
-                                print(poemLines);
                               }
+                              print(poemLines);
                             },
                           ),
                         ),
@@ -717,8 +719,8 @@ class _QuickModeState extends State<QuickMode> {
                                 setState(() {
                                   poemLines.add(controller.text);
                                 });
-                                print(poemLines);
                               }
+                              print(poemLines);
                             },
                           ),
                         ),
