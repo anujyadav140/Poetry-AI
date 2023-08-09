@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:poetry_ai/pages/finish_poem.dart';
 import 'package:poetry_ai/pages/parallax_bg.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:poetry_ai/services/ai/poetry_tools.dart';
@@ -252,8 +253,7 @@ class _QuickModeState extends State<QuickMode> {
                                               } else {
                                                 hintText = "Verse ${index + 1}";
                                               }
-                                              if (index !=
-                                                      startingIndex && // Check if it's not the first text field
+                                              if (index != startingIndex &&
                                                   isCurrentFieldEnabled &&
                                                   focusedTextFieldIndex ==
                                                       index) {
@@ -444,9 +444,8 @@ class _QuickModeState extends State<QuickMode> {
                                                               });
                                                               setState(() {
                                                                 contextLines
-                                                                    .clear(); // Clear the previous context lines
+                                                                    .clear();
 
-                                                                // Collect the last 4 lines before the given index
                                                                 int start =
                                                                     index - 4 >=
                                                                             0
@@ -466,7 +465,6 @@ class _QuickModeState extends State<QuickMode> {
                                                                   }
                                                                 }
 
-                                                                // Collect the lines after the given index
                                                                 for (int i =
                                                                         index +
                                                                             1;
@@ -506,12 +504,10 @@ class _QuickModeState extends State<QuickMode> {
                                                                         '\n');
                                                                 for (String line
                                                                     in responseLines) {
-                                                                  // Trim the line to remove leading and trailing whitespace
                                                                   String
                                                                       trimmedLine =
                                                                       line.trim();
 
-                                                                  // Check if the trimmed line is not empty and not just a colon
                                                                   if (trimmedLine
                                                                           .isNotEmpty &&
                                                                       trimmedLine !=
@@ -691,6 +687,7 @@ class _QuickModeState extends State<QuickMode> {
               Container(
                 alignment: Alignment.topRight,
                 child: FloatingActionButton.small(
+                  heroTag: 'go-back',
                   backgroundColor: const Color(0xFF303030),
                   child: const Icon(Icons.arrow_back,
                       size: 25, color: Colors.white),
@@ -707,6 +704,7 @@ class _QuickModeState extends State<QuickMode> {
                               bottom: MediaQuery.of(context).size.height * 0.06,
                               left: 20),
                           child: FloatingActionButton.extended(
+                            heroTag: 'add-another-stanza',
                             label: Text(
                               "Add Another Stanza",
                               style: Theme.of(context)
@@ -756,6 +754,7 @@ class _QuickModeState extends State<QuickMode> {
                               bottom:
                                   MediaQuery.of(context).size.height * 0.06),
                           child: FloatingActionButton.extended(
+                            heroTag: 'finish',
                             label: Text(
                               "Finish",
                               style: Theme.of(context)
@@ -769,13 +768,13 @@ class _QuickModeState extends State<QuickMode> {
                             tooltip: "Finish",
                             backgroundColor: Colors.white,
                             onPressed: () {
-                              poemLines.clear();
-                              for (var controller in textControllers) {
-                                setState(() {
-                                  poemLines.add(controller.text);
-                                });
-                              }
-                              print(poemLines);
+                              String poem = '''''';
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        FinishPoem(poem: poem),
+                                  ));
                             },
                           ),
                         ),

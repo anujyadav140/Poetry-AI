@@ -80,3 +80,12 @@ class MyApp extends StatelessWidget {
                               //   });
                               // }
                               // print(poemLines);
+                               // poemLines.clear();
+                              // for (var controller in textControllers) {
+                              //   setState(() {
+                              //     poemLines.add(controller.text);
+                              //   });
+                              // }
+                              // print(poemLines);
+
+                    

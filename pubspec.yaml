@@ -60,7 +60,11 @@ dependencies:
   string_similarity: ^2.0.0
   read_more_text: ^0.0.5
   flutter_animate: ^4.2.0+1
-
+  screenshot: ^2.1.0
+  image_gallery_saver: ^2.0.3
+  permission_handler: ^10.4.3
+  share_plus: ^7.1.0
+  path_provider: ^2.1.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
