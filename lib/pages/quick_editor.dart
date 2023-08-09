@@ -27,9 +27,10 @@ class _QuickModeState extends State<QuickMode> {
   double topTwo = 0;
   double topOne = 0;
   late StreamSubscription<bool> keyboardSubscription;
+  late List<bool> enabledStates = [true, false, false, false];
   List<bool> textFieldEnabledStates = [true, false, false, false];
   int focusedTextFieldIndex = 0;
-  List<FocusNode> focusNodes = List.generate(4, (_) => FocusNode());
+  late List<FocusNode> focusNodes;
   late ScrollController _scrollController;
   late ScrollController lineController;
   bool isTextChanged = false;
@@ -41,13 +42,18 @@ class _QuickModeState extends State<QuickMode> {
   bool isSelected = false;
   int selectedChipIndex = -1;
   String putLinesInTextfield = "";
+  int totalTextfield = 4;
+  int startingIndex = 0;
+  int comparisionIndex = 3;
   List<String> generatedPoemLines = [];
-  List<TextEditingController> textControllers =
-      List.generate(4, (_) => TextEditingController());
+  late List<TextEditingController> textControllers;
 
   List<String> poemLines = [];
+  List<String> reloadPoemLines = [];
   @override
   void initState() {
+    textControllers = List.generate(4, (_) => TextEditingController());
+    focusNodes = List.generate(4, (_) => FocusNode());
     super.initState();
     lineController = ScrollController();
     _scrollController = ScrollController();
@@ -227,13 +233,14 @@ class _QuickModeState extends State<QuickMode> {
                                       child: Column(
                                         children: [
                                           Column(
-                                            children: List.generate(4, (index) {
+                                            children: List.generate(
+                                                    totalTextfield, (index) {
                                               String previousLine = "";
                                               final isCurrentFieldEnabled =
                                                   textFieldEnabledStates[index];
                                               String hintText = "";
                                               if (isCurrentFieldEnabled) {
-                                                if (index == 0) {
+                                                if (index == startingIndex) {
                                                   hintText =
                                                       "Write your first line ...";
                                                 } else {
@@ -244,7 +251,7 @@ class _QuickModeState extends State<QuickMode> {
                                                 hintText = "Verse ${index + 1}";
                                               }
                                               if (index !=
-                                                      0 && // Check if it's not the first text field
+                                                      startingIndex && // Check if it's not the first text field
                                                   isCurrentFieldEnabled &&
                                                   focusedTextFieldIndex ==
                                                       index) {
@@ -286,7 +293,8 @@ class _QuickModeState extends State<QuickMode> {
                                                           setState(() {
                                                             isTextChanged =
                                                                 true;
-                                                            if (index < 3) {
+                                                            if (index <
+                                                                comparisionIndex) {
                                                               textFieldEnabledStates[
                                                                   index +
                                                                       1] = true;
@@ -299,22 +307,12 @@ class _QuickModeState extends State<QuickMode> {
                                                                   true;
                                                             }
                                                           });
-                                                          // setState(() {
-                                                          //   if (value.length <
-                                                          //       50) {
-                                                          //     expandTheVerseSpace =
-                                                          //         false;
-                                                          //   }
-                                                          // });
                                                         },
-                                                        // minLines: 3,
                                                         maxLines: null,
                                                         enabled:
                                                             isCurrentFieldEnabled,
                                                         autofocus: false,
                                                         maxLength: 100,
-                                                        // enableInteractiveSelection:
-                                                        //     false,
                                                         textCapitalization:
                                                             TextCapitalization
                                                                 .sentences,
@@ -379,7 +377,8 @@ class _QuickModeState extends State<QuickMode> {
                                                         },
                                                       ),
                                                     ),
-                                                    if (index != 0 &&
+                                                    if (index !=
+                                                            startingIndex &&
                                                         isCurrentFieldEnabled &&
                                                         focusedTextFieldIndex ==
                                                             index)
@@ -438,44 +437,47 @@ class _QuickModeState extends State<QuickMode> {
                                                                 isGenerationClicked =
                                                                     true;
                                                               });
-                                                              PoetryTools()
-                                                                  .generateQuickLines(
-                                                                      previousLine,
-                                                                      poemLines)
-                                                                  .then(
-                                                                      (value) {
-                                                                generatedPoemLines =
-                                                                    [];
-                                                                print(value);
-                                                                List<String>
-                                                                    responseLines =
-                                                                    value.split(
-                                                                        '\n');
-                                                                for (String line
-                                                                    in responseLines) {
-                                                                  // Trim the line to remove leading and trailing whitespace
-                                                                  String
-                                                                      trimmedLine =
-                                                                      line.trim();
+                                                              // print(
+                                                              //     previousLine);
+                                                              // print(poemLines);
+                                                              // PoetryTools()
+                                                              //     .generateQuickLines(
+                                                              //         previousLine,
+                                                              //         poemLines)
+                                                              //     .then(
+                                                              //         (value) {
+                                                              //   generatedPoemLines =
+                                                              //       [];
+                                                              //   print(value);
+                                                              //   List<String>
+                                                              //       responseLines =
+                                                              //       value.split(
+                                                              //           '\n');
+                                                              //   for (String line
+                                                              //       in responseLines) {
+                                                              //     // Trim the line to remove leading and trailing whitespace
+                                                              //     String
+                                                              //         trimmedLine =
+                                                              //         line.trim();
 
-                                                                  // Check if the trimmed line is not empty and not just a colon
-                                                                  if (trimmedLine
-                                                                          .isNotEmpty &&
-                                                                      trimmedLine !=
-                                                                          ":" &&
-                                                                      trimmedLine !=
-                                                                          "-" &&
-                                                                      trimmedLine !=
-                                                                          ".") {
-                                                                    setState(
-                                                                        () {
-                                                                      generatedPoemLines
-                                                                          .add(
-                                                                              trimmedLine);
-                                                                    });
-                                                                  }
-                                                                }
-                                                              });
+                                                              //     // Check if the trimmed line is not empty and not just a colon
+                                                              //     if (trimmedLine
+                                                              //             .isNotEmpty &&
+                                                              //         trimmedLine !=
+                                                              //             ":" &&
+                                                              //         trimmedLine !=
+                                                              //             "-" &&
+                                                              //         trimmedLine !=
+                                                              //             ".") {
+                                                              //       setState(
+                                                              //           () {
+                                                              //         generatedPoemLines
+                                                              //             .add(
+                                                              //                 trimmedLine);
+                                                              //       });
+                                                              // }
+                                                              // }
+                                                              // });
                                                             },
                                                           )
                                                               .animate(
@@ -637,13 +639,30 @@ class _QuickModeState extends State<QuickMode> {
                             tooltip: "Add Another Stanza",
                             backgroundColor: Colors.white,
                             onPressed: () {
-                              // poemLines.clear();
-                              // for (var controller in textControllers) {
-                              //   setState(() {
-                              //     poemLines.add(controller.text);
-                              //   });
-                              // }
-                              // print(poemLines);
+                              for (var controller in textControllers) {
+                                setState(() {
+                                  reloadPoemLines.add(controller.text);
+                                });
+                              }
+                              setState(() {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                                totalTextfield = totalTextfield + 4;
+                                startingIndex = startingIndex + totalTextfield;
+                                comparisionIndex = comparisionIndex + 4;
+                                textFieldEnabledStates.addAll(enabledStates);
+                                textControllers = List.generate(totalTextfield,
+                                    (_) => TextEditingController());
+                                focusNodes = List.generate(
+                                    totalTextfield, (_) => FocusNode());
+                              });
+                              setState(() {
+                                for (int i = 0;
+                                    i < reloadPoemLines.length;
+                                    i++) {
+                                  textControllers[i].text = reloadPoemLines[i];
+                                }
+                                reloadPoemLines.clear();
+                              });
                             },
                           ),
                         ),
