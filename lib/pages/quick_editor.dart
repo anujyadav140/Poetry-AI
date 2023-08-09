@@ -47,6 +47,7 @@ class _QuickModeState extends State<QuickMode> {
   int startingIndex = 0;
   int comparisionIndex = 3;
   List<String> generatedPoemLines = [];
+  List<String> contextLines = [];
   late List<TextEditingController> textControllers;
 
   List<String> poemLines = [];
@@ -442,50 +443,84 @@ class _QuickModeState extends State<QuickMode> {
                                                                         .text;
                                                               });
                                                               setState(() {
+                                                                contextLines
+                                                                    .clear(); // Clear the previous context lines
+
+                                                                // Collect the last 4 lines before the given index
+                                                                int start =
+                                                                    index - 4 >=
+                                                                            0
+                                                                        ? index -
+                                                                            4
+                                                                        : 0;
+                                                                for (int i =
+                                                                        start;
+                                                                    i < index;
+                                                                    i++) {
+                                                                  contextLines.add(
+                                                                      poemLines[
+                                                                          i]);
+                                                                }
+
+                                                                // Collect the lines after the given index
+                                                                for (int i =
+                                                                        index +
+                                                                            1;
+                                                                    i <
+                                                                        poemLines
+                                                                            .length;
+                                                                    i++) {
+                                                                  contextLines.add(
+                                                                      poemLines[
+                                                                          i]);
+                                                                }
+                                                              });
+                                                              setState(() {
                                                                 isGenerationClicked =
                                                                     true;
                                                               });
-                                                              // print(
-                                                              //     previousLine);
-                                                              // print(poemLines);
-                                                              // PoetryTools()
-                                                              //     .generateQuickLines(
-                                                              //         previousLine,
-                                                              //         poemLines)
-                                                              //     .then(
-                                                              //         (value) {
-                                                              //   generatedPoemLines =
-                                                              //       [];
-                                                              //   print(value);
-                                                              //   List<String>
-                                                              //       responseLines =
-                                                              //       value.split(
-                                                              //           '\n');
-                                                              //   for (String line
-                                                              //       in responseLines) {
-                                                              //     // Trim the line to remove leading and trailing whitespace
-                                                              //     String
-                                                              //         trimmedLine =
-                                                              //         line.trim();
+                                                              print(
+                                                                  previousLine);
+                                                              print(
+                                                                  contextLines);
+                                                              PoetryTools()
+                                                                  .generateQuickLines(
+                                                                      previousLine,
+                                                                      contextLines)
+                                                                  .then(
+                                                                      (value) {
+                                                                generatedPoemLines =
+                                                                    [];
+                                                                print(value);
+                                                                List<String>
+                                                                    responseLines =
+                                                                    value.split(
+                                                                        '\n');
+                                                                for (String line
+                                                                    in responseLines) {
+                                                                  // Trim the line to remove leading and trailing whitespace
+                                                                  String
+                                                                      trimmedLine =
+                                                                      line.trim();
 
-                                                              //     // Check if the trimmed line is not empty and not just a colon
-                                                              //     if (trimmedLine
-                                                              //             .isNotEmpty &&
-                                                              //         trimmedLine !=
-                                                              //             ":" &&
-                                                              //         trimmedLine !=
-                                                              //             "-" &&
-                                                              //         trimmedLine !=
-                                                              //             ".") {
-                                                              //       setState(
-                                                              //           () {
-                                                              //         generatedPoemLines
-                                                              //             .add(
-                                                              //                 trimmedLine);
-                                                              //       });
-                                                              // }
-                                                              // }
-                                                              // });
+                                                                  // Check if the trimmed line is not empty and not just a colon
+                                                                  if (trimmedLine
+                                                                          .isNotEmpty &&
+                                                                      trimmedLine !=
+                                                                          ":" &&
+                                                                      trimmedLine !=
+                                                                          "-" &&
+                                                                      trimmedLine !=
+                                                                          ".") {
+                                                                    setState(
+                                                                        () {
+                                                                      generatedPoemLines
+                                                                          .add(
+                                                                              trimmedLine);
+                                                                    });
+                                                                  }
+                                                                }
+                                                              });
                                                             },
                                                           )
                                                               .animate(
@@ -617,8 +652,8 @@ class _QuickModeState extends State<QuickMode> {
                                                             .animate()
                                                             .slideX(
                                                                 duration:
-                                                                    5000.ms)
-                                                            .shimmer(),
+                                                                    500.ms)
+                                                            .shimmer(duration: 5000.ms),
                                                   ),
                                                 )
                                               ],
