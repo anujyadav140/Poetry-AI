@@ -457,9 +457,13 @@ class _QuickModeState extends State<QuickMode> {
                                                                         start;
                                                                     i < index;
                                                                     i++) {
-                                                                  contextLines.add(
-                                                                      poemLines[
-                                                                          i]);
+                                                                  if (poemLines[
+                                                                          i]
+                                                                      .isNotEmpty) {
+                                                                    contextLines.add(
+                                                                        poemLines[
+                                                                            i]);
+                                                                  }
                                                                 }
 
                                                                 // Collect the lines after the given index
@@ -470,9 +474,13 @@ class _QuickModeState extends State<QuickMode> {
                                                                         poemLines
                                                                             .length;
                                                                     i++) {
-                                                                  contextLines.add(
-                                                                      poemLines[
-                                                                          i]);
+                                                                  if (poemLines[
+                                                                          i]
+                                                                      .isNotEmpty) {
+                                                                    contextLines.add(
+                                                                        poemLines[
+                                                                            i]);
+                                                                  }
                                                                 }
                                                               });
                                                               setState(() {
@@ -653,7 +661,9 @@ class _QuickModeState extends State<QuickMode> {
                                                             .slideX(
                                                                 duration:
                                                                     500.ms)
-                                                            .shimmer(duration: 5000.ms),
+                                                            .shimmer(
+                                                                duration:
+                                                                    5000.ms),
                                                   ),
                                                 )
                                               ],
