@@ -40,6 +40,7 @@ class _QuickModeState extends State<QuickMode> {
   bool isGenerationClicked = false;
   bool finished = false;
   bool isSelected = false;
+  bool isAddAnotherStanza = false;
   int selectedChipIndex = -1;
   String putLinesInTextfield = "";
   int totalTextfield = 4;
@@ -277,7 +278,10 @@ class _QuickModeState extends State<QuickMode> {
                                                     .width,
                                                 alignment: Alignment.topLeft,
                                                 padding: const EdgeInsets.only(
-                                                    left: 20.0, right: 20.0),
+                                                    left: 20.0,
+                                                    right: 20.0,
+                                                    top: 0,
+                                                    bottom: 0),
                                                 child: Row(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
@@ -403,6 +407,10 @@ class _QuickModeState extends State<QuickMode> {
                                                                     .white),
                                                             onPressed: () {
                                                               setState(() {
+                                                                generatedPoemLines
+                                                                    .clear();
+                                                              });
+                                                              setState(() {
                                                                 isSelected =
                                                                     false;
                                                                 selectedChipIndex =
@@ -524,8 +532,30 @@ class _QuickModeState extends State<QuickMode> {
                                                                 fontFamily: GoogleFonts
                                                                         .ebGaramond()
                                                                     .fontFamily),
-                                                      )
-                                                    : Container(),
+                                                      ).animate().fadeIn(
+                                                        duration: 800.ms,
+                                                        curve: Curves.easeIn)
+                                                    : Container(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .only(
+                                                                left: 20.0),
+                                                        child: Text(
+                                                          "Write poetry & generate suggestions ...",
+                                                          style: Theme.of(
+                                                                  context)
+                                                              .textTheme
+                                                              .headlineSmall
+                                                              ?.copyWith(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontFamily: GoogleFonts
+                                                                          .ebGaramond()
+                                                                      .fontFamily),
+                                                        ),
+                                                      ).animate().fadeIn(
+                                                        duration: 800.ms,
+                                                        curve: Curves.easeIn),
                                                 Expanded(
                                                   child: Scrollbar(
                                                     child: generatedPoemLines
@@ -533,6 +563,7 @@ class _QuickModeState extends State<QuickMode> {
                                                             isGenerationClicked
                                                         ? const SizedBox(
                                                             width: 200,
+                                                            height: 15,
                                                             child:
                                                                 CircularProgressIndicator(
                                                               color:
@@ -582,7 +613,12 @@ class _QuickModeState extends State<QuickMode> {
                                                                 },
                                                               );
                                                             },
-                                                          ),
+                                                          )
+                                                            .animate()
+                                                            .slideX(
+                                                                duration:
+                                                                    5000.ms)
+                                                            .shimmer(),
                                                   ),
                                                 )
                                               ],
@@ -639,6 +675,9 @@ class _QuickModeState extends State<QuickMode> {
                             tooltip: "Add Another Stanza",
                             backgroundColor: Colors.white,
                             onPressed: () {
+                              setState(() {
+                                isAddAnotherStanza = true;
+                              });
                               for (var controller in textControllers) {
                                 setState(() {
                                   reloadPoemLines.add(controller.text);
