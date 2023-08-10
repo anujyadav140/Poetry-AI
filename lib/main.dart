@@ -54,11 +54,52 @@ class MyApp extends StatelessWidget {
         // primarySwatch: Colors.green,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      // home: const AuthGate(),
+      home: const AuthGate(),
       // home: const QuickMode(),
-      home: const TemplateForm(),
+      // home: const TemplateForm(),
     );
   }
 }
 
-                    
+                               // WaveWidget(
+                                                                  //   config:
+                                                                  //       CustomConfig(
+                                                                  //     gradients: [
+                                                                  //       [
+                                                                  //         Colors
+                                                                  //             .blue,
+                                                                  //         Colors
+                                                                  //             .blue
+                                                                  //             .shade200
+                                                                  //       ],
+                                                                  //       [
+                                                                  //         Colors
+                                                                  //             .blue
+                                                                  //             .shade200,
+                                                                  //         Colors
+                                                                  //             .blue
+                                                                  //             .shade100
+                                                                  //       ],
+                                                                  //     ],
+                                                                  //     durations: [
+                                                                  //       3500,
+                                                                  //       5000
+                                                                  //     ],
+                                                                  //     heightPercentages: [
+                                                                  //       0.05,
+                                                                  //       0.1
+                                                                  //     ],
+                                                                  //   ),
+                                                                  //   waveAmplitude:
+                                                                  //       0,
+                                                                  //   backgroundColor:
+                                                                  //       Colors
+                                                                  //           .transparent,
+                                                                  //   size: Size(
+                                                                  //       double
+                                                                  //           .infinity,
+                                                                  //       80.0),
+                                                                  // ),
+                                                                  // SizedBox(
+                                                                  //     height:
+                                                                  //         16.0),

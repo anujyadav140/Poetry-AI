@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class TemplateForm extends StatefulWidget {
-  const TemplateForm({super.key});
-
+  const TemplateForm({super.key, required this.description});
+  final String description;
   @override
   State<TemplateForm> createState() => _TemplateFormState();
 }

@@ -5,6 +5,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:poetry_ai/components/color_palette.dart';
+import 'package:poetry_ai/components/form.dart';
 import 'package:poetry_ai/components/template_card.dart';
 import 'package:poetry_ai/pages/editor.dart';
 import 'package:poetry_ai/services/authentication/auth_service.dart';
@@ -51,6 +52,7 @@ class _HomePageState extends State<HomePage>
   List<String> icons = [""];
   int selectedTemplateIndex = -1;
   List<dynamic>? existingPoemList = [];
+  bool isCustomTemplate = false;
   @override
   void initState() {
     currentPoemIndex = poemListIndexBox.get('poemIndex') ?? -1;
@@ -175,26 +177,28 @@ class _HomePageState extends State<HomePage>
     }
 
     void onTapTemplate(int index) {
+      print(index);
+      print(selectedTemplateIndex);
       setState(() {
         if (selectedTemplateIndex == index) {
-          selectedTemplateIndex = -3;
+          selectedTemplateIndex = -2;
           isTemplateClicked = false;
+          isCustomTemplate = false;
         } else {
           selectedTemplateIndex = index;
           isTemplateClicked = true;
-
-          if (index == -2) {
-            print("Index -2");
-          } else if (index == -1) {
-            print("index -1");
-          } else {
-            poetryTypeName = PoetryTypesData.getPoetryTypeByName(
-                PoetryTypesData.poetryTypes[index].name);
-            setPoemType = PoetryTypesData.poetryTypes[index].name;
-            setPoemMeter = PoetryTypesData.poetryTypes[index].metre;
-            features = PoetryTypesData.getFeaturesByName(poetryTypeName.name);
-            icons = PoetryTypesData.getIconsByName(poetryTypeName.name);
-          }
+          isCustomTemplate = true;
+        }
+        if (index == -1) {
+          isCustomTemplate = true;
+        } else {
+          isCustomTemplate = false;
+          poetryTypeName = PoetryTypesData.getPoetryTypeByName(
+              PoetryTypesData.poetryTypes[index].name);
+          setPoemType = PoetryTypesData.poetryTypes[index].name;
+          setPoemMeter = PoetryTypesData.poetryTypes[index].metre;
+          features = PoetryTypesData.getFeaturesByName(poetryTypeName.name);
+          icons = PoetryTypesData.getIconsByName(poetryTypeName.name);
         }
       });
     }
@@ -248,50 +252,50 @@ class _HomePageState extends State<HomePage>
       ),
       backgroundColor: ColorTheme.accent(themeValue),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(children: [
+        child: Column(
+          children: [
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(children: [
+                Template(
+                  templateBoxColor: ColorTheme.primary(themeValue),
+                  templateSplashColor: ColorTheme.secondary(themeValue),
+                  templateFontColor: ColorTheme.accent(themeValue),
+                  templateUnderlineColor: ColorTheme.accent(themeValue),
+                  name: "Quick Poetry",
+                  description:
+                      "Write poetry very quickly, just select a poem template; Decide what kind of poem you would like to write. Write poetry Verse By Verse and get suggestions by AI.",
+                  onTap: () => onTapTemplate(-1),
+                  isSelected: selectedTemplateIndex == -1,
+                ),
+                // Template(
+                //   templateBoxColor: ColorTheme.primary(themeValue),
+                //   templateSplashColor: ColorTheme.secondary(themeValue),
+                //   templateFontColor: ColorTheme.accent(themeValue),
+                //   templateUnderlineColor: ColorTheme.accent(themeValue),
+                //   name: "Custom Poetry",
+                //   description:
+                //       "Design your own custom template to follow and write your own poem using a word editor. Use AI tools to get the most out of the experience.",
+                //   onTap: () => onTapTemplate(-1),
+                //   isSelected: selectedTemplateIndex == -1,
+                // ),
+                for (int i = 0; i < PoetryTypesData.poetryTypes.length; i++)
                   Template(
                     templateBoxColor: ColorTheme.primary(themeValue),
                     templateSplashColor: ColorTheme.secondary(themeValue),
-                    templateFontColor: ColorTheme.accent(themeValue),
                     templateUnderlineColor: ColorTheme.accent(themeValue),
-                    name: "Quick Poetry",
-                    description:
-                        "Write poetry very quickly, just select a poem template; Decide what kind of poem you would like to write. Write poetry Verse By Verse and get suggestions by AI.",
-                    onTap: () => onTapTemplate(-2),
-                    isSelected: selectedTemplateIndex == -2,
+                    templateFontColor: ColorTheme.text(themeValue),
+                    name: PoetryTypesData.poetryTypes[i].name,
+                    description: PoetryTypesData.poetryTypes[i].description,
+                    onTap: () => onTapTemplate(i),
+                    isSelected: selectedTemplateIndex == i,
                   ),
-                  Template(
-                    templateBoxColor: ColorTheme.primary(themeValue),
-                    templateSplashColor: ColorTheme.secondary(themeValue),
-                    templateFontColor: ColorTheme.accent(themeValue),
-                    templateUnderlineColor: ColorTheme.accent(themeValue),
-                    name: "Custom Poetry",
-                    description:
-                        "Design your own custom template to follow and write your own poem using a word editor. Use AI tools to get the most out of the experience.",
-                    onTap: () => onTapTemplate(-1),
-                    isSelected: selectedTemplateIndex == -1,
-                  ),
-                  for (int i = 0; i < PoetryTypesData.poetryTypes.length; i++)
-                    Template(
-                      templateBoxColor: ColorTheme.primary(themeValue),
-                      templateSplashColor: ColorTheme.secondary(themeValue),
-                      templateUnderlineColor: ColorTheme.accent(themeValue),
-                      templateFontColor: ColorTheme.text(themeValue),
-                      name: PoetryTypesData.poetryTypes[i].name,
-                      description: PoetryTypesData.poetryTypes[i].description,
-                      onTap: () => onTapTemplate(i),
-                      isSelected: selectedTemplateIndex == i,
-                    ),
-                ]),
-              ),
-              SizedBox(
+              ]),
+            ),
+            Expanded(
+              child: SizedBox(
                 width: double.infinity,
-                height: MediaQuery.of(context).size.height * 0.7,
+                height: MediaQuery.of(context).size.height,
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.only(
@@ -307,15 +311,21 @@ class _HomePageState extends State<HomePage>
                       ),
                     ],
                   ),
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(25.0),
-                      topRight: Radius.circular(25.0),
-                    ),
-                    child: ClipPath(
-                      child: Container(
-                        color: ColorTheme.secondary(themeValue),
-                        child: isTemplateClicked
+                  // child: ClipRRect(
+                  //   borderRadius: const BorderRadius.only(
+                  //     topLeft: Radius.circular(25.0),
+                  //     topRight: Radius.circular(25.0),
+                  //   ),
+                  //   child: ClipPath(
+                  child: Container(
+                    color: ColorTheme.secondary(themeValue),
+                    child: isCustomTemplate
+                        ? const Scrollbar(
+                            child: SingleChildScrollView(
+                                child:
+                                    TemplateForm(description: "description")),
+                          )
+                        : isTemplateClicked
                             ? SizedBox(
                                 width: MediaQuery.of(context).size.width,
                                 child: Column(
@@ -512,48 +522,6 @@ class _HomePageState extends State<HomePage>
                                                                     MainAxisSize
                                                                         .min,
                                                                 children: [
-                                                                  // WaveWidget(
-                                                                  //   config:
-                                                                  //       CustomConfig(
-                                                                  //     gradients: [
-                                                                  //       [
-                                                                  //         Colors
-                                                                  //             .blue,
-                                                                  //         Colors
-                                                                  //             .blue
-                                                                  //             .shade200
-                                                                  //       ],
-                                                                  //       [
-                                                                  //         Colors
-                                                                  //             .blue
-                                                                  //             .shade200,
-                                                                  //         Colors
-                                                                  //             .blue
-                                                                  //             .shade100
-                                                                  //       ],
-                                                                  //     ],
-                                                                  //     durations: [
-                                                                  //       3500,
-                                                                  //       5000
-                                                                  //     ],
-                                                                  //     heightPercentages: [
-                                                                  //       0.05,
-                                                                  //       0.1
-                                                                  //     ],
-                                                                  //   ),
-                                                                  //   waveAmplitude:
-                                                                  //       0,
-                                                                  //   backgroundColor:
-                                                                  //       Colors
-                                                                  //           .transparent,
-                                                                  //   size: Size(
-                                                                  //       double
-                                                                  //           .infinity,
-                                                                  //       80.0),
-                                                                  // ),
-                                                                  // SizedBox(
-                                                                  //     height:
-                                                                  //         16.0),
                                                                   TextField(
                                                                     onChanged:
                                                                         (value) {
@@ -695,28 +663,28 @@ class _HomePageState extends State<HomePage>
                                       ),
                                     ],
                                   ),
-                      ),
-                    ),
                   ),
+                  //   ),
+                  // ),
                 ),
               ),
-              AnimatedBuilder(
-                animation: _controller,
-                builder: (context, child) {
-                  return ClipPath(
-                    clipper: DrawClip(_controller.value),
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 60,
-                      child: Container(
-                        color: ColorTheme.secondary(themeValue),
-                      ),
-                    ),
-                  );
-                },
-              )
-            ],
-          ),
+            ),
+            // AnimatedBuilder(
+            //   animation: _controller,
+            //   builder: (context, child) {
+            //     return ClipPath(
+            //       clipper: DrawClip(_controller.value),
+            //       child: SizedBox(
+            //         width: double.infinity,
+            //         height: 60,
+            //         child: Container(
+            //           color: ColorTheme.secondary(themeValue),
+            //         ),
+            //       ),
+            //     );
+            //   },
+            // )
+          ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
