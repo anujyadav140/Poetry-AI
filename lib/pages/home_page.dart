@@ -53,6 +53,11 @@ class _HomePageState extends State<HomePage>
   int selectedTemplateIndex = -1;
   List<dynamic>? existingPoemList = [];
   bool isCustomTemplate = false;
+  List<String> customPoetryMode = ["Quick Poetry", "Custom Poetry"];
+  List<String> customPoetryDescription = [
+    "Write poetry very quickly, just select a poem template; Decide what kind of poem you would like to write. Write poetry Verse By Verse and get suggestions by AI.",
+    "Design your own custom template to follow and write your own poem using a word editor. Use AI tools to get the most out of the experience."
+  ];
   @override
   void initState() {
     currentPoemIndex = poemListIndexBox.get('poemIndex') ?? -1;
@@ -176,30 +181,40 @@ class _HomePageState extends State<HomePage>
       Navigator.pop(context);
     }
 
+    void onTapCustomTemplate(int index) {
+      print(index);
+      print(selectedTemplateIndex);
+      setState(() {
+        isTemplateClicked = false;
+        if (selectedTemplateIndex == index) {
+          selectedTemplateIndex = -1;
+          isCustomTemplate = false;
+        } else {
+          selectedTemplateIndex = index;
+          isCustomTemplate = true;
+        }
+      });
+    }
+
     void onTapTemplate(int index) {
       print(index);
       print(selectedTemplateIndex);
       setState(() {
+        isCustomTemplate = false;
         if (selectedTemplateIndex == index) {
-          selectedTemplateIndex = -2;
+          selectedTemplateIndex = -1;
           isTemplateClicked = false;
-          isCustomTemplate = false;
         } else {
           selectedTemplateIndex = index;
           isTemplateClicked = true;
-          isCustomTemplate = true;
         }
-        if (index == -1) {
-          isCustomTemplate = true;
-        } else {
-          isCustomTemplate = false;
-          poetryTypeName = PoetryTypesData.getPoetryTypeByName(
-              PoetryTypesData.poetryTypes[index].name);
-          setPoemType = PoetryTypesData.poetryTypes[index].name;
-          setPoemMeter = PoetryTypesData.poetryTypes[index].metre;
-          features = PoetryTypesData.getFeaturesByName(poetryTypeName.name);
-          icons = PoetryTypesData.getIconsByName(poetryTypeName.name);
-        }
+        isCustomTemplate = false;
+        poetryTypeName = PoetryTypesData.getPoetryTypeByName(
+            PoetryTypesData.poetryTypes[index].name);
+        setPoemType = PoetryTypesData.poetryTypes[index].name;
+        setPoemMeter = PoetryTypesData.poetryTypes[index].metre;
+        features = PoetryTypesData.getFeaturesByName(poetryTypeName.name);
+        icons = PoetryTypesData.getIconsByName(poetryTypeName.name);
       });
     }
 
@@ -257,28 +272,17 @@ class _HomePageState extends State<HomePage>
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(children: [
-                Template(
-                  templateBoxColor: ColorTheme.primary(themeValue),
-                  templateSplashColor: ColorTheme.secondary(themeValue),
-                  templateFontColor: ColorTheme.accent(themeValue),
-                  templateUnderlineColor: ColorTheme.accent(themeValue),
-                  name: "Quick Poetry",
-                  description:
-                      "Write poetry very quickly, just select a poem template; Decide what kind of poem you would like to write. Write poetry Verse By Verse and get suggestions by AI.",
-                  onTap: () => onTapTemplate(-1),
-                  isSelected: selectedTemplateIndex == -1,
-                ),
-                // Template(
-                //   templateBoxColor: ColorTheme.primary(themeValue),
-                //   templateSplashColor: ColorTheme.secondary(themeValue),
-                //   templateFontColor: ColorTheme.accent(themeValue),
-                //   templateUnderlineColor: ColorTheme.accent(themeValue),
-                //   name: "Custom Poetry",
-                //   description:
-                //       "Design your own custom template to follow and write your own poem using a word editor. Use AI tools to get the most out of the experience.",
-                //   onTap: () => onTapTemplate(-1),
-                //   isSelected: selectedTemplateIndex == -1,
-                // ),
+                for (int i = 0; i < customPoetryMode.length; i++)
+                  Template(
+                    templateBoxColor: ColorTheme.primary(themeValue),
+                    templateSplashColor: ColorTheme.secondary(themeValue),
+                    templateFontColor: ColorTheme.accent(themeValue),
+                    templateUnderlineColor: ColorTheme.accent(themeValue),
+                    name: customPoetryMode[i],
+                    description: customPoetryDescription[i],
+                    onTap: () => onTapCustomTemplate(i),
+                    isSelected: selectedTemplateIndex == i,
+                  ),
                 for (int i = 0; i < PoetryTypesData.poetryTypes.length; i++)
                   Template(
                     templateBoxColor: ColorTheme.primary(themeValue),
@@ -311,19 +315,16 @@ class _HomePageState extends State<HomePage>
                       ),
                     ],
                   ),
-                  // child: ClipRRect(
-                  //   borderRadius: const BorderRadius.only(
-                  //     topLeft: Radius.circular(25.0),
-                  //     topRight: Radius.circular(25.0),
-                  //   ),
-                  //   child: ClipPath(
                   child: Container(
                     color: ColorTheme.secondary(themeValue),
                     child: isCustomTemplate
-                        ? const Scrollbar(
-                            child: SingleChildScrollView(
-                                child:
-                                    TemplateForm(description: "description")),
+                        ? Visibility(
+                            visible: isCustomTemplate,
+                            child: const Scrollbar(
+                              child: SingleChildScrollView(
+                                  child:
+                                      TemplateForm(description: "description")),
+                            ),
                           )
                         : isTemplateClicked
                             ? SizedBox(

@@ -103,3 +103,15 @@ class MyApp extends StatelessWidget {
                                                                   // SizedBox(
                                                                   //     height:
                                                                   //         16.0),
+
+                                                                     // Template(
+                //   templateBoxColor: ColorTheme.primary(themeValue),
+                //   templateSplashColor: ColorTheme.secondary(themeValue),
+                //   templateFontColor: ColorTheme.accent(themeValue),
+                //   templateUnderlineColor: ColorTheme.accent(themeValue),
+                //   name: "Custom Poetry",
+                //   description:
+                //       "Design your own custom template to follow and write your own poem using a word editor. Use AI tools to get the most out of the experience.",
+                //   onTap: () => onTapTemplate(-1),
+                //   isSelected: selectedTemplateIndex == -1,
+                // ),
