@@ -221,12 +221,9 @@ class Template extends StatelessWidget {
                     ),
                     Text(
                       name,
-                      style: GoogleFonts.ebGaramond(
-                        textStyle: TextStyle(
-                            color: templateFontColor,
-                            letterSpacing: .5,
-                            fontSize: 19),
-                      ),
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          color: Colors.black,
+                          fontFamily: GoogleFonts.ebGaramond().fontFamily),
                     ),
                   ],
                 ),
@@ -241,7 +238,11 @@ class Template extends StatelessWidget {
 }
 
 double calculateContainerWidth(String text, BuildContext context) {
-  final textSpan = TextSpan(text: text, style: const TextStyle(fontSize: 21));
+  final textSpan = TextSpan(
+    text: text,
+    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+        color: Colors.black, fontFamily: GoogleFonts.ebGaramond().fontFamily),
+  );
   final textPainter = TextPainter(
     text: textSpan,
     textDirection: TextDirection.ltr,

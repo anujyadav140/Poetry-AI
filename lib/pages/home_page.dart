@@ -177,17 +177,24 @@ class _HomePageState extends State<HomePage>
     void onTapTemplate(int index) {
       setState(() {
         if (selectedTemplateIndex == index) {
-          selectedTemplateIndex = -1;
+          selectedTemplateIndex = -3;
           isTemplateClicked = false;
         } else {
           selectedTemplateIndex = index;
           isTemplateClicked = true;
-          poetryTypeName = PoetryTypesData.getPoetryTypeByName(
-              PoetryTypesData.poetryTypes[index].name);
-          setPoemType = PoetryTypesData.poetryTypes[index].name;
-          setPoemMeter = PoetryTypesData.poetryTypes[index].metre;
-          features = PoetryTypesData.getFeaturesByName(poetryTypeName.name);
-          icons = PoetryTypesData.getIconsByName(poetryTypeName.name);
+
+          if (index == -2) {
+            print("Index -2");
+          } else if (index == -1) {
+            print("index -1");
+          } else {
+            poetryTypeName = PoetryTypesData.getPoetryTypeByName(
+                PoetryTypesData.poetryTypes[index].name);
+            setPoemType = PoetryTypesData.poetryTypes[index].name;
+            setPoemMeter = PoetryTypesData.poetryTypes[index].metre;
+            features = PoetryTypesData.getFeaturesByName(poetryTypeName.name);
+            icons = PoetryTypesData.getIconsByName(poetryTypeName.name);
+          }
         }
       });
     }
@@ -247,6 +254,28 @@ class _HomePageState extends State<HomePage>
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(children: [
+                  Template(
+                    templateBoxColor: ColorTheme.primary(themeValue),
+                    templateSplashColor: ColorTheme.secondary(themeValue),
+                    templateFontColor: ColorTheme.accent(themeValue),
+                    templateUnderlineColor: ColorTheme.accent(themeValue),
+                    name: "Quick Poetry",
+                    description:
+                        "Write poetry very quickly, just select a poem template; Decide what kind of poem you would like to write. Write poetry Verse By Verse and get suggestions by AI.",
+                    onTap: () => onTapTemplate(-2),
+                    isSelected: selectedTemplateIndex == -2,
+                  ),
+                  Template(
+                    templateBoxColor: ColorTheme.primary(themeValue),
+                    templateSplashColor: ColorTheme.secondary(themeValue),
+                    templateFontColor: ColorTheme.accent(themeValue),
+                    templateUnderlineColor: ColorTheme.accent(themeValue),
+                    name: "Custom Poetry",
+                    description:
+                        "Design your own custom template to follow and write your own poem using a word editor. Use AI tools to get the most out of the experience.",
+                    onTap: () => onTapTemplate(-1),
+                    isSelected: selectedTemplateIndex == -1,
+                  ),
                   for (int i = 0; i < PoetryTypesData.poetryTypes.length; i++)
                     Template(
                       templateBoxColor: ColorTheme.primary(themeValue),

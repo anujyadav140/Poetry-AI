@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:poetry_ai/components/form.dart';
 import 'package:poetry_ai/firebase_options.dart';
 import 'package:poetry_ai/pages/quick_editor.dart';
 import 'package:poetry_ai/services/authentication/auth_gate.dart';
@@ -54,38 +55,10 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       // home: const AuthGate(),
-      home: const QuickMode(),
+      // home: const QuickMode(),
+      home: const TemplateForm(),
     );
   }
 }
-                                      //  Positioned(
-                                      //     right: 0,
-                                      //     bottom: 25,
-                                      //     child: IconButton(
-                                      //       icon: const Icon(
-                                      //           Icons.replay_outlined,
-                                      //           color: Colors.white),
-                                      //       onPressed: isCurrentFieldEnabled
-                                      //           ? () {
-                                      //               print(
-                                      //                   "Button pressed for text field $index");
-                                      //             }
-                                      //           : null,
-                                      //     ),
-                                      //   )
-                              // poemLines.clear();
-                              // for (var controller in textControllers) {
-                              //   setState(() {
-                              //     poemLines.add(controller.text);
-                              //   });
-                              // }
-                              // print(poemLines);
-                               // poemLines.clear();
-                              // for (var controller in textControllers) {
-                              //   setState(() {
-                              //     poemLines.add(controller.text);
-                              //   });
-                              // }
-                              // print(poemLines);
 
                     
