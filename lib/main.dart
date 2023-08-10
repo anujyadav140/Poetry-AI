@@ -19,6 +19,7 @@ void main() async {
   var templateBoolBox = await Hive.openBox('myIsTemplateClickedBox');
   var poemListBox = await Hive.openBox('myPoemBox');
   var poemListIndexBox = await Hive.openBox('myPoemListIndexBox');
+  var customPoemListBox = await Hive.openBox('myCustomPoemBox');
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);

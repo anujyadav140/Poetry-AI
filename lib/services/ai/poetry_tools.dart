@@ -147,26 +147,47 @@ class PoetryTools {
     return res;
   }
 
-  Future<String> generateQuickLines(
-      String previousLine, List<String> lineContext) async {
+  Future<String> generateQuickLines(String previousLine,
+      List<String> lineContext, List<String> features) async {
     // , List<String> quickFeatures
     final openai = OpenAI(apiKey: dotenv.env['OPENAI_API_KEY'], temperature: 1);
+    final String form = features[0];
+    final String syllables = features[1];
+    final String rhyme = features[2];
     const multipleMetreFormatInput = PromptTemplate(
-      inputVariables: {'previousLine', 'lineContext'},
+      inputVariables: {
+        'previousLine',
+        'lineContext',
+        'form',
+        'syllables',
+        'rhyme'
+      },
+      // You are a helpful AI poet who helps the user by suggesting multiple poetry lines- verse by verse,
+      //  that can come after the previous line, this is the "{previousLine}" and these are the other lines in the poetry {lineContext}
+      //  suggest multiple, different lines that can come after the previous line while fitting the whole context and intention
+      //  of the poetry. Make sure the form is {form}, the syllables are {syllables} and the rhyme scheme is {rhyme}.
+      //  return only 5 lines- without labelling or numbering them
       template:
-          '''You are a helpful AI poet who helps the user by suggesting multiple poetry lines- verse by verse,
-       that can come after the previous line, this is the "{previousLine}" and these are the other lines in the poetry {lineContext}
-       suggest multiple, different lines that can come after the previous line while fitting the whole context and intention
-       of the poetry, return only 5 lines- without labelling or numbering them''',
+          '''You are a helpful AI poet who helps the user by suggesting poetry lines that can come after
+      the previous line, this is the previous line "{previousLine}" in the poetry: "{lineContext}" make sure the suggest
+      lines are in {form} form and the number of syllables of the lines are only {syllables} you have to make . 
+      Return only 5 lines-  without labelling or numbering them''',
     );
-    print(multipleMetreFormatInput
-        .format({'previousLine': previousLine, 'lineContext': lineContext}));
+    print(multipleMetreFormatInput.format({
+      'previousLine': previousLine,
+      'lineContext': lineContext,
+      'form': form,
+      'syllables': syllables,
+      'rhyme': rhyme
+    }));
     final chain = LLMChain(llm: openai, prompt: multipleMetreFormatInput);
     final res = await chain.run({
       'previousLine': previousLine,
       'lineContext': lineContext,
+      'form': form,
+      'syllables': syllables,
+      'rhyme': rhyme
     });
-    // print(res);
     return res;
   }
 

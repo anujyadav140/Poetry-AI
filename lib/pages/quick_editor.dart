@@ -9,8 +9,8 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:poetry_ai/services/ai/poetry_tools.dart';
 
 class QuickMode extends StatefulWidget {
-  const QuickMode({super.key});
-
+  const QuickMode({super.key, required this.features});
+  final List<String> features;
   @override
   State<QuickMode> createState() => _QuickModeState();
 }
@@ -55,6 +55,7 @@ class _QuickModeState extends State<QuickMode> {
   List<String> reloadPoemLines = [];
   @override
   void initState() {
+    print(widget.features);
     textControllers = List.generate(4, (_) => TextEditingController());
     focusNodes = List.generate(4, (_) => FocusNode());
     super.initState();
@@ -204,7 +205,7 @@ class _QuickModeState extends State<QuickMode> {
                                 alignment: Alignment.topLeft,
                                 padding: const EdgeInsets.only(left: 20.0),
                                 child: Text(
-                                  "Quatrain, 9 syllable count, ABAB rhyme pattern",
+                                  "${widget.features[0]}, ${widget.features[1]} syllable count, ${widget.features[2]}",
                                   style: Theme.of(context)
                                       .textTheme
                                       .titleSmall
@@ -509,7 +510,9 @@ class _QuickModeState extends State<QuickMode> {
                                                               PoetryTools()
                                                                   .generateQuickLines(
                                                                       previousLine,
-                                                                      contextLines)
+                                                                      contextLines,
+                                                                      widget
+                                                                          .features)
                                                                   .then(
                                                                       (value) {
                                                                 generatedPoemLines =

@@ -76,6 +76,7 @@ class _PoetryEditorState extends State<PoetryEditor>
   double _initialDragOffset = 0.0;
   double _minChildSize = 0.3;
 
+  List<String> bookmarks = [];
   @override
   void initState() {
     _animationController = AnimationController(
@@ -94,6 +95,7 @@ class _PoetryEditorState extends State<PoetryEditor>
     print(poetryMetre);
     poetryFeatures = poemData['features'];
     String? poetryType = poemData['type'] as String;
+    bookmarks = poemData['bookmarks'] as List<String>;
     _aiTools = [
       [
         1,
@@ -751,26 +753,28 @@ class _PoetryEditorState extends State<PoetryEditor>
         floatingActionButton: showBookmarkModal
             ? Visibility(
                 visible: reachedTheBottom,
-                child: FloatingActionButton.small(
-                  backgroundColor: widget.editorAppbarColor,
-                  child: Icon(
-                    Icons.arrow_downward,
-                    color: widget.editorFontColor,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      scrollToBottomOfBookmark = true;
-                    });
-                    if (scrollToBottomOfBookmark) {
-                      _sheetScrollController.animateTo(
-                        _sheetScrollController.position.maxScrollExtent,
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                      );
-                      reachedTheBottom = false;
-                    }
-                  },
-                ),
+                child: bookmarks.isNotEmpty
+                    ? FloatingActionButton.small(
+                        backgroundColor: widget.editorAppbarColor,
+                        child: Icon(
+                          Icons.arrow_downward,
+                          color: widget.editorFontColor,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            scrollToBottomOfBookmark = true;
+                          });
+                          if (scrollToBottomOfBookmark) {
+                            _sheetScrollController.animateTo(
+                              _sheetScrollController.position.maxScrollExtent,
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeInOut,
+                            );
+                            reachedTheBottom = false;
+                          }
+                        },
+                      )
+                    : Container(),
               )
             : !isRhymeSelectedLines && !isConvertToMetre
                 ? Padding(
@@ -1163,15 +1167,18 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
   final poemListBox = Hive.box('myPoemBox');
   bool isClicked = false;
   List<String> bookmark = [];
+  // List<String> poemBookmarks = [];
   @override
   void initState() {
     var poemData = poemListBox.getAt(widget.poemIndex) as Map<dynamic, dynamic>;
+    // poemBookmarks = poemData['bookmarks'] as List<String>;
     bookmark = poemData['bookmarks'];
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (bookmark.isEmpty) {}
     void saveOrRemovePoem() {
       if (isClicked) {
         bookmark.removeLast();

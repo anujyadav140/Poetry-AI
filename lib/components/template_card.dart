@@ -108,8 +108,7 @@ class PoetryTypesData {
         'Couplet',
         'A couplet poem consists of two lines, making it a very short form of poetry. Since it comprises only two lines, a couplet can be as brief as just a few words or as long as a few sentences, depending on the poet\'s intention and the message they want to convey.',
         [
-          'Couplets in iambic pentameter are called heroic couplets',
-          'Can have a uniform meter or follow the meter of the overall poem.',
+          'Couplets in iambic pentameter are called heroic couplets, Can have a uniform meter or follow the meter of the overall poem.',
           'A Couplet consists of two lines but can also be combined into a multiple-line poem',
           'Typically rhymed, with various rhyme schemes possible; like AABB Or AA, BB, CC Or ABAB',
         ],

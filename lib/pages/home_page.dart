@@ -8,6 +8,7 @@ import 'package:poetry_ai/components/color_palette.dart';
 import 'package:poetry_ai/components/form.dart';
 import 'package:poetry_ai/components/template_card.dart';
 import 'package:poetry_ai/pages/editor.dart';
+import 'package:poetry_ai/pages/quick_editor.dart';
 import 'package:poetry_ai/services/authentication/auth_service.dart';
 import 'package:rive/rive.dart';
 import 'dart:math' as math;
@@ -33,6 +34,14 @@ class Poem {
       this.bookmarks);
 }
 
+class CustomPoem {
+  String form;
+  String syllables;
+  String rhymes;
+
+  CustomPoem(this.form, this.syllables, this.rhymes);
+}
+
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   int currentPoemIndex = -1;
@@ -45,12 +54,14 @@ class _HomePageState extends State<HomePage>
   final globalThemeBox = Hive.box('myThemeBox');
   final poemListBox = Hive.box('myPoemBox');
   final poemListIndexBox = Hive.box('myPoemListIndexBox');
+  final customPoemListBox = Hive.box('myCustomPoemBox');
   PoetryType poetryTypeName = PoetryType("", "", [""], [""], "");
   bool isTemplateClicked = false;
   bool isPoemListNotEmpty = true;
   List<String> features = [""];
   List<String> icons = [""];
-  int selectedTemplateIndex = -1;
+  int selectedCustomTemplateIndex = -1;
+  int selectedPredefinedTemplateIndex = -1;
   List<dynamic>? existingPoemList = [];
   bool isCustomTemplate = false;
   List<String> customPoetryMode = ["Quick Poetry", "Custom Poetry"];
@@ -58,6 +69,8 @@ class _HomePageState extends State<HomePage>
     "Write poetry very quickly, just select a poem template; Decide what kind of poem you would like to write. Write poetry Verse By Verse and get suggestions by AI.",
     "Design your own custom template to follow and write your own poem using a word editor. Use AI tools to get the most out of the experience."
   ];
+  String selectedDescription = "";
+  List<String> customPoetryTemplateSelection = ["Quartrain", "10", "ABAB"];
   @override
   void initState() {
     currentPoemIndex = poemListIndexBox.get('poemIndex') ?? -1;
@@ -124,6 +137,16 @@ class _HomePageState extends State<HomePage>
     });
   }
 
+  void setCustomPoemList(String poeticForm, String syllables, String rhymes) {
+    var customPoem = CustomPoem(poeticForm, syllables, rhymes);
+
+    customPoemListBox.add({
+      'form': customPoem.form,
+      'syllables': customPoem.syllables,
+      'rhymes': customPoem.rhymes,
+    });
+  }
+
   void showThemeDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -182,30 +205,33 @@ class _HomePageState extends State<HomePage>
     }
 
     void onTapCustomTemplate(int index) {
-      print(index);
-      print(selectedTemplateIndex);
       setState(() {
         isTemplateClicked = false;
-        if (selectedTemplateIndex == index) {
-          selectedTemplateIndex = -1;
+        if (selectedCustomTemplateIndex == index) {
+          selectedCustomTemplateIndex = -1;
           isCustomTemplate = false;
         } else {
-          selectedTemplateIndex = index;
+          selectedCustomTemplateIndex = index;
           isCustomTemplate = true;
+        }
+      });
+      setState(() {
+        if (index == 0) {
+          selectedDescription = customPoetryDescription[index];
+        } else if (index == 1) {
+          selectedDescription = customPoetryDescription[index];
         }
       });
     }
 
     void onTapTemplate(int index) {
-      print(index);
-      print(selectedTemplateIndex);
       setState(() {
         isCustomTemplate = false;
-        if (selectedTemplateIndex == index) {
-          selectedTemplateIndex = -1;
+        if (selectedPredefinedTemplateIndex == index) {
+          selectedPredefinedTemplateIndex = -1;
           isTemplateClicked = false;
         } else {
-          selectedTemplateIndex = index;
+          selectedPredefinedTemplateIndex = index;
           isTemplateClicked = true;
         }
         isCustomTemplate = false;
@@ -281,7 +307,7 @@ class _HomePageState extends State<HomePage>
                     name: customPoetryMode[i],
                     description: customPoetryDescription[i],
                     onTap: () => onTapCustomTemplate(i),
-                    isSelected: selectedTemplateIndex == i,
+                    isSelected: selectedCustomTemplateIndex == i,
                   ),
                 for (int i = 0; i < PoetryTypesData.poetryTypes.length; i++)
                   Template(
@@ -292,7 +318,7 @@ class _HomePageState extends State<HomePage>
                     name: PoetryTypesData.poetryTypes[i].name,
                     description: PoetryTypesData.poetryTypes[i].description,
                     onTap: () => onTapTemplate(i),
-                    isSelected: selectedTemplateIndex == i,
+                    isSelected: selectedPredefinedTemplateIndex == i,
                   ),
               ]),
             ),
@@ -320,10 +346,21 @@ class _HomePageState extends State<HomePage>
                     child: isCustomTemplate
                         ? Visibility(
                             visible: isCustomTemplate,
-                            child: const Scrollbar(
+                            child: Scrollbar(
                               child: SingleChildScrollView(
-                                  child:
-                                      TemplateForm(description: "description")),
+                                  child: TemplateForm(
+                                description: selectedDescription,
+                                onFormSubmit: (String poeticForm,
+                                    String syllables, String rhyme) {
+                                  customPoetryTemplateSelection.clear();
+                                  customPoetryTemplateSelection.insert(
+                                      0, poeticForm);
+                                  customPoetryTemplateSelection.insert(
+                                      1, syllables);
+                                  customPoetryTemplateSelection.insert(
+                                      2, rhyme);
+                                },
+                              )),
                             ),
                           )
                         : isTemplateClicked
@@ -341,29 +378,30 @@ class _HomePageState extends State<HomePage>
                                         children: [
                                           Text(
                                             poetryTypeName.description,
-                                            style: GoogleFonts.ebGaramond(
-                                              textStyle: TextStyle(
-                                                color:
-                                                    ColorTheme.text(themeValue),
-                                                letterSpacing: .5,
-                                                fontSize: 15,
-                                              ),
-                                            ),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleMedium
+                                                ?.copyWith(
+                                                    color: Colors.black,
+                                                    fontFamily:
+                                                        GoogleFonts.ebGaramond()
+                                                            .fontFamily),
                                           ),
                                           const SizedBox(
                                             height: 20,
                                           ),
                                           Text(
                                             "Features for ${poetryTypeName.name}:",
-                                            style: GoogleFonts.ebGaramond(
-                                              textStyle: TextStyle(
-                                                color:
-                                                    ColorTheme.text(themeValue),
-                                                letterSpacing: .5,
-                                                fontSize: 17,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleLarge
+                                                ?.copyWith(
+                                                    color: Colors.black,
+                                                    fontFamily:
+                                                        GoogleFonts.ebGaramond()
+                                                            .fontFamily,
+                                                    fontWeight:
+                                                        FontWeight.bold),
                                           ),
                                         ],
                                       ),
@@ -387,15 +425,14 @@ class _HomePageState extends State<HomePage>
                                                   ),
                                                   title: Text(
                                                     features[index],
-                                                    style:
-                                                        GoogleFonts.ebGaramond(
-                                                      textStyle: TextStyle(
-                                                        color: ColorTheme.text(
-                                                            themeValue),
-                                                        letterSpacing: .5,
-                                                        fontSize: 15,
-                                                      ),
-                                                    ),
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .titleMedium
+                                                        ?.copyWith(
+                                                            color: Colors.black,
+                                                            fontFamily: GoogleFonts
+                                                                    .ebGaramond()
+                                                                .fontFamily),
                                                   ),
                                                 ),
                                                 if (index !=
@@ -688,7 +725,13 @@ class _HomePageState extends State<HomePage>
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
+        label: Text(
+          "Add Poem",
+          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              color: Colors.black,
+              fontFamily: GoogleFonts.ebGaramond().fontFamily),
+        ),
         backgroundColor: ColorTheme.accent(themeValue),
         onPressed: () {
           if (isTemplateClicked) {
@@ -707,14 +750,42 @@ class _HomePageState extends State<HomePage>
                           editorPrimaryColor: ColorTheme.primary(themeValue),
                           poemIndex: newPoemIndex,
                         )));
+          } else if (isCustomTemplate) {
+            if (selectedCustomTemplateIndex == 0) {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => QuickMode(
+                            features: customPoetryTemplateSelection,
+                          )));
+            } else {
+              int newPoemIndex = currentPoemIndex + 1;
+              poemListIndexBox.put('poemIndex', newPoemIndex);
+              String poemType = customPoetryTemplateSelection[0];
+              String poemMeter =
+                  "${customPoetryTemplateSelection[0]} with ${customPoetryTemplateSelection[1]} syllables";
+              var poemTitle =
+                  "Custom Untitled-${poemListIndexBox.get('poemIndex')}  $poemType";
+              setPoemList(poemTitle, poemType, customPoetryTemplateSelection,
+                  "", poemMeter, []);
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => PoetryEditor(
+                            editorAppbarColor: ColorTheme.accent(themeValue),
+                            editorFontColor: ColorTheme.text(themeValue),
+                            editorPrimaryColor: ColorTheme.primary(themeValue),
+                            poemIndex: newPoemIndex,
+                          )));
+            }
           } else {
-            print("select a template!");
+            const snackBar = SnackBar(
+              content: Text('Select a template first!'),
+              duration: Duration(seconds: 2),
+            );
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
           }
         },
-        child: Icon(
-          Icons.add,
-          color: ColorTheme.text(themeValue),
-        ),
       ),
     );
   }
