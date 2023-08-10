@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -407,6 +407,10 @@ class _QuickModeState extends State<QuickMode> {
                                                                 color: Colors
                                                                     .white),
                                                             onPressed: () {
+                                                              FocusManager
+                                                                  .instance
+                                                                  .primaryFocus
+                                                                  ?.unfocus();
                                                               setState(() {
                                                                 generatedPoemLines
                                                                     .clear();
@@ -601,16 +605,12 @@ class _QuickModeState extends State<QuickMode> {
                                                     child: generatedPoemLines
                                                                 .isEmpty &&
                                                             isGenerationClicked
-                                                        ? const SizedBox(
-                                                            width: 200,
-                                                            height: 15,
-                                                            child:
-                                                                CircularProgressIndicator(
-                                                              color:
-                                                                  Colors.white,
-                                                              semanticsLabel:
-                                                                  "Loading ...",
-                                                            ))
+                                                        ? Lottie.asset(
+                                                            'assets/loading.json',
+                                                            width: 300,
+                                                            height: 200,
+                                                            fit: BoxFit.fill,
+                                                          )
                                                         : ListView.builder(
                                                             itemCount:
                                                                 generatedPoemLines
@@ -692,7 +692,9 @@ class _QuickModeState extends State<QuickMode> {
                   backgroundColor: const Color(0xFF303030),
                   child: const Icon(Icons.arrow_back,
                       size: 25, color: Colors.white),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
                 ),
               ),
               finished

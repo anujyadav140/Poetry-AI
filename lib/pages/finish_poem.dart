@@ -76,6 +76,10 @@ class _FinishPoemState extends State<FinishPoem> {
         backgroundColor: const Color(0xFF303030),
         appBar: AppBar(
           backgroundColor: const Color(0xFF303030),
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(25),
+          )),
           title: Text(
             "Save, Copy & Share",
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
