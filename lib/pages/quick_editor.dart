@@ -510,12 +510,13 @@ class _QuickModeState extends State<QuickMode> {
 
                                                                   if (trimmedLine
                                                                           .isNotEmpty &&
-                                                                      trimmedLine !=
-                                                                          ":" &&
-                                                                      trimmedLine !=
-                                                                          "-" &&
-                                                                      trimmedLine !=
-                                                                          ".") {
+                                                                      ![
+                                                                        ':',
+                                                                        '-',
+                                                                        '.',
+                                                                        '"'
+                                                                      ].contains(
+                                                                          trimmedLine)) {
                                                                     setState(
                                                                         () {
                                                                       generatedPoemLines
@@ -768,7 +769,13 @@ class _QuickModeState extends State<QuickMode> {
                             tooltip: "Finish",
                             backgroundColor: Colors.white,
                             onPressed: () {
-                              String poem = '''''';
+                              List<String> finishedPoemLines = [];
+                              for (var controller in textControllers) {
+                                setState(() {
+                                  finishedPoemLines.add(controller.text);
+                                });
+                              }
+                              String poem = finishedPoemLines.join('\n');
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
