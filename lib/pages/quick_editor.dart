@@ -412,6 +412,19 @@ class _QuickModeState extends State<QuickMode> {
                                                                   .primaryFocus
                                                                   ?.unfocus();
                                                               setState(() {
+                                                                if (index <
+                                                                        textFieldEnabledStates.length -
+                                                                            1 &&
+                                                                    !textFieldEnabledStates[
+                                                                        index +
+                                                                            1]) {
+                                                                  textFieldEnabledStates[
+                                                                          index +
+                                                                              1] =
+                                                                      true;
+                                                                }
+                                                              });
+                                                              setState(() {
                                                                 generatedPoemLines
                                                                     .clear();
                                                               });
