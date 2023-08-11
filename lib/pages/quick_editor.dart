@@ -636,8 +636,39 @@ class _QuickModeState extends State<QuickMode> {
                                                               isSelected =
                                                                   selectedChipIndex ==
                                                                       index;
-                                                              return ActionChip(
-                                                                avatar: Icon(
+                                                              // return ActionChip(
+                                                              //   avatar: Icon(
+                                                              //     isSelected
+                                                              //         ? Icons
+                                                              //             .favorite
+                                                              //         : Icons
+                                                              //             .favorite_border,
+                                                              //     color: isSelected
+                                                              //         ? Colors
+                                                              //             .red
+                                                              //         : null,
+                                                              //   ),
+                                                              //   label: Text(
+                                                              //       generatedPoemLines[
+                                                              //           index]),
+                                                              //   onPressed: () {
+                                                              //     setState(() {
+                                                              //       putLinesInTextfield =
+                                                              //           generatedPoemLines[
+                                                              //               index];
+                                                              //     });
+                                                              //     print(
+                                                              //         putLinesInTextfield);
+                                                              //     setState(() {
+                                                              //       selectedChipIndex =
+                                                              //           isSelected
+                                                              //               ? -1
+                                                              //               : index;
+                                                              //     });
+                                                              //   },
+                                                              // );
+                                                              return ListTile(
+                                                                leading: Icon(
                                                                   isSelected
                                                                       ? Icons
                                                                           .favorite
@@ -646,12 +677,22 @@ class _QuickModeState extends State<QuickMode> {
                                                                   color: isSelected
                                                                       ? Colors
                                                                           .red
-                                                                      : null,
+                                                                      : Colors.white,
                                                                 ),
-                                                                label: Text(
-                                                                    generatedPoemLines[
-                                                                        index]),
-                                                                onPressed: () {
+                                                                title: Text(
+                                                                  generatedPoemLines[
+                                                                      index],
+                                                                  style: Theme.of(
+                                                                          context)
+                                                                      .textTheme
+                                                                      .titleMedium
+                                                                      ?.copyWith(
+                                                                          color: Colors
+                                                                              .white,
+                                                                          fontFamily:
+                                                                              GoogleFonts.ebGaramond().fontFamily),
+                                                                ),
+                                                                onTap: () {
                                                                   setState(() {
                                                                     putLinesInTextfield =
                                                                         generatedPoemLines[
