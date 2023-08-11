@@ -581,16 +581,17 @@ class _PoetryEditorState extends State<PoetryEditor>
                                 SliverAppBar(
                                   actions: [
                                     IconButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            showBookmarkModal = false;
-                                            reachedTheBottom = true;
-                                          });
-                                        },
-                                        icon: const Icon(
-                                          Icons.close,
-                                          color: Colors.black,
-                                        ))
+                                      onPressed: () {
+                                        setState(() {
+                                          showBookmarkModal = false;
+                                          reachedTheBottom = true;
+                                        });
+                                      },
+                                      icon: const Icon(
+                                        Icons.close,
+                                        color: Colors.black,
+                                      ),
+                                    )
                                   ],
                                   leading: const Icon(
                                     Icons.bookmark_added,
@@ -612,132 +613,152 @@ class _PoetryEditorState extends State<PoetryEditor>
                                     ),
                                   ),
                                 ),
-                                SliverList(
-                                  delegate: SliverChildBuilderDelegate(
-                                    (context, index) {
-                                      bool readMoreClicked = true;
-                                      var poemData =
-                                          poemListBox.getAt(widget.poemIndex)
-                                              as Map<dynamic, dynamic>;
-                                      String content =
-                                          poemData['bookmarks'][index];
-                                      List<String> bookmark =
-                                          poemData['bookmarks'];
-                                      return Slidable(
-                                        key: const ValueKey(0),
-                                        enabled: readMoreClicked,
-                                        endActionPane: ActionPane(
-                                          motion: const ScrollMotion(),
-                                          children: [
-                                            // SlidableAction(
-                                            //   onPressed: (context) {},
-                                            //   backgroundColor:
-                                            //       const Color(0xFF21B7CA),
-                                            //   foregroundColor:
-                                            //       Colors.white,
-                                            //   icon: Icons.share,
-                                            //   label: 'Share',
-                                            // ),
-                                            SlidableAction(
-                                              onPressed: (context) {
-                                                setState(() {
-                                                  bookmark.removeAt(index);
-                                                });
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(
-                                                  SnackBar(
-                                                    backgroundColor: widget
-                                                        .editorAppbarColor,
-                                                    content: Text(
-                                                      'Bookmark deleted.',
-                                                      style: TextStyle(
-                                                          color: widget
-                                                              .editorFontColor),
-                                                    ),
-                                                    action: SnackBarAction(
+                                // Check if bookmarks list is empty
+                                if (poemBookmarks.isEmpty)
+                                  SliverToBoxAdapter(
+                                    child: Center(
+                                      child: Text(
+                                        "No Bookmarks Yet ...",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headlineSmall
+                                            ?.copyWith(
+                                                color: Colors.black,
+                                                fontFamily:
+                                                    GoogleFonts.ebGaramond()
+                                                        .fontFamily),
+                                      ),
+                                    ),
+                                  )
+                                else
+                                  SliverList(
+                                    delegate: SliverChildBuilderDelegate(
+                                      (context, index) {
+                                        bool readMoreClicked = true;
+                                        var poemData =
+                                            poemListBox.getAt(widget.poemIndex)
+                                                as Map<dynamic, dynamic>;
+                                        String content =
+                                            poemData['bookmarks'][index];
+                                        List<String> bookmark =
+                                            poemData['bookmarks'];
+                                        return Slidable(
+                                          key: const ValueKey(0),
+                                          enabled: readMoreClicked,
+                                          endActionPane: ActionPane(
+                                            motion: const ScrollMotion(),
+                                            children: [
+                                              // SlidableAction(
+                                              //   onPressed: (context) {},
+                                              //   backgroundColor:
+                                              //       const Color(0xFF21B7CA),
+                                              //   foregroundColor:
+                                              //       Colors.white,
+                                              //   icon: Icons.share,
+                                              //   label: 'Share',
+                                              // ),
+                                              SlidableAction(
+                                                onPressed: (context) {
+                                                  setState(() {
+                                                    bookmark.removeAt(index);
+                                                  });
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    SnackBar(
                                                       backgroundColor: widget
-                                                          .editorPrimaryColor,
-                                                      label: 'Undo',
-                                                      textColor: widget
-                                                          .editorFontColor,
-                                                      onPressed: () {
-                                                        setState(() {
-                                                          bookmark.add(content);
-                                                        });
-                                                      },
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                              backgroundColor:
-                                                  const Color(0xFFFE4A49),
-                                              foregroundColor: Colors.white,
-                                              icon: Icons.delete,
-                                              label: 'Delete',
-                                            ),
-                                          ],
-                                        ),
-                                        child: Column(
-                                          children: [
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 8.0,
-                                                      horizontal: 16.0),
-                                              child: Container(
-                                                color: Colors.white,
-                                                child: ListTile(
-                                                  title:
-                                                      ReadMoreText.selectable(
-                                                    content,
-                                                    numLines: 2,
-                                                    style:
-                                                        GoogleFonts.ebGaramond(
-                                                      textStyle:
-                                                          const TextStyle(
-                                                        color: Colors.black,
-                                                        letterSpacing: .5,
-                                                        fontSize: 18,
+                                                          .editorAppbarColor,
+                                                      content: Text(
+                                                        'Bookmark deleted.',
+                                                        style: TextStyle(
+                                                            color: widget
+                                                                .editorFontColor),
+                                                      ),
+                                                      action: SnackBarAction(
+                                                        backgroundColor: widget
+                                                            .editorPrimaryColor,
+                                                        label: 'Undo',
+                                                        textColor: widget
+                                                            .editorFontColor,
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            bookmark
+                                                                .add(content);
+                                                          });
+                                                        },
                                                       ),
                                                     ),
-                                                    readMoreTextStyle:
-                                                        GoogleFonts.ebGaramond(
-                                                      textStyle:
-                                                          const TextStyle(
-                                                        color: Colors.black,
-                                                        letterSpacing: .5,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        fontSize: 15,
+                                                  );
+                                                },
+                                                backgroundColor:
+                                                    const Color(0xFFFE4A49),
+                                                foregroundColor: Colors.white,
+                                                icon: Icons.delete,
+                                                label: 'Delete',
+                                              ),
+                                            ],
+                                          ),
+                                          child: Column(
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 8.0,
+                                                        horizontal: 16.0),
+                                                child: Container(
+                                                  color: Colors.white,
+                                                  child: ListTile(
+                                                    title:
+                                                        ReadMoreText.selectable(
+                                                      content,
+                                                      numLines: 2,
+                                                      style: GoogleFonts
+                                                          .ebGaramond(
+                                                        textStyle:
+                                                            const TextStyle(
+                                                          color: Colors.black,
+                                                          letterSpacing: .5,
+                                                          fontSize: 18,
+                                                        ),
                                                       ),
+                                                      readMoreTextStyle:
+                                                          GoogleFonts
+                                                              .ebGaramond(
+                                                        textStyle:
+                                                            const TextStyle(
+                                                          color: Colors.black,
+                                                          letterSpacing: .5,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          fontSize: 15,
+                                                        ),
+                                                      ),
+                                                      readMoreIconColor:
+                                                          Colors.black,
+                                                      readMoreText: 'Read more',
+                                                      onReadMoreClicked: () =>
+                                                          setState(() {
+                                                        readMoreClicked =
+                                                            !readMoreClicked;
+                                                      }),
+                                                      readLessText: 'Read less',
+                                                      readMoreAlign:
+                                                          AlignmentDirectional
+                                                              .bottomStart,
                                                     ),
-                                                    readMoreIconColor:
-                                                        Colors.black,
-                                                    readMoreText: 'Read more',
-                                                    onReadMoreClicked: () =>
-                                                        setState(() {
-                                                      readMoreClicked =
-                                                          !readMoreClicked;
-                                                    }),
-                                                    readLessText: 'Read less',
-                                                    readMoreAlign:
-                                                        AlignmentDirectional
-                                                            .bottomStart,
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                            const Divider(
-                                              height: 1,
-                                              color: Colors.grey,
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                    childCount: poemBookmarks.length,
-                                  ),
-                                ),
+                                              const Divider(
+                                                height: 1,
+                                                color: Colors.grey,
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                      childCount: poemBookmarks.length,
+                                    ),
+                                  )
                               ],
                             ),
                           );
