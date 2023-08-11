@@ -74,15 +74,16 @@ class _HomePageState extends State<HomePage>
   @override
   void initState() {
     currentPoemIndex = poemListIndexBox.get('poemIndex') ?? -1;
-    if (firebaseAuth.currentUser?.displayName != null) {
-      user = firebaseAuth.currentUser!.displayName!;
-    } else {
-      user = firebaseAuth.currentUser!.email!;
-      String email = user;
-      RegExp regex = RegExp(r"^(.+)@.*$");
-      String username = regex.firstMatch(email)?.group(1) ?? email;
-      user = username;
-    }
+    //FIREBASE FUNCTIONALITY CODE
+    // if (firebaseAuth.currentUser?.displayName != null) {
+    //   user = firebaseAuth.currentUser!.displayName!;
+    // } else {
+    //   user = firebaseAuth.currentUser!.email!;
+    //   String email = user;
+    //   RegExp regex = RegExp(r"^(.+)@.*$");
+    //   String username = regex.firstMatch(email)?.group(1) ?? email;
+    //   user = username;
+    // }
     globalThemeBox.get('theme');
     super.initState();
     _controller = AnimationController(
@@ -152,12 +153,22 @@ class _HomePageState extends State<HomePage>
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Pick a theme ...'),
+          title: Text(
+            'Pick a theme ...',
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                color: Colors.black,
+                fontFamily: GoogleFonts.ebGaramond().fontFamily),
+          ),
           content: SingleChildScrollView(
             child: ListBody(
               children: themeList.map((theme) {
                 return ListTile(
-                  title: Text(theme),
+                  title: Text(
+                    theme,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: Colors.black,
+                        fontFamily: GoogleFonts.ebGaramond().fontFamily),
+                  ),
                   onTap: () {
                     if (theme == "Purple") {
                       setState(() {
@@ -188,7 +199,7 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
-    final themeValue = globalThemeBox.get('theme') ?? 'Green';
+    final themeValue = globalThemeBox.get('theme') ?? 'Classic';
     void logout() async {
       //show loading
       showDialog(
@@ -206,37 +217,52 @@ class _HomePageState extends State<HomePage>
 
     void onTapCustomTemplate(int index) {
       setState(() {
-        isTemplateClicked = false;
+        // Check if the same custom template is clicked again
         if (selectedCustomTemplateIndex == index) {
           selectedCustomTemplateIndex = -1;
           isCustomTemplate = false;
         } else {
+          // Deselect the previous custom template if one was selected
+          if (selectedCustomTemplateIndex != -1) {
+            selectedCustomTemplateIndex = -1;
+            isCustomTemplate = false;
+          }
+          // Select the new custom template
           selectedCustomTemplateIndex = index;
           isCustomTemplate = true;
+
+          // Deselect any predefined template if one was selected
+          selectedPredefinedTemplateIndex = -1;
+          isTemplateClicked = false;
         }
-      });
-      setState(() {
-        if (index == 0) {
-          selectedDescription = customPoetryDescription[index];
-        } else if (index == 1) {
-          selectedDescription = customPoetryDescription[index];
-        }
+        selectedDescription = customPoetryDescription[index];
       });
     }
 
     void onTapTemplate(int index) {
       setState(() {
-        isCustomTemplate = false;
+        // Check if the same predefined template is clicked again
         if (selectedPredefinedTemplateIndex == index) {
           selectedPredefinedTemplateIndex = -1;
           isTemplateClicked = false;
         } else {
+          // Deselect the previous predefined template if one was selected
+          if (selectedPredefinedTemplateIndex != -1) {
+            selectedPredefinedTemplateIndex = -1;
+            isTemplateClicked = false;
+          }
+          // Select the new predefined template
           selectedPredefinedTemplateIndex = index;
           isTemplateClicked = true;
+
+          // Deselect the Quick Poetry Template Form
+          selectedCustomTemplateIndex = -1;
+          isCustomTemplate = false;
         }
-        isCustomTemplate = false;
+
         poetryTypeName = PoetryTypesData.getPoetryTypeByName(
-            PoetryTypesData.poetryTypes[index].name);
+          PoetryTypesData.poetryTypes[index].name,
+        );
         setPoemType = PoetryTypesData.poetryTypes[index].name;
         setPoemMeter = PoetryTypesData.poetryTypes[index].metre;
         features = PoetryTypesData.getFeaturesByName(poetryTypeName.name);
@@ -247,15 +273,14 @@ class _HomePageState extends State<HomePage>
     return Scaffold(
       appBar: AppBar(
         title: AutoSizeText(
-          "Welcome, $user!",
+          //FIREBBASE FUNCTIONALITY CODE
+          // "Welcome, $user!",
+          "Welcome, Dear Poet",
           minFontSize: 8,
           maxLines: 4,
-          style: GoogleFonts.ebGaramond(
-            textStyle: TextStyle(
-                color: ColorTheme.text(themeValue),
-                letterSpacing: .5,
-                fontSize: 20),
-          ),
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              color: Colors.black,
+              fontFamily: GoogleFonts.ebGaramond().fontFamily),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0.0,
@@ -268,25 +293,33 @@ class _HomePageState extends State<HomePage>
             onSelected: (value) {
               if (value == 'themes') {
                 showThemeDialog(context);
-              } else if (value == 'logout') {
-                logout();
               }
+              //FIREBASE FUNCTIONALITY CODE
+              // else if (value == 'logout') {
+              //   logout();
+              // }
             },
             itemBuilder: (context) => [
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'themes',
                 child: ListTile(
-                  leading: Icon(Icons.palette),
-                  title: Text("Themes"),
+                  leading: const Icon(Icons.palette),
+                  title: Text(
+                    "Themes",
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: Colors.black,
+                        fontFamily: GoogleFonts.ebGaramond().fontFamily),
+                  ),
                 ),
               ),
-              const PopupMenuItem(
-                value: 'logout',
-                child: ListTile(
-                  leading: Icon(Icons.logout),
-                  title: Text("Logout"),
-                ),
-              ),
+              //FIREBASE FUNCTIONALITY CODE
+              // const PopupMenuItem(
+              //   value: 'logout',
+              //   child: ListTile(
+              //     leading: Icon(Icons.logout),
+              //     title: Text("Logout"),
+              //   ),
+              // ),
             ],
           )
         ],
@@ -309,16 +342,16 @@ class _HomePageState extends State<HomePage>
                     onTap: () => onTapCustomTemplate(i),
                     isSelected: selectedCustomTemplateIndex == i,
                   ),
-                for (int i = 0; i < PoetryTypesData.poetryTypes.length; i++)
+                for (int j = 0; j < PoetryTypesData.poetryTypes.length; j++)
                   Template(
                     templateBoxColor: ColorTheme.primary(themeValue),
                     templateSplashColor: ColorTheme.secondary(themeValue),
                     templateUnderlineColor: ColorTheme.accent(themeValue),
                     templateFontColor: ColorTheme.text(themeValue),
-                    name: PoetryTypesData.poetryTypes[i].name,
-                    description: PoetryTypesData.poetryTypes[i].description,
-                    onTap: () => onTapTemplate(i),
-                    isSelected: selectedPredefinedTemplateIndex == i,
+                    name: PoetryTypesData.poetryTypes[j].name,
+                    description: PoetryTypesData.poetryTypes[j].description,
+                    onTap: () => onTapTemplate(j),
+                    isSelected: selectedPredefinedTemplateIndex == j,
                   ),
               ]),
             ),
@@ -475,14 +508,15 @@ class _HomePageState extends State<HomePage>
                                           endActionPane: ActionPane(
                                             motion: const ScrollMotion(),
                                             children: [
-                                              SlidableAction(
-                                                onPressed: (context) {},
-                                                backgroundColor:
-                                                    const Color(0xFF21B7CA),
-                                                foregroundColor: Colors.white,
-                                                icon: Icons.share,
-                                                label: 'Share',
-                                              ),
+                                              //FUTURE FUNCTIONALITY CODE
+                                              // SlidableAction(
+                                              //   onPressed: (context) {},
+                                              //   backgroundColor:
+                                              //       const Color(0xFF21B7CA),
+                                              //   foregroundColor: Colors.white,
+                                              //   icon: Icons.share,
+                                              //   label: 'Share',
+                                              // ),
                                               SlidableAction(
                                                 onPressed: (context) {
                                                   setState(() {
@@ -691,13 +725,15 @@ class _HomePageState extends State<HomePage>
                                       ),
                                       Text(
                                         "You haven't written any poetry yet ...",
-                                        style: GoogleFonts.ebGaramond(
-                                          textStyle: TextStyle(
-                                              color:
-                                                  ColorTheme.text(themeValue),
-                                              letterSpacing: .5,
-                                              fontSize: 18),
-                                        ),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleLarge
+                                            ?.copyWith(
+                                                color:
+                                                    ColorTheme.text(themeValue),
+                                                fontFamily:
+                                                    GoogleFonts.ebGaramond()
+                                                        .fontFamily),
                                       ),
                                     ],
                                   ),

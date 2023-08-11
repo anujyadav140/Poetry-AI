@@ -48,7 +48,8 @@ class _QuickModeState extends State<QuickMode> {
   int startingIndex = 0;
   int comparisionIndex = 3;
   List<String> generatedPoemLines = [];
-  List<String> contextLines = [];
+  List<String> contextPreviousLines = [];
+  List<String> contextNextLines = [];
   late List<TextEditingController> textControllers;
 
   List<String> poemLines = [];
@@ -461,9 +462,10 @@ class _QuickModeState extends State<QuickMode> {
                                                                         .text;
                                                               });
                                                               setState(() {
-                                                                contextLines
+                                                                contextPreviousLines
                                                                     .clear();
-
+                                                                contextNextLines
+                                                                    .clear();
                                                                 int start =
                                                                     index - 4 >=
                                                                             0
@@ -477,7 +479,7 @@ class _QuickModeState extends State<QuickMode> {
                                                                   if (poemLines[
                                                                           i]
                                                                       .isNotEmpty) {
-                                                                    contextLines.add(
+                                                                    contextPreviousLines.add(
                                                                         poemLines[
                                                                             i]);
                                                                   }
@@ -493,7 +495,7 @@ class _QuickModeState extends State<QuickMode> {
                                                                   if (poemLines[
                                                                           i]
                                                                       .isNotEmpty) {
-                                                                    contextLines.add(
+                                                                    contextNextLines.add(
                                                                         poemLines[
                                                                             i]);
                                                                   }
@@ -503,14 +505,11 @@ class _QuickModeState extends State<QuickMode> {
                                                                 isGenerationClicked =
                                                                     true;
                                                               });
-                                                              print(
-                                                                  previousLine);
-                                                              print(
-                                                                  contextLines);
                                                               PoetryTools()
                                                                   .generateQuickLines(
                                                                       previousLine,
-                                                                      contextLines,
+                                                                      contextPreviousLines,
+                                                                      contextNextLines,
                                                                       widget
                                                                           .features)
                                                                   .then(
