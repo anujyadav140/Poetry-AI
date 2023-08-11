@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:poetry_ai/pages/finish_poem.dart';
+import 'package:poetry_ai/pages/give_title.dart';
 import 'package:poetry_ai/pages/parallax_bg.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:poetry_ai/services/ai/poetry_tools.dart';
@@ -42,6 +43,7 @@ class _QuickModeState extends State<QuickMode> {
   bool finished = false;
   bool isSelected = false;
   bool isAddAnotherStanza = false;
+  bool isAnotherLineClicked = true;
   int selectedChipIndex = -1;
   String putLinesInTextfield = "";
   int totalTextfield = 4;
@@ -377,6 +379,15 @@ class _QuickModeState extends State<QuickMode> {
                                                                   ),
                                                         ),
                                                         onTap: () {
+                                                          if (focusedTextFieldIndex ==
+                                                              index - 1) {
+                                                            isGenerationClicked =
+                                                                false;
+                                                            isAnotherLineClicked =
+                                                                false;
+                                                            generatedPoemLines
+                                                                .clear();
+                                                          }
                                                           setState(() {
                                                             focusedTextFieldIndex =
                                                                 index;
@@ -414,6 +425,8 @@ class _QuickModeState extends State<QuickMode> {
                                                                   .primaryFocus
                                                                   ?.unfocus();
                                                               setState(() {
+                                                                isAnotherLineClicked =
+                                                                    true;
                                                                 if (index <
                                                                         textFieldEnabledStates.length -
                                                                             1 &&
@@ -533,7 +546,8 @@ class _QuickModeState extends State<QuickMode> {
                                                                         ':',
                                                                         '-',
                                                                         '.',
-                                                                        '"'
+                                                                        '"',
+                                                                        '!'
                                                                       ].contains(
                                                                           trimmedLine)) {
                                                                     setState(
@@ -620,11 +634,15 @@ class _QuickModeState extends State<QuickMode> {
                                                     child: generatedPoemLines
                                                                 .isEmpty &&
                                                             isGenerationClicked
-                                                        ? Lottie.asset(
-                                                            'assets/loading.json',
-                                                            width: 300,
-                                                            height: 200,
-                                                            fit: BoxFit.fill,
+                                                        ? Visibility(
+                                                            visible:
+                                                                isAnotherLineClicked,
+                                                            child: Lottie.asset(
+                                                              'assets/loading.json',
+                                                              width: 300,
+                                                              height: 200,
+                                                              fit: BoxFit.fill,
+                                                            ),
                                                           )
                                                         : ListView.builder(
                                                             itemCount:
@@ -636,37 +654,6 @@ class _QuickModeState extends State<QuickMode> {
                                                               isSelected =
                                                                   selectedChipIndex ==
                                                                       index;
-                                                              // return ActionChip(
-                                                              //   avatar: Icon(
-                                                              //     isSelected
-                                                              //         ? Icons
-                                                              //             .favorite
-                                                              //         : Icons
-                                                              //             .favorite_border,
-                                                              //     color: isSelected
-                                                              //         ? Colors
-                                                              //             .red
-                                                              //         : null,
-                                                              //   ),
-                                                              //   label: Text(
-                                                              //       generatedPoemLines[
-                                                              //           index]),
-                                                              //   onPressed: () {
-                                                              //     setState(() {
-                                                              //       putLinesInTextfield =
-                                                              //           generatedPoemLines[
-                                                              //               index];
-                                                              //     });
-                                                              //     print(
-                                                              //         putLinesInTextfield);
-                                                              //     setState(() {
-                                                              //       selectedChipIndex =
-                                                              //           isSelected
-                                                              //               ? -1
-                                                              //               : index;
-                                                              //     });
-                                                              //   },
-                                                              // );
                                                               return ListTile(
                                                                 leading: Icon(
                                                                   isSelected
@@ -677,7 +664,8 @@ class _QuickModeState extends State<QuickMode> {
                                                                   color: isSelected
                                                                       ? Colors
                                                                           .red
-                                                                      : Colors.white,
+                                                                      : Colors
+                                                                          .white,
                                                                 ),
                                                                 title: Text(
                                                                   generatedPoemLines[
@@ -837,8 +825,7 @@ class _QuickModeState extends State<QuickMode> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) =>
-                                        FinishPoem(poem: poem),
+                                    builder: (context) => GiveTitle(poem: poem),
                                   ));
                             },
                           ),

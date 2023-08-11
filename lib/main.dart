@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:poetry_ai/components/form.dart';
 import 'package:poetry_ai/firebase_options.dart';
+import 'package:poetry_ai/pages/give_title.dart';
 import 'package:poetry_ai/pages/home_page.dart';
 import 'package:poetry_ai/pages/quick_editor.dart';
 import 'package:poetry_ai/services/authentication/auth_gate.dart';
@@ -59,7 +60,7 @@ class MyApp extends StatelessWidget {
       // home: const AuthGate(),
       home: const HomePage(),
       // home: const QuickMode(),
-      // home: const TemplateForm(),
+      // home: const GiveTitle(),
     );
   }
 }

@@ -153,8 +153,7 @@ class PoetryTools {
       List<String> nextLines,
       List<String> features) async {
     print(previousLine);
-    final openai =
-        ChatOpenAI(apiKey: dotenv.env['OPENAI_API_KEY'], temperature: 1);
+    final openai = OpenAI(apiKey: dotenv.env['OPENAI_API_KEY'], temperature: 1);
     final String form = features[0];
     final String syllables = features[1];
     final String rhyme = features[2];
@@ -169,10 +168,13 @@ class PoetryTools {
       },
       template:
           '''You are a helpful AI poet. You have to generate poetry lines from the current line. 
-          These are the previous lines from the current line: {previousLines}, 
-          these are the next lines from the current line: {nextLines}.
-          The form should be: {form} and the syllables should be exactly {syllables},
-          the rhyme scheme should be strictly: {rhyme}. Generate at least 5 lines, without labelling or numbering them''',
+          These are the previous lines: {previousLines}, 
+          these are the next lines: {nextLines}.
+          These are the rules you should follow strictly:
+          1. The form should be: {form}; 
+          2. Count the syllables make sure they are EXACTLY {syllables}, the syllable count should be exactly {syllables}'
+          3. The rhyme scheme pattern should be strictly: {rhyme}.
+          Generate exactly between 5 to 8 lines (NOT MORE THAN THAT!), without labelling or numbering them''',
     );
     print(multipleMetreFormatInput.format({
       'previousLine': previousLine,

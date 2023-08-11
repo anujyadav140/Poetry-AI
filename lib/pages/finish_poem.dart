@@ -13,7 +13,10 @@ import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 
 class FinishPoem extends StatefulWidget {
-  const FinishPoem({super.key, required this.poem});
+  const FinishPoem(
+      {super.key, required this.poem, required this.title, required this.name});
+  final String title;
+  final String name;
   final String poem;
   @override
   State<FinishPoem> createState() => _FinishPoemState();
@@ -100,18 +103,50 @@ class _FinishPoemState extends State<FinishPoem> {
                     children: [
                       Container(
                         width: MediaQuery.of(context).size.width,
-                        padding: const EdgeInsets.all(20.0),
+                        padding: const EdgeInsets.all(40.0),
                         // color: const Color(0xFF303030),
                         color: Colors.white,
-                        child: Text(
-                          widget.poem,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge
-                              ?.copyWith(
-                                  color: Colors.black,
-                                  fontFamily:
-                                      GoogleFonts.ebGaramond().fontFamily),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.title,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(
+                                      color: Colors.black,
+                                      fontFamily:
+                                          GoogleFonts.ebGaramond().fontFamily),
+                            ),
+                            const SizedBox(
+                              height: 25,
+                            ),
+                            Text(
+                              widget.poem,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                      color: Colors.black,
+                                      fontFamily:
+                                          GoogleFonts.ebGaramond().fontFamily),
+                            ),
+                            const SizedBox(
+                              height: 25,
+                            ),
+                            Text(
+                              "—${widget.name}",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                      color: Colors.black,
+                                      fontFamily:
+                                          GoogleFonts.ebGaramond().fontFamily),
+                            ),
+                          ],
                         ),
                       ),
                       // Container(
@@ -196,49 +231,6 @@ class _FinishPoemState extends State<FinishPoem> {
             ),
           ],
         ),
-        // floatingActionButton: Padding(
-        //   padding: const EdgeInsets.all(8.0),
-        //   child: Row(
-        //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        //     children: [
-        //       FloatingActionButton.extended(
-        //           heroTag: 'copy',
-        //           onPressed: () {
-        //             copyTextToClipboard();
-        //           },
-        //           icon: const Icon(Icons.copy),
-        //           label: Text(
-        //             "Copy Poem",
-        //             style: Theme.of(context).textTheme.titleSmall?.copyWith(
-        //                 color: Colors.white,
-        //                 fontFamily: GoogleFonts.ebGaramond().fontFamily),
-        //           )),
-        //       FloatingActionButton.extended(
-        //           heroTag: 'save',
-        //           onPressed: () async {
-        //             final image = await screenshotController.capture();
-        //             if (image == null) return;
-        //             await saveImage(image);
-        //           },
-        //           icon: const Icon(Icons.save),
-        //           label: Text(
-        //             "Save Poem",
-        //             style: Theme.of(context).textTheme.titleSmall?.copyWith(
-        //                 color: Colors.white,
-        //                 fontFamily: GoogleFonts.ebGaramond().fontFamily),
-        //           )),
-        //       FloatingActionButton(
-        //         heroTag: 'share',
-        //         onPressed: () async {
-        //           final image = await screenshotController.capture();
-        //           if (image == null) return;
-        //           await saveAndShare(image);
-        //         },
-        //         child: const Icon(Icons.share),
-        //       ),
-        //     ],
-        //   ),
-        // ),
       ),
     );
   }
