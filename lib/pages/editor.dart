@@ -1013,6 +1013,17 @@ class _AiToolsListState extends State<AiToolsList> {
           itemBuilder: (context, index) {
             return InkWell(
               onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(widget.primaryColor),
+                      ),
+                    );
+                  },
+                );
                 String aiToolsSelectTitle = widget._aiTools[index][2];
                 aiToolsSelected(
                   widget._aiTools[index][0],
@@ -1035,6 +1046,7 @@ class _AiToolsListState extends State<AiToolsList> {
                       Navigator.of(context).pop();
                     }
                     wordResponse = response;
+                    Navigator.of(context).pop();
                     !context.read<AuthService>().isRhymeSelectedLines &&
                             !context.read<AuthService>().isConvertToMetre
                         ? showModalBottomSheet(

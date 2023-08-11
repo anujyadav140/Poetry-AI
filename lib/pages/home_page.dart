@@ -200,20 +200,21 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     final themeValue = globalThemeBox.get('theme') ?? 'Classic';
-    void logout() async {
-      //show loading
-      showDialog(
-        context: context,
-        builder: (context) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        },
-      );
-      AuthService().logout();
-      //pop the loading
-      Navigator.pop(context);
-    }
+    //FIREBASE FUNCTIONALITY CODE
+    // void logout() async {
+    //   //show loading
+    //   showDialog(
+    //     context: context,
+    //     builder: (context) {
+    //       return const Center(
+    //         child: CircularProgressIndicator(),
+    //       );
+    //     },
+    //   );
+    //   AuthService().logout();
+    //   //pop the loading
+    //   Navigator.pop(context);
+    // }
 
     void onTapCustomTemplate(int index) {
       setState(() {
@@ -856,9 +857,14 @@ class _HomePageState extends State<HomePage>
                           )));
             }
           } else {
-            const snackBar = SnackBar(
-              content: Text('Select a template first!'),
-              duration: Duration(seconds: 2),
+            final snackBar = SnackBar(
+              content: Text(
+                'Select a template first!',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    color: Colors.white,
+                    fontFamily: GoogleFonts.ebGaramond().fontFamily),
+              ),
+              duration: const Duration(seconds: 2),
             );
             ScaffoldMessenger.of(context).showSnackBar(snackBar);
           }
