@@ -796,26 +796,9 @@ class _HomePageState extends State<HomePage>
                                     ],
                                   ),
                   ),
-                  //   ),
-                  // ),
                 ),
               ),
             ),
-            // AnimatedBuilder(
-            //   animation: _controller,
-            //   builder: (context, child) {
-            //     return ClipPath(
-            //       clipper: DrawClip(_controller.value),
-            //       child: SizedBox(
-            //         width: double.infinity,
-            //         height: 60,
-            //         child: Container(
-            //           color: ColorTheme.secondary(themeValue),
-            //         ),
-            //       ),
-            //     );
-            //   },
-            // )
           ],
         ),
       ),
@@ -882,46 +865,5 @@ class _HomePageState extends State<HomePage>
         },
       ),
     );
-  }
-}
-
-class DrawClip extends CustomClipper<Path> {
-  double move = 0;
-  double slice = math.pi;
-  DrawClip(this.move);
-  @override
-  Path getClip(Size size) {
-    Path path = Path();
-    path.lineTo(0, size.height * 0.8);
-    double xCenter =
-        size.width * 0.5 + (size.width * 0.6 + 1) * math.sin(move * slice);
-    double yCenter = size.height * 0.8 + 69 * math.cos(move * slice);
-    path.quadraticBezierTo(xCenter, yCenter, size.width, size.height * 0.8);
-
-    path.lineTo(size.width, 0);
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) {
-    return true;
-  }
-}
-
-class MyClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    return Path()
-      ..lineTo(0, size.height)
-      ..quadraticBezierTo(
-          size.width / 4, size.height - 40, size.width / 2, size.height - 20)
-      ..quadraticBezierTo(
-          3 / 4 * size.width, size.height, size.width, size.height - 30)
-      ..lineTo(size.width, 0);
-  }
-
-  @override
-  bool shouldReclip(covariant CustomClipper<Path> oldClipper) {
-    return false;
   }
 }
