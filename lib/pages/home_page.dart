@@ -587,8 +587,21 @@ class _HomePageState extends State<HomePage>
                                                                           8.0), // Add border radius here
                                                             ),
                                                             child: AlertDialog(
-                                                              title: const Text(
-                                                                  "Edit the poem title:"),
+                                                              backgroundColor:
+                                                                  ColorTheme.accent(
+                                                                      themeValue),
+                                                              title: Text(
+                                                                "Edit the poem title:",
+                                                                style: Theme.of(
+                                                                        context)
+                                                                    .textTheme
+                                                                    .headlineSmall
+                                                                    ?.copyWith(
+                                                                        color: ColorTheme.text(
+                                                                            themeValue),
+                                                                        fontFamily:
+                                                                            GoogleFonts.ebGaramond().fontFamily),
+                                                              ),
                                                               content: Column(
                                                                 mainAxisSize:
                                                                     MainAxisSize
@@ -600,10 +613,30 @@ class _HomePageState extends State<HomePage>
                                                                       editedTitle =
                                                                           value;
                                                                     },
+                                                                    cursorColor:
+                                                                        ColorTheme.text(
+                                                                            themeValue),
                                                                     decoration:
                                                                         InputDecoration(
+                                                                      focusedBorder:
+                                                                          OutlineInputBorder(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(8.0),
+                                                                        borderSide:
+                                                                            BorderSide(color: ColorTheme.text(themeValue)), // Set the focused border color to black
+                                                                      ),
+                                                                      focusColor:
+                                                                          ColorTheme.accent(
+                                                                              themeValue),
                                                                       hintText:
                                                                           "Poem Name",
+                                                                      hintStyle: Theme.of(
+                                                                              context)
+                                                                          .textTheme
+                                                                          .titleLarge
+                                                                          ?.copyWith(
+                                                                              color: Colors.black,
+                                                                              fontFamily: GoogleFonts.ebGaramond().fontFamily),
                                                                       border:
                                                                           OutlineInputBorder(
                                                                         borderRadius:
@@ -630,15 +663,32 @@ class _HomePageState extends State<HomePage>
                                                               ),
                                                               actions: [
                                                                 TextButton(
+                                                                  style: ButtonStyle(
+                                                                      backgroundColor:
+                                                                          MaterialStatePropertyAll(
+                                                                              ColorTheme.primary(themeValue))),
                                                                   onPressed:
                                                                       () {
                                                                     Navigator.pop(
                                                                         context);
                                                                   },
-                                                                  child: const Text(
-                                                                      "Cancel"),
+                                                                  child: Text(
+                                                                    "Cancel",
+                                                                    style: Theme.of(
+                                                                            context)
+                                                                        .textTheme
+                                                                        .titleMedium
+                                                                        ?.copyWith(
+                                                                            color:
+                                                                                Colors.black,
+                                                                            fontFamily: GoogleFonts.ebGaramond().fontFamily),
+                                                                  ),
                                                                 ),
                                                                 TextButton(
+                                                                  style: ButtonStyle(
+                                                                      backgroundColor:
+                                                                          MaterialStatePropertyAll(
+                                                                              ColorTheme.primary(themeValue))),
                                                                   onPressed:
                                                                       () {
                                                                     setState(
@@ -658,9 +708,17 @@ class _HomePageState extends State<HomePage>
                                                                     Navigator.pop(
                                                                         context);
                                                                   },
-                                                                  child:
-                                                                      const Text(
-                                                                          "Save"),
+                                                                  child: Text(
+                                                                    "Save",
+                                                                    style: Theme.of(
+                                                                            context)
+                                                                        .textTheme
+                                                                        .titleMedium
+                                                                        ?.copyWith(
+                                                                            color:
+                                                                                Colors.black,
+                                                                            fontFamily: GoogleFonts.ebGaramond().fontFamily),
+                                                                  ),
                                                                 ),
                                                               ],
                                                             ),
