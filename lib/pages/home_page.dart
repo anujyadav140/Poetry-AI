@@ -446,30 +446,27 @@ class _HomePageState extends State<HomePage>
                                         children: [
                                           Text(
                                             poetryTypeName.description,
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleMedium
-                                                ?.copyWith(
-                                                    color: Colors.black,
-                                                    fontFamily:
-                                                        GoogleFonts.ebGaramond()
-                                                            .fontFamily),
+                                            style: TextStyle(
+                                                fontSize:
+                                                    !isWideScreen ? 20 : 26,
+                                                color: Colors.black,
+                                                fontFamily:
+                                                    GoogleFonts.ebGaramond()
+                                                        .fontFamily),
                                           ),
                                           const SizedBox(
                                             height: 20,
                                           ),
                                           Text(
                                             "Features for ${poetryTypeName.name}:",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleLarge
-                                                ?.copyWith(
-                                                    color: Colors.black,
-                                                    fontFamily:
-                                                        GoogleFonts.ebGaramond()
-                                                            .fontFamily,
-                                                    fontWeight:
-                                                        FontWeight.bold),
+                                            style: TextStyle(
+                                                fontSize:
+                                                    !isWideScreen ? 20 : 26,
+                                                color: Colors.black,
+                                                fontFamily:
+                                                    GoogleFonts.ebGaramond()
+                                                        .fontFamily,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                         ],
                                       ),
@@ -495,13 +492,13 @@ class _HomePageState extends State<HomePage>
                                                     features[index],
                                                     style: !isWideScreen
                                                         ? TextStyle(
-                                                            fontSize: 20,
+                                                            fontSize: 19,
                                                             color: Colors.black,
                                                             fontFamily: GoogleFonts
                                                                     .ebGaramond()
                                                                 .fontFamily)
                                                         : TextStyle(
-                                                            fontSize: 26,
+                                                            fontSize: 25,
                                                             color: Colors.black,
                                                             fontFamily: GoogleFonts
                                                                     .ebGaramond()

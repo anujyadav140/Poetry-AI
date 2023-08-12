@@ -203,7 +203,7 @@ class _QuickModeState extends State<QuickMode> {
                                   "Poem Structure",
                                   style: !isWideScreen
                                       ? TextStyle(
-                                          fontSize: 20,
+                                          fontSize: 18,
                                           color: Colors.white,
                                           fontFamily: GoogleFonts.ebGaramond()
                                               .fontFamily)
@@ -222,7 +222,7 @@ class _QuickModeState extends State<QuickMode> {
                                   "${widget.features[0]}, ${widget.features[1]} syllable count, ${widget.features[2]}",
                                   style: !isWideScreen
                                       ? TextStyle(
-                                          fontSize: 20,
+                                          fontSize: 18,
                                           color: Colors.white,
                                           fontFamily: GoogleFonts.ebGaramond()
                                               .fontFamily)
@@ -346,7 +346,7 @@ class _QuickModeState extends State<QuickMode> {
                                                             const ClampingScrollPhysics(),
                                                         style: !isWideScreen
                                                             ? TextStyle(
-                                                                fontSize: 22,
+                                                                fontSize: 20,
                                                                 color: Colors
                                                                     .white,
                                                                 fontFamily: GoogleFonts
@@ -380,7 +380,7 @@ class _QuickModeState extends State<QuickMode> {
                                                           labelText: hintText,
                                                           counterStyle: !isWideScreen
                                                               ? TextStyle(
-                                                                  fontSize: 20,
+                                                                  fontSize: 16,
                                                                   color: Colors
                                                                       .white,
                                                                   fontFamily: GoogleFonts
@@ -395,7 +395,7 @@ class _QuickModeState extends State<QuickMode> {
                                                                       .fontFamily),
                                                           labelStyle: !isWideScreen
                                                               ? TextStyle(
-                                                                  fontSize: 20,
+                                                                  fontSize: 18,
                                                                   color: Colors
                                                                       .white,
                                                                   fontFamily: GoogleFonts
@@ -410,7 +410,7 @@ class _QuickModeState extends State<QuickMode> {
                                                                       .fontFamily),
                                                           hintStyle: !isWideScreen
                                                               ? TextStyle(
-                                                                  fontSize: 20,
+                                                                  fontSize: 18,
                                                                   color: Colors
                                                                       .white,
                                                                   fontFamily: GoogleFonts
@@ -724,7 +724,7 @@ class _QuickModeState extends State<QuickMode> {
                                                                   style: !isWideScreen
                                                                       ? TextStyle(
                                                                           fontSize:
-                                                                              22,
+                                                                              20,
                                                                           color: Colors
                                                                               .white,
                                                                           fontFamily: GoogleFonts.ebGaramond()

@@ -539,7 +539,7 @@ class _PoetryEditorState extends State<PoetryEditor>
           child: Column(children: [
             quill.QuillToolbar.basic(
               controller: controller,
-              toolbarIconSize: 18,
+              toolbarIconSize: !isWideScreen ? 20 : 30,
               showQuote: false,
               showIndent: false,
               showDividers: false,

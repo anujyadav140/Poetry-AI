@@ -103,7 +103,7 @@ class _TemplateFormState extends State<TemplateForm> {
                         widget.description,
                         style: !isWideScreen
                             ? TextStyle(
-                                fontSize: 20,
+                                fontSize: 18,
                                 color: Colors.black,
                                 fontFamily: GoogleFonts.ebGaramond().fontFamily)
                             : TextStyle(
@@ -113,7 +113,7 @@ class _TemplateFormState extends State<TemplateForm> {
                                     GoogleFonts.ebGaramond().fontFamily),
                       ),
                       const SizedBox(
-                        height: 20,
+                        height: 18,
                       ),
                       Column(
                         children: [
@@ -123,7 +123,7 @@ class _TemplateFormState extends State<TemplateForm> {
                               "Poetic Form:",
                               style: !isWideScreen
                                   ? TextStyle(
-                                      fontSize: 20,
+                                      fontSize: 18,
                                       color: Colors.black,
                                       fontFamily:
                                           GoogleFonts.ebGaramond().fontFamily)
@@ -168,7 +168,7 @@ class _TemplateFormState extends State<TemplateForm> {
                                                         index == selectedRadio
                                                             ? FontWeight.bold
                                                             : FontWeight.normal,
-                                                    fontSize: 20,
+                                                    fontSize: 18,
                                                     color: Colors.black,
                                                     fontFamily:
                                                         GoogleFonts.ebGaramond()
@@ -201,7 +201,7 @@ class _TemplateFormState extends State<TemplateForm> {
                                           "",
                                       style: !isWideScreen
                                           ? TextStyle(
-                                              fontSize: 20,
+                                              fontSize: 18,
                                               color: Colors.black,
                                               fontFamily:
                                                   GoogleFonts.ebGaramond()
@@ -221,7 +221,7 @@ class _TemplateFormState extends State<TemplateForm> {
                                           "",
                                       style: !isWideScreen
                                           ? TextStyle(
-                                              fontSize: 20,
+                                              fontSize: 18,
                                               color: Colors.black,
                                               fontFamily:
                                                   GoogleFonts.ebGaramond()
@@ -241,7 +241,7 @@ class _TemplateFormState extends State<TemplateForm> {
                         ],
                       ),
                       const SizedBox(
-                        height: 20,
+                        height: 18,
                       ),
                       Column(
                         children: [
@@ -251,7 +251,7 @@ class _TemplateFormState extends State<TemplateForm> {
                               "Syllable Count:",
                               style: !isWideScreen
                                   ? TextStyle(
-                                      fontSize: 20,
+                                      fontSize: 18,
                                       color: Colors.black,
                                       fontFamily:
                                           GoogleFonts.ebGaramond().fontFamily)
@@ -268,7 +268,7 @@ class _TemplateFormState extends State<TemplateForm> {
                               "The number of syllables for each line of verse",
                               style: !isWideScreen
                                   ? TextStyle(
-                                      fontSize: 20,
+                                      fontSize: 18,
                                       color: Colors.black,
                                       fontFamily:
                                           GoogleFonts.ebGaramond().fontFamily)
@@ -289,7 +289,7 @@ class _TemplateFormState extends State<TemplateForm> {
                                   value,
                                   style: !isWideScreen
                                       ? TextStyle(
-                                          fontSize: 20,
+                                          fontSize: 18,
                                           color: Colors.black,
                                           fontFamily: GoogleFonts.ebGaramond()
                                               .fontFamily)
@@ -304,7 +304,7 @@ class _TemplateFormState extends State<TemplateForm> {
                             value: dropdownSyllableCount,
                             style: !isWideScreen
                                 ? TextStyle(
-                                    fontSize: 20,
+                                    fontSize: 18,
                                     color: Colors.black,
                                     fontFamily:
                                         GoogleFonts.ebGaramond().fontFamily)
@@ -323,7 +323,7 @@ class _TemplateFormState extends State<TemplateForm> {
                         ],
                       ),
                       const SizedBox(
-                        height: 20,
+                        height: 18,
                       ),
                       Column(
                         children: [
@@ -333,7 +333,7 @@ class _TemplateFormState extends State<TemplateForm> {
                               "Rhyme:",
                               style: !isWideScreen
                                   ? TextStyle(
-                                      fontSize: 20,
+                                      fontSize: 18,
                                       color: Colors.black,
                                       fontFamily:
                                           GoogleFonts.ebGaramond().fontFamily)
@@ -350,7 +350,7 @@ class _TemplateFormState extends State<TemplateForm> {
                               "The letters indicate which lines of the poem rhyme",
                               style: !isWideScreen
                                   ? TextStyle(
-                                      fontSize: 20,
+                                      fontSize: 18,
                                       color: Colors.black,
                                       fontFamily:
                                           GoogleFonts.ebGaramond().fontFamily)
@@ -371,7 +371,7 @@ class _TemplateFormState extends State<TemplateForm> {
                                   value,
                                   style: !isWideScreen
                                       ? TextStyle(
-                                          fontSize: 20,
+                                          fontSize: 18,
                                           color: Colors.black,
                                           fontFamily: GoogleFonts.ebGaramond()
                                               .fontFamily)
@@ -385,7 +385,7 @@ class _TemplateFormState extends State<TemplateForm> {
                             }).toList(),
                             style: !isWideScreen
                                 ? TextStyle(
-                                    fontSize: 20,
+                                    fontSize: 18,
                                     color: Colors.black,
                                     fontFamily:
                                         GoogleFonts.ebGaramond().fontFamily)
@@ -416,8 +416,8 @@ class _TemplateFormState extends State<TemplateForm> {
           WaveWidget(
             config: CustomConfig(
               // gradients: [
-              //   [Colors.blue, Colors.blue.shade200],
-              //   [Colors.blue.shade200, Colors.blue.shade100],
+              //   [Colors.blue, Colors.blue.shade180],
+              //   [Colors.blue.shade180, Colors.blue.shade100],
               // ],
               gradients: [
                 [Colors.grey, Colors.grey.shade200],
