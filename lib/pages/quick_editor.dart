@@ -813,12 +813,12 @@ class _QuickModeState extends State<QuickMode> {
                               "Add Another Stanza",
                               style: !isWideScreen
                                   ? TextStyle(
-                                      fontSize: 22,
+                                      fontSize: 16,
                                       color: Colors.black,
                                       fontFamily:
                                           GoogleFonts.ebGaramond().fontFamily)
                                   : TextStyle(
-                                      fontSize: 30,
+                                      fontSize: 26,
                                       color: Colors.black,
                                       fontFamily:
                                           GoogleFonts.ebGaramond().fontFamily),
@@ -867,7 +867,7 @@ class _QuickModeState extends State<QuickMode> {
                               "Finish",
                               style: !isWideScreen
                                   ? TextStyle(
-                                      fontSize: 20,
+                                      fontSize: 16,
                                       color: Colors.black,
                                       fontFamily:
                                           GoogleFonts.ebGaramond().fontFamily)

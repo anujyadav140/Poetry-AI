@@ -32,20 +32,40 @@ class _FinishPoemState extends State<FinishPoem> {
   }
 
   Future<void> showSuccessSnackbar() async {
-    const snackBar = SnackBar(
-      content: Text('Image saved successfully'),
-      duration: Duration(seconds: 2),
-    );
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    bool isWideScreen = false;
+    if (MediaQuery.of(context).size.width >= 768) {
+      isWideScreen = true;
+    }
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(
+        'Image saved successfully',
+        style: TextStyle(
+            color: Colors.white,
+            letterSpacing: .5,
+            fontSize: !isWideScreen ? 18 : 28,
+            fontFamily: GoogleFonts.ebGaramond().fontFamily),
+      ),
+      duration: const Duration(seconds: 2),
+    ));
   }
 
   void copyTextToClipboard() {
+    bool isWideScreen = false;
+    if (MediaQuery.of(context).size.width >= 768) {
+      isWideScreen = true;
+    }
     Clipboard.setData(ClipboardData(text: widget.poem));
-    const snackBar = SnackBar(
-      content: Text('Text copied to clipboard'),
-      duration: Duration(seconds: 2),
-    );
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(
+        'Text copied to clipboard',
+        style: TextStyle(
+            color: Colors.white,
+            letterSpacing: .5,
+            fontSize: !isWideScreen ? 18 : 28,
+            fontFamily: GoogleFonts.ebGaramond().fontFamily),
+      ),
+      duration: const Duration(seconds: 2),
+    ));
   }
 
   Future<String> saveImage(Uint8List bytes) async {
@@ -67,13 +87,16 @@ class _FinishPoemState extends State<FinishPoem> {
     final imageFile = File('${directory.path}/poetry.png');
     await imageFile.writeAsBytes(bytes);
     final xfile = XFile(imageFile.path);
-    const String shareText =
-        "Poem written on Poetry AI made with ❤ by Anuj Yadav";
+    const String shareText = "Poem written on Poetry AI";
     await Share.shareXFiles([xfile], text: shareText);
   }
 
   @override
   Widget build(BuildContext context) {
+    bool isWideScreen = false;
+    if (MediaQuery.of(context).size.width >= 768) {
+      isWideScreen = true;
+    }
     return SafeArea(
       child: Scaffold(
         backgroundColor: const Color(0xFF303030),
@@ -85,7 +108,8 @@ class _FinishPoemState extends State<FinishPoem> {
           )),
           title: Text(
             "Save, Copy & Share",
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            style: TextStyle(
+                fontSize: !isWideScreen ? 20 : 28,
                 color: Colors.white,
                 fontFamily: GoogleFonts.ebGaramond().fontFamily),
           ),
@@ -110,42 +134,40 @@ class _FinishPoemState extends State<FinishPoem> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              widget.title,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge
-                                  ?.copyWith(
-                                      color: Colors.black,
-                                      fontFamily:
-                                          GoogleFonts.ebGaramond().fontFamily),
-                            ),
+                            widget.title.isNotEmpty
+                                ? Text(
+                                    widget.title,
+                                    style: TextStyle(
+                                        fontSize: !isWideScreen ? 20 : 28,
+                                        color: Colors.black,
+                                        fontFamily: GoogleFonts.ebGaramond()
+                                            .fontFamily),
+                                  )
+                                : Container(),
                             const SizedBox(
                               height: 25,
                             ),
                             Text(
                               widget.poem,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
-                                  ?.copyWith(
-                                      color: Colors.black,
-                                      fontFamily:
-                                          GoogleFonts.ebGaramond().fontFamily),
+                              style: TextStyle(
+                                  fontSize: !isWideScreen ? 20 : 28,
+                                  color: Colors.black,
+                                  fontFamily:
+                                      GoogleFonts.ebGaramond().fontFamily),
                             ),
                             const SizedBox(
                               height: 25,
                             ),
-                            Text(
-                              "—${widget.name}",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
-                                  ?.copyWith(
-                                      color: Colors.black,
-                                      fontFamily:
-                                          GoogleFonts.ebGaramond().fontFamily),
-                            ),
+                            widget.name.isNotEmpty
+                                ? Text(
+                                    "—${widget.name}",
+                                    style: TextStyle(
+                                        fontSize: !isWideScreen ? 20 : 28,
+                                        color: Colors.black,
+                                        fontFamily: GoogleFonts.ebGaramond()
+                                            .fontFamily),
+                                  )
+                                : Container(),
                           ],
                         ),
                       ),
@@ -175,13 +197,14 @@ class _FinishPoemState extends State<FinishPoem> {
               child: const Icon(
                 Icons.copy_all,
                 color: Color(0xFF303030),
+                size: 30,
               ),
               label: 'Copy Text',
               labelStyle: GoogleFonts.ebGaramond(
-                textStyle: const TextStyle(
-                  color: Color(0xFF303030),
+                textStyle: TextStyle(
+                  color: const Color(0xFF303030),
                   letterSpacing: .5,
-                  fontSize: 15,
+                  fontSize: !isWideScreen ? 20 : 28,
                 ),
               ),
               backgroundColor: Colors.white,
@@ -193,13 +216,14 @@ class _FinishPoemState extends State<FinishPoem> {
               child: const Icon(
                 Icons.download,
                 color: Color(0xFF303030),
+                size: 30,
               ),
               label: 'Download As Image',
               labelStyle: GoogleFonts.ebGaramond(
-                textStyle: const TextStyle(
-                  color: Color(0xFF303030),
+                textStyle: TextStyle(
+                  color: const Color(0xFF303030),
                   letterSpacing: .5,
-                  fontSize: 15,
+                  fontSize: !isWideScreen ? 20 : 28,
                 ),
               ),
               backgroundColor: Colors.white,
@@ -213,13 +237,14 @@ class _FinishPoemState extends State<FinishPoem> {
               child: const Icon(
                 Icons.share,
                 color: Color(0xFF303030),
+                size: 30,
               ),
               label: 'Share',
               labelStyle: GoogleFonts.ebGaramond(
-                textStyle: const TextStyle(
-                  color: Color(0xFF303030),
+                textStyle: TextStyle(
+                  color: const Color(0xFF303030),
                   letterSpacing: .5,
-                  fontSize: 15,
+                  fontSize: !isWideScreen ? 20 : 28,
                 ),
               ),
               backgroundColor: Colors.white,
