@@ -791,7 +791,7 @@ class _HomePageState extends State<HomePage>
                                                     poemTitle,
                                                     style: !isWideScreen
                                                         ? TextStyle(
-                                                            fontSize: 20,
+                                                            fontSize: 19,
                                                             color: Colors.black,
                                                             fontFamily: GoogleFonts
                                                                     .ebGaramond()

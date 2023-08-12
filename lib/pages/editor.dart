@@ -289,7 +289,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                   style: GoogleFonts.ebGaramond(
                     textStyle: !isWideScreen
                         ? TextStyle(
-                            fontSize: 20,
+                            fontSize: 18,
                             color: widget.editorFontColor,
                             letterSpacing: .5,
                             // fontSize: 18,
@@ -307,7 +307,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                   style: GoogleFonts.ebGaramond(
                     textStyle: !isWideScreen
                         ? TextStyle(
-                            fontSize: 20,
+                            fontSize: 18,
                             color: widget.editorFontColor,
                             letterSpacing: .5,
                           )
@@ -353,7 +353,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                                     'Features',
                                     style: !isWideScreen
                                         ? TextStyle(
-                                            fontSize: 20,
+                                            fontSize: 18,
                                             color: widget.editorFontColor,
                                             letterSpacing: .5,
                                           )
@@ -375,7 +375,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                                       allFeatures,
                                       style: !isWideScreen
                                           ? TextStyle(
-                                              fontSize: 20,
+                                              fontSize: 18,
                                               color: widget.editorFontColor,
                                               letterSpacing: .5,
                                             )
@@ -597,7 +597,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                     customStyles: quill.DefaultStyles(
                       paragraph: quill.DefaultTextBlockStyle(
                           GoogleFonts.ebGaramond(
-                              fontSize: isWideScreen ? 21 : 29,
+                              fontSize: !isWideScreen ? 21 : 29,
                               fontWeight: FontWeight.w300,
                               color: Colors.black),
                           const quill.VerticalSpacing(0, 6),
@@ -679,7 +679,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                                         textStyle: TextStyle(
                                           color: Colors.black,
                                           letterSpacing: .5,
-                                          fontSize: isWideScreen ? 20 : 28,
+                                          fontSize: !isWideScreen ? 18 : 28,
                                         ),
                                       ),
                                     ),
@@ -692,7 +692,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                                       child: Text(
                                         "No Bookmarks Yet ...",
                                         style: TextStyle(
-                                            fontSize: isWideScreen ? 20 : 28,
+                                            fontSize: !isWideScreen ? 18 : 28,
                                             color: Colors.black,
                                             fontFamily: GoogleFonts.ebGaramond()
                                                 .fontFamily),
@@ -740,8 +740,8 @@ class _PoetryEditorState extends State<PoetryEditor>
                                                         'Bookmark deleted.',
                                                         style: TextStyle(
                                                             fontSize:
-                                                                isWideScreen
-                                                                    ? 20
+                                                                !isWideScreen
+                                                                    ? 18
                                                                     : 28,
                                                             color: widget
                                                                 .editorFontColor),
@@ -789,8 +789,8 @@ class _PoetryEditorState extends State<PoetryEditor>
                                                         textStyle: TextStyle(
                                                           color: Colors.black,
                                                           letterSpacing: .5,
-                                                          fontSize: isWideScreen
-                                                              ? 20
+                                                          fontSize: !isWideScreen
+                                                              ? 18
                                                               : 28,
                                                         ),
                                                       ),
@@ -802,8 +802,8 @@ class _PoetryEditorState extends State<PoetryEditor>
                                                           letterSpacing: .5,
                                                           fontWeight:
                                                               FontWeight.w600,
-                                                          fontSize: isWideScreen
-                                                              ? 20
+                                                          fontSize: !isWideScreen
+                                                              ? 18
                                                               : 28,
                                                         ),
                                                       ),
@@ -901,7 +901,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                               textStyle: TextStyle(
                                 color: Colors.black,
                                 letterSpacing: .5,
-                                fontSize: isWideScreen ? 20 : 28,
+                                fontSize: !isWideScreen ? 18 : 28,
                               ),
                             ),
                             backgroundColor: widget.editorAppbarColor,
@@ -965,8 +965,8 @@ class _PoetryEditorState extends State<PoetryEditor>
                                                         textStyle: TextStyle(
                                                           color: Colors.black,
                                                           letterSpacing: .5,
-                                                          fontSize: isWideScreen
-                                                              ? 20
+                                                          fontSize: !isWideScreen
+                                                              ? 22
                                                               : 28,
                                                         ),
                                                       ),
@@ -1029,7 +1029,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                             textStyle: TextStyle(
                               color: Colors.black,
                               letterSpacing: .5,
-                              fontSize: isWideScreen ? 20 : 28,
+                              fontSize: !isWideScreen ? 18 : 28,
                             ),
                           ),
                           backgroundColor: widget.editorAppbarColor,
@@ -1047,7 +1047,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                             textStyle: TextStyle(
                               color: Colors.black,
                               letterSpacing: .5,
-                              fontSize: isWideScreen ? 20 : 28,
+                              fontSize: !isWideScreen ? 18 : 28,
                             ),
                           ),
                           backgroundColor: widget.editorAppbarColor,
@@ -1083,7 +1083,7 @@ class _PoetryEditorState extends State<PoetryEditor>
       timeInSecForIosWeb: 1,
       backgroundColor: widget.editorAppbarColor,
       textColor: widget.editorFontColor,
-      fontSize: isWideScreen ? 20 : 28,
+      fontSize: !isWideScreen ? 18 : 28,
     );
   }
 }
@@ -1213,7 +1213,7 @@ class _AiToolsListState extends State<AiToolsList> {
                         textStyle: TextStyle(
                           color: Colors.black,
                           letterSpacing: .5,
-                          fontSize: isWideScreen ? 20 : 28,
+                          fontSize: !isWideScreen ? 18 : 28,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -1224,7 +1224,7 @@ class _AiToolsListState extends State<AiToolsList> {
                         textStyle: TextStyle(
                           color: Colors.black,
                           letterSpacing: .5,
-                          fontSize: isWideScreen ? 20 : 28,
+                          fontSize: !isWideScreen ? 18 : 28,
                         ),
                       ),
                     ),
@@ -1327,7 +1327,7 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
-          fontSize: isWideScreen ? 20 : 28,
+          fontSize: !isWideScreen ? 18 : 28,
           backgroundColor: widget.buttonColor,
           textColor: widget.fontColor,
         );
@@ -1347,7 +1347,7 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
-          fontSize: isWideScreen ? 20 : 28,
+          fontSize: !isWideScreen ? 18 : 28,
           backgroundColor: widget.buttonColor,
           textColor: widget.fontColor,
         );
@@ -1395,7 +1395,7 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
                       textStyle: TextStyle(
                         color: Colors.black,
                         letterSpacing: .5,
-                        fontSize: isWideScreen ? 20 : 28,
+                        fontSize: !isWideScreen ? 18 : 28,
                       ),
                     ),
                   ),
@@ -1444,7 +1444,7 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
                           textStyle: TextStyle(
                             color: Colors.black,
                             letterSpacing: .5,
-                            fontSize: isWideScreen ? 20 : 28,
+                            fontSize: !isWideScreen ? 18 : 28,
                           ),
                         ),
                       ),
@@ -1490,7 +1490,7 @@ class InfoPage extends StatelessWidget {
       "Write the info to help user here:",
       style: !isWideScreen
           ? TextStyle(
-              fontSize: 22,
+              fontSize: 20,
               color: Colors.black,
               fontFamily: GoogleFonts.ebGaramond().fontFamily)
           : TextStyle(
