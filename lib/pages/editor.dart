@@ -274,29 +274,38 @@ class _PoetryEditorState extends State<PoetryEditor>
                   tooltip: "Click on this if you want to cancel the selection",
                 ),
           title: !isConvertToMetre
-              ? Text(
-                  !isRhymeSelectedLines
-                      ? "Editor - $poemTitle"
-                      : !isFirstLineSelected
-                          ? "Select Line 1 To Rhyme"
-                          : !isSecondLineSelected
-                              ? "Select Line 2 To Rhyme"
-                              : "",
-                  style: GoogleFonts.ebGaramond(
-                    textStyle: TextStyle(
-                      color: widget.editorFontColor,
-                      letterSpacing: .5,
-                      fontSize: 18,
+              ? FittedBox(
+                  fit: BoxFit.fitWidth,
+                  child: AutoSizeText(
+                    !isRhymeSelectedLines
+                        ? "Editor - $poemTitle"
+                        : !isFirstLineSelected
+                            ? "Select Line 1 To Rhyme"
+                            : !isSecondLineSelected
+                                ? "Select Line 2 To Rhyme"
+                                : "",
+                    maxFontSize: 26,
+                    minFontSize: 18,
+                    style: GoogleFonts.ebGaramond(
+                      textStyle: TextStyle(
+                        color: widget.editorFontColor,
+                        letterSpacing: .5,
+                        // fontSize: 18,
+                      ),
                     ),
                   ),
                 )
-              : Text(
-                  "Select Line(s)",
-                  style: GoogleFonts.ebGaramond(
-                    textStyle: TextStyle(
-                      color: widget.editorFontColor,
-                      letterSpacing: .5,
-                      fontSize: 18,
+              : FittedBox(
+                  fit: BoxFit.fitWidth,
+                  child: AutoSizeText(
+                    maxFontSize: 26,
+                    minFontSize: 18,
+                    "Select Line(s)",
+                    style: GoogleFonts.ebGaramond(
+                      textStyle: TextStyle(
+                        color: widget.editorFontColor,
+                        letterSpacing: .5,
+                      ),
                     ),
                   ),
                 ),
@@ -312,17 +321,66 @@ class _PoetryEditorState extends State<PoetryEditor>
             !isRhymeSelectedLines && !isConvertToMetre
                 ? IconButton(
                     onPressed: () {
-                      setState(() {
-                        var poemData = poemListBox.getAt(widget.poemIndex)
-                            as Map<dynamic, dynamic>;
-                        poemData['poetry'] =
-                            jsonEncode(controller.document.toDelta().toJson());
-                        poemListBox.putAt(widget.poemIndex, poemData);
-                        showToast("Poem Saved!");
-                      });
+                      var poemData = poemListBox.getAt(widget.poemIndex)
+                          as Map<dynamic, dynamic>;
+                      poemTitle = poemData['title'] as String;
+                      String? poetryContent = poemData['poetry'] as String?;
+                      String? poetryMetre = poemData['meter'] as String?;
+                      print(poetryMetre);
+                      poetryFeatures = poemData['features'];
+                      String? poetryType = poemData['type'] as String;
+                      String allFeatures = poetryFeatures.join(", ");
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            scrollable: true,
+                            content: SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.8,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Text(
+                                      'Features',
+                                      style: TextStyle(
+                                        fontSize: 26,
+                                        color: Colors.black,
+                                        fontFamily:
+                                            GoogleFonts.ebGaramond().fontFamily,
+                                      ),
+                                    ),
+                                  ),
+                                  const Divider(
+                                    height: 1,
+                                    color: Colors.grey,
+                                  ),
+                                  const SizedBox(
+                                      height:
+                                          10), // Add spacing between the title and content
+                                  SingleChildScrollView(
+                                    child: AutoSizeText(
+                                      maxFontSize: 26,
+                                      minFontSize: 22,
+                                      allFeatures,
+                                      style: TextStyle(
+                                        // fontSize: 22,
+                                        color: Colors.black,
+                                        fontFamily:
+                                            GoogleFonts.ebGaramond().fontFamily,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
                     },
                     icon: Icon(
-                      Icons.save,
+                      Icons.info,
                       color: widget.editorFontColor,
                     ),
                   )
@@ -826,7 +884,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                               textStyle: const TextStyle(
                                 color: Colors.black,
                                 letterSpacing: .5,
-                                fontSize: 15,
+                                fontSize: 18,
                               ),
                             ),
                             backgroundColor: widget.editorAppbarColor,
@@ -881,17 +939,21 @@ class _PoetryEditorState extends State<PoetryEditor>
                                                       MainAxisAlignment
                                                           .spaceBetween,
                                                   children: [
-                                                    Text(
-                                                      _isInfoClicked
-                                                          ? 'How To Get Started'
-                                                          : 'AI Tools:',
-                                                      style: GoogleFonts
-                                                          .ebGaramond(
-                                                        textStyle:
-                                                            const TextStyle(
-                                                          color: Colors.black,
-                                                          letterSpacing: .5,
-                                                          fontSize: 18,
+                                                    FittedBox(
+                                                      fit: BoxFit.fitWidth,
+                                                      child: AutoSizeText(
+                                                        maxFontSize: 26,
+                                                        minFontSize: 18,
+                                                        _isInfoClicked
+                                                            ? 'How To Get Started'
+                                                            : 'AI Tools:',
+                                                        style: GoogleFonts
+                                                            .ebGaramond(
+                                                          textStyle:
+                                                              const TextStyle(
+                                                            color: Colors.black,
+                                                            letterSpacing: .5,
+                                                          ),
                                                         ),
                                                       ),
                                                     ),
@@ -953,7 +1015,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                             textStyle: const TextStyle(
                               color: Colors.black,
                               letterSpacing: .5,
-                              fontSize: 15,
+                              fontSize: 18,
                             ),
                           ),
                           backgroundColor: widget.editorAppbarColor,
@@ -961,6 +1023,28 @@ class _PoetryEditorState extends State<PoetryEditor>
                             setState(() {
                               FocusScope.of(context).unfocus();
                               showBookmarkModal = !showBookmarkModal;
+                            });
+                          },
+                        ),
+                        SpeedDialChild(
+                          child: const Icon(Icons.save),
+                          label: 'Save The Poem',
+                          labelStyle: GoogleFonts.ebGaramond(
+                            textStyle: const TextStyle(
+                              color: Colors.black,
+                              letterSpacing: .5,
+                              fontSize: 18,
+                            ),
+                          ),
+                          backgroundColor: widget.editorAppbarColor,
+                          onTap: () async {
+                            setState(() {
+                              var poemData = poemListBox.getAt(widget.poemIndex)
+                                  as Map<dynamic, dynamic>;
+                              poemData['poetry'] = jsonEncode(
+                                  controller.document.toDelta().toJson());
+                              poemListBox.putAt(widget.poemIndex, poemData);
+                              showToast("Poem Saved!");
                             });
                           },
                         ),

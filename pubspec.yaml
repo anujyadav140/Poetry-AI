@@ -93,7 +93,6 @@ flutter:
   assets:
     - images/
     - assets/
-    - assets/data/cmudict.dict
     - assets/parallax/
     - .env
 

@@ -64,6 +64,7 @@ class _HomePageState extends State<HomePage>
   int selectedPredefinedTemplateIndex = -1;
   List<dynamic>? existingPoemList = [];
   bool isCustomTemplate = false;
+  bool isWideScreen = false;
   List<String> customPoetryMode = ["Quick Poetry", "Custom Poetry"];
   List<String> customPoetryDescription = [
     "Write poetry very quickly, just select a poem template; Decide what kind of poem you would like to write. Write poetry Verse By Verse and get suggestions by AI.",
@@ -155,9 +156,15 @@ class _HomePageState extends State<HomePage>
         return AlertDialog(
           title: Text(
             'Pick a theme ...',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                color: Colors.black,
-                fontFamily: GoogleFonts.ebGaramond().fontFamily),
+            style: !isWideScreen
+                ? TextStyle(
+                    fontSize: 20,
+                    color: Colors.black,
+                    fontFamily: GoogleFonts.ebGaramond().fontFamily)
+                : TextStyle(
+                    fontSize: 26,
+                    color: Colors.black,
+                    fontFamily: GoogleFonts.ebGaramond().fontFamily),
           ),
           content: SingleChildScrollView(
             child: ListBody(
@@ -165,9 +172,15 @@ class _HomePageState extends State<HomePage>
                 return ListTile(
                   title: Text(
                     theme,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color: Colors.black,
-                        fontFamily: GoogleFonts.ebGaramond().fontFamily),
+                    style: !isWideScreen
+                        ? TextStyle(
+                            fontSize: 20,
+                            color: Colors.black,
+                            fontFamily: GoogleFonts.ebGaramond().fontFamily)
+                        : TextStyle(
+                            fontSize: 26,
+                            color: Colors.black,
+                            fontFamily: GoogleFonts.ebGaramond().fontFamily),
                   ),
                   onTap: () {
                     if (theme == "Purple") {
@@ -199,6 +212,9 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
+    if (MediaQuery.of(context).size.width >= 768) {
+      isWideScreen = true;
+    }
     final themeValue = globalThemeBox.get('theme') ?? 'Classic';
     //FIREBASE FUNCTIONALITY CODE
     // void logout() async {
@@ -273,21 +289,33 @@ class _HomePageState extends State<HomePage>
 
     return Scaffold(
       appBar: AppBar(
-        title: AutoSizeText(
-          //FIREBBASE FUNCTIONALITY CODE
-          // "Welcome, $user!",
-          "Welcome, Dear Poet",
-          minFontSize: 8,
-          maxLines: 4,
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              color: Colors.black,
-              fontFamily: GoogleFonts.ebGaramond().fontFamily),
-        ),
+        title: !isWideScreen
+            ? Text(
+                //FIREBBASE FUNCTIONALITY CODE
+                // "Welcome, $user!",
+                "Welcome, Dear Poet",
+                maxLines: 4,
+                style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.black,
+                    fontFamily: GoogleFonts.ebGaramond().fontFamily),
+              )
+            : Text(
+                //FIREBBASE FUNCTIONALITY CODE
+                // "Welcome, $user!",
+                "Welcome, Dear Poet",
+                maxLines: 4,
+                style: TextStyle(
+                    fontSize: 26,
+                    color: Colors.black,
+                    fontFamily: GoogleFonts.ebGaramond().fontFamily),
+              ),
         backgroundColor: Colors.transparent,
         elevation: 0.0,
         actions: [
           PopupMenuButton(
             icon: Icon(
+              size: 30,
               Icons.menu,
               color: ColorTheme.text(themeValue),
             ),
@@ -307,9 +335,15 @@ class _HomePageState extends State<HomePage>
                   leading: const Icon(Icons.palette),
                   title: Text(
                     "Themes",
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Colors.black,
-                        fontFamily: GoogleFonts.ebGaramond().fontFamily),
+                    style: !isWideScreen
+                        ? TextStyle(
+                            fontSize: 20,
+                            color: Colors.black,
+                            fontFamily: GoogleFonts.ebGaramond().fontFamily)
+                        : TextStyle(
+                            fontSize: 26,
+                            color: Colors.black,
+                            fontFamily: GoogleFonts.ebGaramond().fontFamily),
                   ),
                 ),
               ),
@@ -459,10 +493,15 @@ class _HomePageState extends State<HomePage>
                                                   ),
                                                   title: Text(
                                                     features[index],
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .titleMedium
-                                                        ?.copyWith(
+                                                    style: !isWideScreen
+                                                        ? TextStyle(
+                                                            fontSize: 20,
+                                                            color: Colors.black,
+                                                            fontFamily: GoogleFonts
+                                                                    .ebGaramond()
+                                                                .fontFamily)
+                                                        : TextStyle(
+                                                            fontSize: 26,
                                                             color: Colors.black,
                                                             fontFamily: GoogleFonts
                                                                     .ebGaramond()
@@ -535,10 +574,21 @@ class _HomePageState extends State<HomePage>
                                                               themeValue),
                                                       content: Text(
                                                         '$poemTitle deleted.',
-                                                        style: TextStyle(
-                                                            color:
-                                                                ColorTheme.text(
-                                                                    themeValue)),
+                                                        style: !isWideScreen
+                                                            ? TextStyle(
+                                                                fontSize: 20,
+                                                                color: Colors
+                                                                    .black,
+                                                                fontFamily: GoogleFonts
+                                                                        .ebGaramond()
+                                                                    .fontFamily)
+                                                            : TextStyle(
+                                                                fontSize: 26,
+                                                                color: Colors
+                                                                    .black,
+                                                                fontFamily: GoogleFonts
+                                                                        .ebGaramond()
+                                                                    .fontFamily),
                                                       ),
                                                       action: SnackBarAction(
                                                         backgroundColor:
@@ -591,18 +641,22 @@ class _HomePageState extends State<HomePage>
                                                               backgroundColor:
                                                                   ColorTheme.accent(
                                                                       themeValue),
-                                                              title: Text(
-                                                                "Edit the poem title:",
-                                                                style: Theme.of(
-                                                                        context)
-                                                                    .textTheme
-                                                                    .headlineSmall
-                                                                    ?.copyWith(
-                                                                        color: ColorTheme.text(
-                                                                            themeValue),
-                                                                        fontFamily:
-                                                                            GoogleFonts.ebGaramond().fontFamily),
-                                                              ),
+                                                              title:
+                                                                  !isWideScreen
+                                                                      ? Text(
+                                                                          "Edit the poem title:",
+                                                                          style: TextStyle(
+                                                                              fontSize: 20,
+                                                                              color: ColorTheme.text(themeValue),
+                                                                              fontFamily: GoogleFonts.ebGaramond().fontFamily),
+                                                                        )
+                                                                      : Text(
+                                                                          "Edit the poem title:",
+                                                                          style: TextStyle(
+                                                                              fontSize: 26,
+                                                                              color: ColorTheme.text(themeValue),
+                                                                              fontFamily: GoogleFonts.ebGaramond().fontFamily),
+                                                                        ),
                                                               content: Column(
                                                                 mainAxisSize:
                                                                     MainAxisSize
@@ -631,11 +685,16 @@ class _HomePageState extends State<HomePage>
                                                                               themeValue),
                                                                       hintText:
                                                                           "Poem Name",
-                                                                      hintStyle: Theme.of(
-                                                                              context)
-                                                                          .textTheme
-                                                                          .titleLarge
-                                                                          ?.copyWith(
+                                                                      hintStyle: !isWideScreen
+                                                                          ? TextStyle(
+                                                                              fontSize:
+                                                                                  20,
+                                                                              color: Colors
+                                                                                  .black,
+                                                                              fontFamily: GoogleFonts.ebGaramond()
+                                                                                  .fontFamily)
+                                                                          : TextStyle(
+                                                                              fontSize: 26,
                                                                               color: Colors.black,
                                                                               fontFamily: GoogleFonts.ebGaramond().fontFamily),
                                                                       border:
@@ -673,17 +732,16 @@ class _HomePageState extends State<HomePage>
                                                                     Navigator.pop(
                                                                         context);
                                                                   },
-                                                                  child: Text(
-                                                                    "Cancel",
-                                                                    style: Theme.of(
-                                                                            context)
-                                                                        .textTheme
-                                                                        .titleMedium
-                                                                        ?.copyWith(
-                                                                            color:
-                                                                                Colors.black,
-                                                                            fontFamily: GoogleFonts.ebGaramond().fontFamily),
-                                                                  ),
+                                                                  child:
+                                                                      !isWideScreen
+                                                                          ? Text(
+                                                                              "Cancel",
+                                                                              style: TextStyle(fontSize: 20, color: Colors.black, fontFamily: GoogleFonts.ebGaramond().fontFamily),
+                                                                            )
+                                                                          : Text(
+                                                                              "Cancel",
+                                                                              style: TextStyle(fontSize: 26, color: Colors.black, fontFamily: GoogleFonts.ebGaramond().fontFamily),
+                                                                            ),
                                                                 ),
                                                                 TextButton(
                                                                   style: ButtonStyle(
@@ -709,17 +767,16 @@ class _HomePageState extends State<HomePage>
                                                                     Navigator.pop(
                                                                         context);
                                                                   },
-                                                                  child: Text(
-                                                                    "Save",
-                                                                    style: Theme.of(
-                                                                            context)
-                                                                        .textTheme
-                                                                        .titleMedium
-                                                                        ?.copyWith(
-                                                                            color:
-                                                                                Colors.black,
-                                                                            fontFamily: GoogleFonts.ebGaramond().fontFamily),
-                                                                  ),
+                                                                  child:
+                                                                      !isWideScreen
+                                                                          ? Text(
+                                                                              "Save",
+                                                                              style: TextStyle(fontSize: 20, color: Colors.black, fontFamily: GoogleFonts.ebGaramond().fontFamily),
+                                                                            )
+                                                                          : Text(
+                                                                              "Save",
+                                                                              style: TextStyle(fontSize: 26, color: Colors.black, fontFamily: GoogleFonts.ebGaramond().fontFamily),
+                                                                            ),
                                                                 ),
                                                               ],
                                                             ),
@@ -730,7 +787,22 @@ class _HomePageState extends State<HomePage>
                                                     icon:
                                                         const Icon(Icons.edit),
                                                   ),
-                                                  title: Text(poemTitle),
+                                                  title: Text(
+                                                    poemTitle,
+                                                    style: !isWideScreen
+                                                        ? TextStyle(
+                                                            fontSize: 20,
+                                                            color: Colors.black,
+                                                            fontFamily: GoogleFonts
+                                                                    .ebGaramond()
+                                                                .fontFamily)
+                                                        : TextStyle(
+                                                            fontSize: 26,
+                                                            color: Colors.black,
+                                                            fontFamily: GoogleFonts
+                                                                    .ebGaramond()
+                                                                .fontFamily),
+                                                  ),
                                                   tileColor:
                                                       ColorTheme.secondary(
                                                           themeValue),
@@ -784,12 +856,16 @@ class _HomePageState extends State<HomePage>
                                       ),
                                       Text(
                                         "You haven't written any poetry yet ...",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleLarge
-                                            ?.copyWith(
-                                                color:
-                                                    ColorTheme.text(themeValue),
+                                        style: !isWideScreen
+                                            ? TextStyle(
+                                                fontSize: 20,
+                                                color: Colors.black,
+                                                fontFamily:
+                                                    GoogleFonts.ebGaramond()
+                                                        .fontFamily)
+                                            : TextStyle(
+                                                fontSize: 26,
+                                                color: Colors.black,
                                                 fontFamily:
                                                     GoogleFonts.ebGaramond()
                                                         .fontFamily),
@@ -804,12 +880,21 @@ class _HomePageState extends State<HomePage>
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        label: Text(
-          "Add Poem",
-          style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              color: Colors.black,
-              fontFamily: GoogleFonts.ebGaramond().fontFamily),
-        ),
+        label: !isWideScreen
+            ? Text(
+                "Add Poem",
+                style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                    fontFamily: GoogleFonts.ebGaramond().fontFamily),
+              )
+            : Text(
+                "Add Poem",
+                style: TextStyle(
+                    fontSize: 26,
+                    color: Colors.black,
+                    fontFamily: GoogleFonts.ebGaramond().fontFamily),
+              ),
         backgroundColor: ColorTheme.accent(themeValue),
         onPressed: () {
           if (isTemplateClicked) {
@@ -860,9 +945,15 @@ class _HomePageState extends State<HomePage>
             final snackBar = SnackBar(
               content: Text(
                 'Select a template first!',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: Colors.white,
-                    fontFamily: GoogleFonts.ebGaramond().fontFamily),
+                style: !isWideScreen
+                    ? TextStyle(
+                        fontSize: 20,
+                        color: Colors.white,
+                        fontFamily: GoogleFonts.ebGaramond().fontFamily)
+                    : TextStyle(
+                        fontSize: 26,
+                        color: Colors.white,
+                        fontFamily: GoogleFonts.ebGaramond().fontFamily),
               ),
               duration: const Duration(seconds: 2),
             );

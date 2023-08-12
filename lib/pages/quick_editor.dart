@@ -53,7 +53,7 @@ class _QuickModeState extends State<QuickMode> {
   List<String> contextPreviousLines = [];
   List<String> contextNextLines = [];
   late List<TextEditingController> textControllers;
-
+  bool isWideScreen = false;
   List<String> poemLines = [];
   List<String> reloadPoemLines = [];
   @override
@@ -77,6 +77,9 @@ class _QuickModeState extends State<QuickMode> {
 
   @override
   Widget build(BuildContext context) {
+    if (MediaQuery.of(context).size.width >= 768) {
+      isWideScreen = true;
+    }
     return KeyboardVisibilityBuilder(
       builder: (p0, isKeyboardVisible) {
         if (isKeyboardVisible) {
@@ -179,10 +182,14 @@ class _QuickModeState extends State<QuickMode> {
                                 padding: const EdgeInsets.only(left: 20.0),
                                 child: Text(
                                   "Verse By Verse",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineSmall
-                                      ?.copyWith(
+                                  style: !isWideScreen
+                                      ? TextStyle(
+                                          fontSize: 24,
+                                          color: Colors.white,
+                                          fontFamily: GoogleFonts.ebGaramond()
+                                              .fontFamily)
+                                      : TextStyle(
+                                          fontSize: 30,
                                           color: Colors.white,
                                           fontFamily: GoogleFonts.ebGaramond()
                                               .fontFamily),
@@ -194,10 +201,14 @@ class _QuickModeState extends State<QuickMode> {
                                 padding: const EdgeInsets.only(left: 20.0),
                                 child: Text(
                                   "Poem Structure",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium
-                                      ?.copyWith(
+                                  style: !isWideScreen
+                                      ? TextStyle(
+                                          fontSize: 20,
+                                          color: Colors.white,
+                                          fontFamily: GoogleFonts.ebGaramond()
+                                              .fontFamily)
+                                      : TextStyle(
+                                          fontSize: 26,
                                           color: Colors.white,
                                           fontFamily: GoogleFonts.ebGaramond()
                                               .fontFamily),
@@ -209,10 +220,14 @@ class _QuickModeState extends State<QuickMode> {
                                 padding: const EdgeInsets.only(left: 20.0),
                                 child: Text(
                                   "${widget.features[0]}, ${widget.features[1]} syllable count, ${widget.features[2]}",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleSmall
-                                      ?.copyWith(
+                                  style: !isWideScreen
+                                      ? TextStyle(
+                                          fontSize: 20,
+                                          color: Colors.white,
+                                          fontFamily: GoogleFonts.ebGaramond()
+                                              .fontFamily)
+                                      : TextStyle(
+                                          fontSize: 26,
                                           color: Colors.white,
                                           fontFamily: GoogleFonts.ebGaramond()
                                               .fontFamily),
@@ -329,16 +344,21 @@ class _QuickModeState extends State<QuickMode> {
                                                             ScrollController(),
                                                         scrollPhysics:
                                                             const ClampingScrollPhysics(),
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .titleMedium
-                                                            ?.copyWith(
-                                                              color:
-                                                                  Colors.white,
-                                                              fontFamily: GoogleFonts
-                                                                      .ebGaramond()
-                                                                  .fontFamily,
-                                                            ),
+                                                        style: !isWideScreen
+                                                            ? TextStyle(
+                                                                fontSize: 22,
+                                                                color: Colors
+                                                                    .white,
+                                                                fontFamily: GoogleFonts
+                                                                        .ebGaramond()
+                                                                    .fontFamily)
+                                                            : TextStyle(
+                                                                fontSize: 30,
+                                                                color: Colors
+                                                                    .white,
+                                                                fontFamily: GoogleFonts
+                                                                        .ebGaramond()
+                                                                    .fontFamily),
                                                         cursorColor:
                                                             Colors.white,
                                                         decoration:
@@ -358,25 +378,51 @@ class _QuickModeState extends State<QuickMode> {
                                                                         .white),
                                                           ),
                                                           labelText: hintText,
-                                                          counterStyle:
-                                                              const TextStyle(
+                                                          counterStyle: !isWideScreen
+                                                              ? TextStyle(
+                                                                  fontSize: 20,
                                                                   color: Colors
-                                                                      .white),
-                                                          labelStyle:
-                                                              const TextStyle(
+                                                                      .white,
+                                                                  fontFamily: GoogleFonts
+                                                                          .ebGaramond()
+                                                                      .fontFamily)
+                                                              : TextStyle(
+                                                                  fontSize: 26,
                                                                   color: Colors
-                                                                      .white),
-                                                          hintStyle:
-                                                              Theme.of(context)
-                                                                  .textTheme
-                                                                  .labelSmall
-                                                                  ?.copyWith(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontFamily:
-                                                                        GoogleFonts.ebGaramond()
-                                                                            .fontFamily,
-                                                                  ),
+                                                                      .white,
+                                                                  fontFamily: GoogleFonts
+                                                                          .ebGaramond()
+                                                                      .fontFamily),
+                                                          labelStyle: !isWideScreen
+                                                              ? TextStyle(
+                                                                  fontSize: 20,
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontFamily: GoogleFonts
+                                                                          .ebGaramond()
+                                                                      .fontFamily)
+                                                              : TextStyle(
+                                                                  fontSize: 26,
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontFamily: GoogleFonts
+                                                                          .ebGaramond()
+                                                                      .fontFamily),
+                                                          hintStyle: !isWideScreen
+                                                              ? TextStyle(
+                                                                  fontSize: 20,
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontFamily: GoogleFonts
+                                                                          .ebGaramond()
+                                                                      .fontFamily)
+                                                              : TextStyle(
+                                                                  fontSize: 26,
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontFamily: GoogleFonts
+                                                                          .ebGaramond()
+                                                                      .fontFamily),
                                                         ),
                                                         onTap: () {
                                                           if (focusedTextFieldIndex ==
@@ -615,11 +661,16 @@ class _QuickModeState extends State<QuickMode> {
                                                                 left: 20.0),
                                                         child: Text(
                                                           "Write poetry & generate suggestions ...",
-                                                          style: Theme.of(
-                                                                  context)
-                                                              .textTheme
-                                                              .headlineSmall
-                                                              ?.copyWith(
+                                                          style: !isWideScreen
+                                                              ? TextStyle(
+                                                                  fontSize: 24,
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontFamily: GoogleFonts
+                                                                          .ebGaramond()
+                                                                      .fontFamily)
+                                                              : TextStyle(
+                                                                  fontSize: 30,
                                                                   color: Colors
                                                                       .white,
                                                                   fontFamily: GoogleFonts
@@ -670,11 +721,17 @@ class _QuickModeState extends State<QuickMode> {
                                                                 title: Text(
                                                                   generatedPoemLines[
                                                                       index],
-                                                                  style: Theme.of(
-                                                                          context)
-                                                                      .textTheme
-                                                                      .titleMedium
-                                                                      ?.copyWith(
+                                                                  style: !isWideScreen
+                                                                      ? TextStyle(
+                                                                          fontSize:
+                                                                              22,
+                                                                          color: Colors
+                                                                              .white,
+                                                                          fontFamily: GoogleFonts.ebGaramond()
+                                                                              .fontFamily)
+                                                                      : TextStyle(
+                                                                          fontSize:
+                                                                              30,
                                                                           color: Colors
                                                                               .white,
                                                                           fontFamily:
@@ -735,7 +792,7 @@ class _QuickModeState extends State<QuickMode> {
                   heroTag: 'go-back',
                   backgroundColor: const Color(0xFF303030),
                   child: const Icon(Icons.arrow_back,
-                      size: 25, color: Colors.white),
+                      size: 30, color: Colors.white),
                   onPressed: () {
                     Navigator.pop(context);
                   },
@@ -754,11 +811,15 @@ class _QuickModeState extends State<QuickMode> {
                             heroTag: 'add-another-stanza',
                             label: Text(
                               "Add Another Stanza",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleSmall
-                                  ?.copyWith(
-                                      color: const Color(0xFF303030),
+                              style: !isWideScreen
+                                  ? TextStyle(
+                                      fontSize: 22,
+                                      color: Colors.black,
+                                      fontFamily:
+                                          GoogleFonts.ebGaramond().fontFamily)
+                                  : TextStyle(
+                                      fontSize: 30,
+                                      color: Colors.black,
                                       fontFamily:
                                           GoogleFonts.ebGaramond().fontFamily),
                             ),
@@ -804,11 +865,15 @@ class _QuickModeState extends State<QuickMode> {
                             heroTag: 'finish',
                             label: Text(
                               "Finish",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
-                                  ?.copyWith(
-                                      color: const Color(0xFF303030),
+                              style: !isWideScreen
+                                  ? TextStyle(
+                                      fontSize: 20,
+                                      color: Colors.black,
+                                      fontFamily:
+                                          GoogleFonts.ebGaramond().fontFamily)
+                                  : TextStyle(
+                                      fontSize: 26,
+                                      color: Colors.black,
                                       fontFamily:
                                           GoogleFonts.ebGaramond().fontFamily),
                             ),

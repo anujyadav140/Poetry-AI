@@ -77,6 +77,14 @@ class _TemplateFormState extends State<TemplateForm> {
 
   @override
   Widget build(BuildContext context) {
+    bool isWideScreen = false;
+    bool isLongScreen = false;
+    if (MediaQuery.of(context).size.width >= 768) {
+      isWideScreen = true;
+    }
+    if (MediaQuery.of(context).size.height >= 1000) {
+      isLongScreen = true;
+    }
     return Material(
       child: Column(
         children: [
@@ -93,10 +101,13 @@ class _TemplateFormState extends State<TemplateForm> {
                     children: [
                       Text(
                         widget.description,
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleMedium
-                            ?.copyWith(
+                        style: !isWideScreen
+                            ? TextStyle(
+                                fontSize: 20,
+                                color: Colors.black,
+                                fontFamily: GoogleFonts.ebGaramond().fontFamily)
+                            : TextStyle(
+                                fontSize: 26,
                                 color: Colors.black,
                                 fontFamily:
                                     GoogleFonts.ebGaramond().fontFamily),
@@ -110,14 +121,17 @@ class _TemplateFormState extends State<TemplateForm> {
                             alignment: Alignment.topLeft,
                             child: Text(
                               "Poetic Form:",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
-                                  ?.copyWith(
+                              style: !isWideScreen
+                                  ? TextStyle(
+                                      fontSize: 20,
                                       color: Colors.black,
                                       fontFamily:
-                                          GoogleFonts.ebGaramond().fontFamily,
-                                      fontWeight: FontWeight.bold),
+                                          GoogleFonts.ebGaramond().fontFamily)
+                                  : TextStyle(
+                                      fontSize: 26,
+                                      color: Colors.black,
+                                      fontFamily:
+                                          GoogleFonts.ebGaramond().fontFamily),
                             ),
                           ),
                           Column(
@@ -148,18 +162,27 @@ class _TemplateFormState extends State<TemplateForm> {
                                           ),
                                           Text(
                                             poeticForms[index],
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleMedium
-                                                ?.copyWith(
+                                            style: !isWideScreen
+                                                ? TextStyle(
+                                                    fontWeight:
+                                                        index == selectedRadio
+                                                            ? FontWeight.bold
+                                                            : FontWeight.normal,
+                                                    fontSize: 20,
                                                     color: Colors.black,
                                                     fontFamily:
                                                         GoogleFonts.ebGaramond()
-                                                            .fontFamily,
-                                                    fontWeight: index ==
-                                                            selectedRadio
-                                                        ? FontWeight.bold
-                                                        : FontWeight.normal),
+                                                            .fontFamily)
+                                                : TextStyle(
+                                                    fontWeight:
+                                                        index == selectedRadio
+                                                            ? FontWeight.bold
+                                                            : FontWeight.normal,
+                                                    fontSize: 26,
+                                                    color: Colors.black,
+                                                    fontFamily:
+                                                        GoogleFonts.ebGaramond()
+                                                            .fontFamily),
                                           ),
                                         ],
                                       ),
@@ -176,10 +199,15 @@ class _TemplateFormState extends State<TemplateForm> {
                                                   poeticForms[selectedRadio]]
                                               ?["Description"] ??
                                           "",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleMedium
-                                          ?.copyWith(
+                                      style: !isWideScreen
+                                          ? TextStyle(
+                                              fontSize: 20,
+                                              color: Colors.black,
+                                              fontFamily:
+                                                  GoogleFonts.ebGaramond()
+                                                      .fontFamily)
+                                          : TextStyle(
+                                              fontSize: 26,
                                               color: Colors.black,
                                               fontFamily:
                                                   GoogleFonts.ebGaramond()
@@ -191,14 +219,19 @@ class _TemplateFormState extends State<TemplateForm> {
                                                   poeticForms[selectedRadio]]
                                               ?["Sample Poem"] ??
                                           "",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleSmall
-                                          ?.copyWith(
-                                            color: Colors.black,
-                                            fontFamily: GoogleFonts.ebGaramond()
-                                                .fontFamily,
-                                          ),
+                                      style: !isWideScreen
+                                          ? TextStyle(
+                                              fontSize: 20,
+                                              color: Colors.black,
+                                              fontFamily:
+                                                  GoogleFonts.ebGaramond()
+                                                      .fontFamily)
+                                          : TextStyle(
+                                              fontSize: 26,
+                                              color: Colors.black,
+                                              fontFamily:
+                                                  GoogleFonts.ebGaramond()
+                                                      .fontFamily),
                                     ),
                                   ],
                                 ),
@@ -216,28 +249,34 @@ class _TemplateFormState extends State<TemplateForm> {
                             alignment: Alignment.topLeft,
                             child: Text(
                               "Syllable Count:",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
-                                  ?.copyWith(
+                              style: !isWideScreen
+                                  ? TextStyle(
+                                      fontSize: 20,
                                       color: Colors.black,
                                       fontFamily:
-                                          GoogleFonts.ebGaramond().fontFamily,
-                                      fontWeight: FontWeight.bold),
+                                          GoogleFonts.ebGaramond().fontFamily)
+                                  : TextStyle(
+                                      fontSize: 26,
+                                      color: Colors.black,
+                                      fontFamily:
+                                          GoogleFonts.ebGaramond().fontFamily),
                             ),
                           ),
                           Container(
                             alignment: Alignment.topLeft,
                             child: Text(
                               "The number of syllables for each line of verse",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
-                                  ?.copyWith(
+                              style: !isWideScreen
+                                  ? TextStyle(
+                                      fontSize: 20,
                                       color: Colors.black,
                                       fontFamily:
-                                          GoogleFonts.ebGaramond().fontFamily,
-                                      fontWeight: FontWeight.normal),
+                                          GoogleFonts.ebGaramond().fontFamily)
+                                  : TextStyle(
+                                      fontSize: 26,
+                                      color: Colors.black,
+                                      fontFamily:
+                                          GoogleFonts.ebGaramond().fontFamily),
                             ),
                           ),
                           DropdownButton(
@@ -246,18 +285,34 @@ class _TemplateFormState extends State<TemplateForm> {
                                 .map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
-                                child: Text(value),
+                                child: Text(
+                                  value,
+                                  style: !isWideScreen
+                                      ? TextStyle(
+                                          fontSize: 20,
+                                          color: Colors.black,
+                                          fontFamily: GoogleFonts.ebGaramond()
+                                              .fontFamily)
+                                      : TextStyle(
+                                          fontSize: 26,
+                                          color: Colors.black,
+                                          fontFamily: GoogleFonts.ebGaramond()
+                                              .fontFamily),
+                                ),
                               );
                             }).toList(),
                             value: dropdownSyllableCount,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium
-                                ?.copyWith(
+                            style: !isWideScreen
+                                ? TextStyle(
+                                    fontSize: 20,
                                     color: Colors.black,
                                     fontFamily:
-                                        GoogleFonts.ebGaramond().fontFamily,
-                                    fontWeight: FontWeight.normal),
+                                        GoogleFonts.ebGaramond().fontFamily)
+                                : TextStyle(
+                                    fontSize: 26,
+                                    color: Colors.black,
+                                    fontFamily:
+                                        GoogleFonts.ebGaramond().fontFamily),
                             onChanged: (String? value) {
                               setState(() {
                                 dropdownSyllableCount = value!;
@@ -276,28 +331,34 @@ class _TemplateFormState extends State<TemplateForm> {
                             alignment: Alignment.topLeft,
                             child: Text(
                               "Rhyme:",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
-                                  ?.copyWith(
+                              style: !isWideScreen
+                                  ? TextStyle(
+                                      fontSize: 20,
                                       color: Colors.black,
                                       fontFamily:
-                                          GoogleFonts.ebGaramond().fontFamily,
-                                      fontWeight: FontWeight.bold),
+                                          GoogleFonts.ebGaramond().fontFamily)
+                                  : TextStyle(
+                                      fontSize: 26,
+                                      color: Colors.black,
+                                      fontFamily:
+                                          GoogleFonts.ebGaramond().fontFamily),
                             ),
                           ),
                           Container(
                             alignment: Alignment.topLeft,
                             child: Text(
                               "The letters indicate which lines of the poem rhyme",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
-                                  ?.copyWith(
+                              style: !isWideScreen
+                                  ? TextStyle(
+                                      fontSize: 20,
                                       color: Colors.black,
                                       fontFamily:
-                                          GoogleFonts.ebGaramond().fontFamily,
-                                      fontWeight: FontWeight.normal),
+                                          GoogleFonts.ebGaramond().fontFamily)
+                                  : TextStyle(
+                                      fontSize: 26,
+                                      color: Colors.black,
+                                      fontFamily:
+                                          GoogleFonts.ebGaramond().fontFamily),
                             ),
                           ),
                           DropdownButton(
@@ -306,17 +367,33 @@ class _TemplateFormState extends State<TemplateForm> {
                                 .map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
-                                child: Text(value),
+                                child: Text(
+                                  value,
+                                  style: !isWideScreen
+                                      ? TextStyle(
+                                          fontSize: 20,
+                                          color: Colors.black,
+                                          fontFamily: GoogleFonts.ebGaramond()
+                                              .fontFamily)
+                                      : TextStyle(
+                                          fontSize: 26,
+                                          color: Colors.black,
+                                          fontFamily: GoogleFonts.ebGaramond()
+                                              .fontFamily),
+                                ),
                               );
                             }).toList(),
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium
-                                ?.copyWith(
+                            style: !isWideScreen
+                                ? TextStyle(
+                                    fontSize: 20,
                                     color: Colors.black,
                                     fontFamily:
-                                        GoogleFonts.ebGaramond().fontFamily,
-                                    fontWeight: FontWeight.normal),
+                                        GoogleFonts.ebGaramond().fontFamily)
+                                : TextStyle(
+                                    fontSize: 26,
+                                    color: Colors.black,
+                                    fontFamily:
+                                        GoogleFonts.ebGaramond().fontFamily),
                             value: dropdownRhyme,
                             onChanged: (String? value) {
                               setState(() {
@@ -333,6 +410,9 @@ class _TemplateFormState extends State<TemplateForm> {
               ],
             ),
           ),
+          isLongScreen
+              ? SizedBox(height: MediaQuery.of(context).size.height * 0.1)
+              : Container(),
           WaveWidget(
             config: CustomConfig(
               // gradients: [
@@ -348,7 +428,11 @@ class _TemplateFormState extends State<TemplateForm> {
             ),
             waveAmplitude: 0,
             backgroundColor: Colors.transparent,
-            size: const Size(double.infinity, 80.0),
+            size: !isLongScreen
+                ? Size(
+                    double.infinity, MediaQuery.of(context).size.height * 0.2)
+                : Size(
+                    double.infinity, MediaQuery.of(context).size.height * 0.3),
           ),
         ],
       ),

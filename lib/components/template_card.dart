@@ -175,6 +175,10 @@ class Template extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isWideScreen = false;
+    if (MediaQuery.of(context).size.width >= 768) {
+      isWideScreen = true;
+    }
     return Padding(
       padding: const EdgeInsets.only(
         top: 8.0,
@@ -218,12 +222,23 @@ class Template extends StatelessWidget {
                         color: templateUnderlineColor,
                       ),
                     ),
-                    Text(
-                      name,
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          color: Colors.black,
-                          fontFamily: GoogleFonts.ebGaramond().fontFamily),
-                    ),
+                    !isWideScreen
+                        ? Text(
+                            name,
+                            style: TextStyle(
+                              fontSize: 20,
+                                color: Colors.black,
+                                fontFamily:
+                                    GoogleFonts.ebGaramond().fontFamily),
+                          )
+                        : Text(
+                            name,
+                            style: TextStyle(
+                              fontSize: 26,
+                                color: Colors.black,
+                                fontFamily:
+                                    GoogleFonts.ebGaramond().fontFamily),
+                          ),
                   ],
                 ),
                 // Text(description),
