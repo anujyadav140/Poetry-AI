@@ -1191,7 +1191,13 @@ class _PoetryEditorState extends State<PoetryEditor>
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => GiveTitle(poem: poem),
+                                  builder: (context) => GiveTitle(
+                                    poem: poem,
+                                    accentColor: ColorTheme.accent(themeValue),
+                                    primaryColor:
+                                        ColorTheme.primary(themeValue),
+                                    textColor: ColorTheme.text(themeValue),
+                                  ),
                                 ));
                           },
                         ),

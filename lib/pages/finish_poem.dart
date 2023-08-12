@@ -10,11 +10,21 @@ import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 
 class FinishPoem extends StatefulWidget {
-  const FinishPoem(
-      {super.key, required this.poem, required this.title, required this.name});
+  const FinishPoem({
+    super.key,
+    required this.poem,
+    required this.title,
+    required this.name,
+    this.primaryColor = const Color(0xFF303030),
+    this.textColor = Colors.white,
+    this.accentColor = const Color(0xFF303030),
+  });
   final String title;
   final String name;
   final String poem;
+  final Color primaryColor;
+  final Color textColor;
+  final Color accentColor;
   @override
   State<FinishPoem> createState() => _FinishPoemState();
 }
@@ -37,7 +47,7 @@ class _FinishPoemState extends State<FinishPoem> {
       content: Text(
         'Image saved successfully',
         style: TextStyle(
-            color: Colors.white,
+            color: widget.textColor,
             letterSpacing: .5,
             fontSize: !isWideScreen ? 18 : 28,
             fontFamily: GoogleFonts.ebGaramond().fontFamily),
@@ -56,7 +66,7 @@ class _FinishPoemState extends State<FinishPoem> {
       content: Text(
         'Text copied to clipboard',
         style: TextStyle(
-            color: Colors.white,
+            color: widget.textColor,
             letterSpacing: .5,
             fontSize: !isWideScreen ? 18 : 28,
             fontFamily: GoogleFonts.ebGaramond().fontFamily),
@@ -96,9 +106,12 @@ class _FinishPoemState extends State<FinishPoem> {
     }
     return SafeArea(
       child: Scaffold(
-        backgroundColor: const Color(0xFF303030),
+        backgroundColor: widget.primaryColor,
         appBar: AppBar(
-          backgroundColor: const Color(0xFF303030),
+          iconTheme: IconThemeData(
+            color: widget.textColor,
+          ),
+          backgroundColor: widget.primaryColor,
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.vertical(
             bottom: Radius.circular(25),
@@ -107,7 +120,7 @@ class _FinishPoemState extends State<FinishPoem> {
             "Save, Copy & Share",
             style: TextStyle(
                 fontSize: !isWideScreen ? 20 : 28,
-                color: Colors.white,
+                color: widget.textColor,
                 fontFamily: GoogleFonts.ebGaramond().fontFamily),
           ),
           elevation: 0.0,
@@ -125,7 +138,7 @@ class _FinishPoemState extends State<FinishPoem> {
                       Container(
                         width: MediaQuery.of(context).size.width,
                         padding: const EdgeInsets.all(40.0),
-                        // color: const Color(0xFF303030),
+                        // color: widget.primaryColor,
                         color: Colors.white,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -181,8 +194,8 @@ class _FinishPoemState extends State<FinishPoem> {
         ),
         floatingActionButton: SpeedDial(
           animatedIcon: AnimatedIcons.menu_close,
-          foregroundColor: const Color(0xFF303030),
-          backgroundColor: Colors.white,
+          foregroundColor: widget.textColor,
+          backgroundColor: widget.accentColor,
           overlayColor: Colors.transparent,
           overlayOpacity: 0.4,
           spacing: 9,
@@ -191,39 +204,39 @@ class _FinishPoemState extends State<FinishPoem> {
           direction: SpeedDialDirection.up,
           children: [
             SpeedDialChild(
-              child: const Icon(
+              child: Icon(
                 Icons.copy_all,
-                color: Color(0xFF303030),
+                color: widget.textColor,
                 size: 30,
               ),
               label: 'Copy Text',
               labelStyle: GoogleFonts.ebGaramond(
                 textStyle: TextStyle(
-                  color: const Color(0xFF303030),
+                  color: Colors.black,
                   letterSpacing: .5,
                   fontSize: !isWideScreen ? 20 : 28,
                 ),
               ),
-              backgroundColor: Colors.white,
+              backgroundColor: widget.accentColor,
               onTap: () async {
                 copyTextToClipboard();
               },
             ),
             SpeedDialChild(
-              child: const Icon(
+              child: Icon(
                 Icons.download,
-                color: Color(0xFF303030),
+                color: widget.textColor,
                 size: 30,
               ),
               label: 'Download As Image',
               labelStyle: GoogleFonts.ebGaramond(
                 textStyle: TextStyle(
-                  color: const Color(0xFF303030),
+                  color: Colors.black,
                   letterSpacing: .5,
                   fontSize: !isWideScreen ? 20 : 28,
                 ),
               ),
-              backgroundColor: Colors.white,
+              backgroundColor: widget.accentColor,
               onTap: () async {
                 final image = await screenshotController.capture();
                 if (image == null) return;
@@ -231,20 +244,20 @@ class _FinishPoemState extends State<FinishPoem> {
               },
             ),
             SpeedDialChild(
-              child: const Icon(
+              child: Icon(
                 Icons.share,
-                color: Color(0xFF303030),
+                color: widget.textColor,
                 size: 30,
               ),
               label: 'Share',
               labelStyle: GoogleFonts.ebGaramond(
                 textStyle: TextStyle(
-                  color: const Color(0xFF303030),
+                  color: Colors.black,
                   letterSpacing: .5,
                   fontSize: !isWideScreen ? 20 : 28,
                 ),
               ),
-              backgroundColor: Colors.white,
+              backgroundColor: widget.accentColor,
               onTap: () async {
                 final image = await screenshotController.capture();
                 if (image == null) return;

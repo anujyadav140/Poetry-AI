@@ -3,8 +3,17 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:poetry_ai/pages/finish_poem.dart';
 
 class GiveTitle extends StatefulWidget {
-  const GiveTitle({super.key, required this.poem});
+  const GiveTitle({
+    super.key,
+    required this.poem,
+    this.primaryColor = const Color(0xFF303030),
+    this.textColor = Colors.white,
+    this.accentColor = const Color(0xFF303030),
+  });
   final String poem;
+  final Color primaryColor;
+  final Color textColor;
+  final Color accentColor;
   @override
   State<GiveTitle> createState() => _GiveTitleState();
 }
@@ -14,23 +23,31 @@ class _GiveTitleState extends State<GiveTitle> {
   late String name = "";
   @override
   Widget build(BuildContext context) {
+    bool isWideScreen = false;
+    if (MediaQuery.of(context).size.width >= 768) {
+      isWideScreen = true;
+    }
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: const Color(0xFF303030),
+          iconTheme: IconThemeData(
+            color: widget.textColor,
+          ),
+          backgroundColor: widget.primaryColor,
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.vertical(
             bottom: Radius.circular(25),
           )),
           title: Text(
             "Title & Write Your Name",
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: Colors.white,
-                fontFamily: GoogleFonts.ebGaramond().fontFamily),
+            style: TextStyle(
+                fontSize: !isWideScreen ? 20 : 28,
+                fontFamily: GoogleFonts.ebGaramond().fontFamily,
+                color: widget.textColor),
           ),
           elevation: 0.0,
         ),
-        backgroundColor: const Color(0xFF303030),
+        backgroundColor: widget.primaryColor,
         body: SingleChildScrollView(
           child: Column(
             children: [
@@ -46,25 +63,33 @@ class _GiveTitleState extends State<GiveTitle> {
                 textCapitalization: TextCapitalization.sentences,
                 scrollController: ScrollController(),
                 scrollPhysics: const ClampingScrollPhysics(),
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: Colors.white,
-                      fontFamily: GoogleFonts.ebGaramond().fontFamily,
-                    ),
-                cursorColor: Colors.white,
+                style: TextStyle(
+                  fontSize: !isWideScreen ? 20 : 28,
+                  color: widget.textColor,
+                  fontFamily: GoogleFonts.ebGaramond().fontFamily,
+                ),
+                cursorColor: widget.textColor,
                 decoration: InputDecoration(
                   labelText: "Give A Title To Your Poem ...",
-                  focusedBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: widget.textColor),
                   ),
-                  enabledBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: widget.textColor),
                   ),
-                  counterStyle: const TextStyle(color: Colors.white),
-                  labelStyle: const TextStyle(color: Colors.white),
-                  hintStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: Colors.white,
-                        fontFamily: GoogleFonts.ebGaramond().fontFamily,
-                      ),
+                  counterStyle: TextStyle(
+                      fontSize: !isWideScreen ? 16 : 26,
+                      fontFamily: GoogleFonts.ebGaramond().fontFamily,
+                      color: widget.textColor),
+                  labelStyle: TextStyle(
+                      fontSize: !isWideScreen ? 20 : 26,
+                      fontFamily: GoogleFonts.ebGaramond().fontFamily,
+                      color: widget.textColor),
+                  hintStyle: TextStyle(
+                    fontSize: !isWideScreen ? 18 : 26,
+                    color: widget.textColor,
+                    fontFamily: GoogleFonts.ebGaramond().fontFamily,
+                  ),
                 ),
                 onTap: () {},
               ),
@@ -81,24 +106,31 @@ class _GiveTitleState extends State<GiveTitle> {
                 scrollController: ScrollController(),
                 scrollPhysics: const ClampingScrollPhysics(),
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: Colors.white,
+                      color: widget.textColor,
                       fontFamily: GoogleFonts.ebGaramond().fontFamily,
                     ),
-                cursorColor: Colors.white,
+                cursorColor: widget.textColor,
                 decoration: InputDecoration(
                   labelText: "Write Your Name ...",
-                  focusedBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: widget.textColor),
                   ),
-                  enabledBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: widget.textColor),
                   ),
-                  counterStyle: const TextStyle(color: Colors.white),
-                  labelStyle: const TextStyle(color: Colors.white),
-                  hintStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: Colors.white,
-                        fontFamily: GoogleFonts.ebGaramond().fontFamily,
-                      ),
+                  counterStyle: TextStyle(
+                      fontSize: !isWideScreen ? 16 : 26,
+                      fontFamily: GoogleFonts.ebGaramond().fontFamily,
+                      color: widget.textColor),
+                  labelStyle: TextStyle(
+                      fontSize: !isWideScreen ? 20 : 26,
+                      fontFamily: GoogleFonts.ebGaramond().fontFamily,
+                      color: widget.textColor),
+                  hintStyle: TextStyle(
+                    fontSize: !isWideScreen ? 18 : 26,
+                    color: widget.textColor,
+                    fontFamily: GoogleFonts.ebGaramond().fontFamily,
+                  ),
                 ),
                 onTap: () {},
               ),
@@ -106,9 +138,10 @@ class _GiveTitleState extends State<GiveTitle> {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   widget.poem,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: Colors.white,
-                      fontFamily: GoogleFonts.ebGaramond().fontFamily),
+                  style: TextStyle(
+                      fontSize: !isWideScreen ? 24 : 30,
+                      fontFamily: GoogleFonts.ebGaramond().fontFamily,
+                      color: widget.textColor),
                 ),
               ),
             ],
@@ -118,12 +151,13 @@ class _GiveTitleState extends State<GiveTitle> {
           heroTag: 'finish',
           label: Text(
             "Finish",
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: const Color(0xFF303030),
-                fontFamily: GoogleFonts.ebGaramond().fontFamily),
+            style: TextStyle(
+                fontSize: !isWideScreen ? 20 : 28,
+                fontFamily: GoogleFonts.ebGaramond().fontFamily,
+                color: widget.textColor),
           ),
           tooltip: "Finish",
-          backgroundColor: Colors.white,
+          backgroundColor: widget.accentColor,
           onPressed: () {
             Navigator.push(
                 context,
@@ -132,6 +166,9 @@ class _GiveTitleState extends State<GiveTitle> {
                     title: title,
                     name: name,
                     poem: widget.poem,
+                    primaryColor: widget.primaryColor,
+                    textColor: widget.textColor,
+                    accentColor: widget.accentColor,
                   ),
                 ));
           },
