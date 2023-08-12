@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:async';
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
@@ -17,7 +16,6 @@ import 'package:poetry_ai/services/authentication/auth_service.dart';
 import 'package:rive/rive.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:english_words/english_words.dart';
 import 'package:provider/provider.dart';
 import 'package:read_more_text/read_more_text.dart';
 

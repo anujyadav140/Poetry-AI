@@ -57,14 +57,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.11.0"
-  auto_size_text:
-    dependency: "direct main"
-    description:
-      name: auto_size_text
-      sha256: "3f5261cd3fb5f2a9ab4e2fc3fba84fd9fcaac8821f20a1d4e71f557521b22599"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.0.0"
   beautiful_soup_dart:
     dependency: transitive
     description:
@@ -289,14 +281,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.4.1"
-  english_words:
-    dependency: "direct main"
-    description:
-      name: english_words
-      sha256: "6a7ef6473a97bd8571b6b641d006a6e58a7c67e65fb6f3d6d1151cb46b0e983c"
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.0.0"
   equatable:
     dependency: transitive
     description:
@@ -1157,14 +1141,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
-  string_similarity:
-    dependency: "direct main"
-    description:
-      name: string_similarity
-      sha256: "5219d2ca048f6d3b8954747644b99b103244b5f84ef62b2577d29eb6bdeb61bb"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.0"
   term_glyph:
     dependency: transitive
     description:

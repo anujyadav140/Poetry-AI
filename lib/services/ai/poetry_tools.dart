@@ -1,11 +1,7 @@
 import 'package:langchain/langchain.dart';
 import 'package:langchain_openai/langchain_openai.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'dart:convert';
 import 'package:flutter/services.dart';
-import 'package:english_words/english_words.dart';
-import 'package:poetry_ai/services/ai/tools/rhyme_tool.dart';
-import 'package:string_similarity/string_similarity.dart';
 
 class PoetryTools {
   // final llm = OpenAI(apiKey: dotenv.env['OPENAI_API_KEY'], temperature: 0.9);
@@ -14,15 +10,7 @@ class PoetryTools {
     model: 'gpt-3.5-turbo-0613',
     temperature: 0,
   );
-  Future<void> rhymeAgent() async {
-    final tool = RhymeTool();
-    final tools = [tool];
-    final agent = OpenAIFunctionsAgent.fromLLMAndTools(llm: llm, tools: tools);
-    final executor = AgentExecutor(agent: agent, tools: tools);
-    final res = await executor.run(
-        'What is the rhyme for the words Sigh and I? Look at the dice coefficient from the tool agent and give your own analysis on it');
-    print(res);
-  }
+  Future<void> rhymeAgent() async {}
 
   Future<Map<String, String>> parseCmuDict() async {
     try {
@@ -68,24 +56,7 @@ class PoetryTools {
   }
 
   Future<String> rhymeSchemePatternFinder(String poem) async {
-    RhymeTool().countTotalSyllables();
     print(poem);
-    // final chat = ChatOpenAI(
-    //   model: 'gpt-3.5-turbo',
-    //   apiKey: dotenv.env['OPENAI_API_KEY'],
-    //   temperature: 0.9,
-    // );
-    // const template =
-    //     '''You are a helpful poetry tutor that helps in finding the rhyme scheme of the poem''';
-    // final systemMessagePrompt =
-    //     SystemChatMessagePromptTemplate.fromTemplate(template);
-    // const humanTemplate = '{poem}';
-    // final humanMessagePrompt =
-    //     HumanChatMessagePromptTemplate.fromTemplate(humanTemplate);
-    // final chatPrompt = ChatPromptTemplate.fromPromptMessages(
-    //     [systemMessagePrompt, humanMessagePrompt]);
-    // final chain = LLMChain(llm: chat, prompt: chatPrompt);
-    // final res = await chain.run({'poem': poem});
     return "";
   }
 
@@ -244,8 +215,3 @@ class PoetryTools {
     return res;
   }
 }
-      // You are a helpful AI poet who helps the user by suggesting multiple poetry lines- verse by verse,
-      //  that can come after the previous line, this is the "{previousLine}" and these are the other lines in the poetry {lineContext}
-      //  suggest multiple, different lines that can come after the previous line while fitting the whole context and intention
-      //  of the poetry. Make sure the form is {form}, the syllables are {syllables} and the rhyme scheme is {rhyme}.
-      //  return only 5 lines- without labelling or numbering them
