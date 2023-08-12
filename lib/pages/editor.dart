@@ -55,6 +55,7 @@ class _PoetryEditorState extends State<PoetryEditor>
   bool isScrollingUp = false;
   bool reachedTheBottom = true;
   bool isExpanded = false;
+  bool isWideScreen = false;
   Timer? _scrollTimer;
   late String poemTitle = "";
   List<String> poetryFeatures = [];
@@ -226,6 +227,9 @@ class _PoetryEditorState extends State<PoetryEditor>
   bool tester = false;
   @override
   Widget build(BuildContext context) {
+    if (MediaQuery.of(context).size.width >= 768) {
+      isWideScreen = true;
+    }
     var poemData = poemListBox.getAt(widget.poemIndex) as Map<dynamic, dynamic>;
     String metre = poemData['meter'] as String;
     final isRhymeSelectedLines =
@@ -274,39 +278,44 @@ class _PoetryEditorState extends State<PoetryEditor>
                   tooltip: "Click on this if you want to cancel the selection",
                 ),
           title: !isConvertToMetre
-              ? FittedBox(
-                  fit: BoxFit.fitWidth,
-                  child: AutoSizeText(
-                    !isRhymeSelectedLines
-                        ? "Editor - $poemTitle"
-                        : !isFirstLineSelected
-                            ? "Select Line 1 To Rhyme"
-                            : !isSecondLineSelected
-                                ? "Select Line 2 To Rhyme"
-                                : "",
-                    maxFontSize: 26,
-                    minFontSize: 18,
-                    style: GoogleFonts.ebGaramond(
-                      textStyle: TextStyle(
-                        color: widget.editorFontColor,
-                        letterSpacing: .5,
-                        // fontSize: 18,
-                      ),
-                    ),
+              ? Text(
+                  !isRhymeSelectedLines
+                      ? "Editor - $poemTitle"
+                      : !isFirstLineSelected
+                          ? "Select Line 1 To Rhyme"
+                          : !isSecondLineSelected
+                              ? "Select Line 2 To Rhyme"
+                              : "",
+                  style: GoogleFonts.ebGaramond(
+                    textStyle: !isWideScreen
+                        ? TextStyle(
+                            fontSize: 20,
+                            color: widget.editorFontColor,
+                            letterSpacing: .5,
+                            // fontSize: 18,
+                          )
+                        : TextStyle(
+                            fontSize: 26,
+                            color: widget.editorFontColor,
+                            letterSpacing: .5,
+                            // fontSize: 18,
+                          ),
                   ),
                 )
-              : FittedBox(
-                  fit: BoxFit.fitWidth,
-                  child: AutoSizeText(
-                    maxFontSize: 26,
-                    minFontSize: 18,
-                    "Select Line(s)",
-                    style: GoogleFonts.ebGaramond(
-                      textStyle: TextStyle(
-                        color: widget.editorFontColor,
-                        letterSpacing: .5,
-                      ),
-                    ),
+              : Text(
+                  "Select Line(s)",
+                  style: GoogleFonts.ebGaramond(
+                    textStyle: !isWideScreen
+                        ? TextStyle(
+                            fontSize: 20,
+                            color: widget.editorFontColor,
+                            letterSpacing: .5,
+                          )
+                        : TextStyle(
+                            fontSize: 28,
+                            color: widget.editorFontColor,
+                            letterSpacing: .5,
+                          ),
                   ),
                 ),
           iconTheme: IconThemeData(
@@ -340,17 +349,19 @@ class _PoetryEditorState extends State<PoetryEditor>
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: Text(
-                                      'Features',
-                                      style: TextStyle(
-                                        fontSize: 26,
-                                        color: Colors.black,
-                                        fontFamily:
-                                            GoogleFonts.ebGaramond().fontFamily,
-                                      ),
-                                    ),
+                                  Text(
+                                    'Features',
+                                    style: !isWideScreen
+                                        ? TextStyle(
+                                            fontSize: 20,
+                                            color: widget.editorFontColor,
+                                            letterSpacing: .5,
+                                          )
+                                        : TextStyle(
+                                            fontSize: 28,
+                                            color: widget.editorFontColor,
+                                            letterSpacing: .5,
+                                          ),
                                   ),
                                   const Divider(
                                     height: 1,
@@ -360,16 +371,19 @@ class _PoetryEditorState extends State<PoetryEditor>
                                       height:
                                           10), // Add spacing between the title and content
                                   SingleChildScrollView(
-                                    child: AutoSizeText(
-                                      maxFontSize: 26,
-                                      minFontSize: 22,
+                                    child: Text(
                                       allFeatures,
-                                      style: TextStyle(
-                                        // fontSize: 22,
-                                        color: Colors.black,
-                                        fontFamily:
-                                            GoogleFonts.ebGaramond().fontFamily,
-                                      ),
+                                      style: !isWideScreen
+                                          ? TextStyle(
+                                              fontSize: 20,
+                                              color: widget.editorFontColor,
+                                              letterSpacing: .5,
+                                            )
+                                          : TextStyle(
+                                              fontSize: 28,
+                                              color: widget.editorFontColor,
+                                              letterSpacing: .5,
+                                            ),
                                     ),
                                   ),
                                 ],
@@ -583,7 +597,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                     customStyles: quill.DefaultStyles(
                       paragraph: quill.DefaultTextBlockStyle(
                           GoogleFonts.ebGaramond(
-                              fontSize: 21,
+                              fontSize: isWideScreen ? 21 : 29,
                               fontWeight: FontWeight.w300,
                               color: Colors.black),
                           const quill.VerticalSpacing(0, 6),
@@ -662,10 +676,10 @@ class _PoetryEditorState extends State<PoetryEditor>
                                     title: Text(
                                       "Bookmarks-$formattedCount",
                                       style: GoogleFonts.ebGaramond(
-                                        textStyle: const TextStyle(
+                                        textStyle: TextStyle(
                                           color: Colors.black,
                                           letterSpacing: .5,
-                                          fontSize: 18,
+                                          fontSize: isWideScreen ? 20 : 28,
                                         ),
                                       ),
                                     ),
@@ -677,14 +691,11 @@ class _PoetryEditorState extends State<PoetryEditor>
                                     child: Center(
                                       child: Text(
                                         "No Bookmarks Yet ...",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headlineSmall
-                                            ?.copyWith(
-                                                color: Colors.black,
-                                                fontFamily:
-                                                    GoogleFonts.ebGaramond()
-                                                        .fontFamily),
+                                        style: TextStyle(
+                                            fontSize: isWideScreen ? 20 : 28,
+                                            color: Colors.black,
+                                            fontFamily: GoogleFonts.ebGaramond()
+                                                .fontFamily),
                                       ),
                                     ),
                                   )
@@ -728,6 +739,10 @@ class _PoetryEditorState extends State<PoetryEditor>
                                                       content: Text(
                                                         'Bookmark deleted.',
                                                         style: TextStyle(
+                                                            fontSize:
+                                                                isWideScreen
+                                                                    ? 20
+                                                                    : 28,
                                                             color: widget
                                                                 .editorFontColor),
                                                       ),
@@ -771,23 +786,25 @@ class _PoetryEditorState extends State<PoetryEditor>
                                                       numLines: 2,
                                                       style: GoogleFonts
                                                           .ebGaramond(
-                                                        textStyle:
-                                                            const TextStyle(
+                                                        textStyle: TextStyle(
                                                           color: Colors.black,
                                                           letterSpacing: .5,
-                                                          fontSize: 18,
+                                                          fontSize: isWideScreen
+                                                              ? 20
+                                                              : 28,
                                                         ),
                                                       ),
                                                       readMoreTextStyle:
                                                           GoogleFonts
                                                               .ebGaramond(
-                                                        textStyle:
-                                                            const TextStyle(
+                                                        textStyle: TextStyle(
                                                           color: Colors.black,
                                                           letterSpacing: .5,
                                                           fontWeight:
                                                               FontWeight.w600,
-                                                          fontSize: 15,
+                                                          fontSize: isWideScreen
+                                                              ? 20
+                                                              : 28,
                                                         ),
                                                       ),
                                                       readMoreIconColor:
@@ -881,10 +898,10 @@ class _PoetryEditorState extends State<PoetryEditor>
                             child: const Icon(Icons.smart_button_sharp),
                             label: 'AI Poetry Tool',
                             labelStyle: GoogleFonts.ebGaramond(
-                              textStyle: const TextStyle(
+                              textStyle: TextStyle(
                                 color: Colors.black,
                                 letterSpacing: .5,
-                                fontSize: 18,
+                                fontSize: isWideScreen ? 20 : 28,
                               ),
                             ),
                             backgroundColor: widget.editorAppbarColor,
@@ -939,21 +956,18 @@ class _PoetryEditorState extends State<PoetryEditor>
                                                       MainAxisAlignment
                                                           .spaceBetween,
                                                   children: [
-                                                    FittedBox(
-                                                      fit: BoxFit.fitWidth,
-                                                      child: AutoSizeText(
-                                                        maxFontSize: 26,
-                                                        minFontSize: 18,
-                                                        _isInfoClicked
-                                                            ? 'How To Get Started'
-                                                            : 'AI Tools:',
-                                                        style: GoogleFonts
-                                                            .ebGaramond(
-                                                          textStyle:
-                                                              const TextStyle(
-                                                            color: Colors.black,
-                                                            letterSpacing: .5,
-                                                          ),
+                                                    Text(
+                                                      _isInfoClicked
+                                                          ? 'How To Get Started'
+                                                          : 'AI Tools:',
+                                                      style: GoogleFonts
+                                                          .ebGaramond(
+                                                        textStyle: TextStyle(
+                                                          color: Colors.black,
+                                                          letterSpacing: .5,
+                                                          fontSize: isWideScreen
+                                                              ? 20
+                                                              : 28,
                                                         ),
                                                       ),
                                                     ),
@@ -1012,10 +1026,10 @@ class _PoetryEditorState extends State<PoetryEditor>
                           child: const Icon(Icons.bookmark_added_rounded),
                           label: 'Saved Bookmarks',
                           labelStyle: GoogleFonts.ebGaramond(
-                            textStyle: const TextStyle(
+                            textStyle: TextStyle(
                               color: Colors.black,
                               letterSpacing: .5,
-                              fontSize: 18,
+                              fontSize: isWideScreen ? 20 : 28,
                             ),
                           ),
                           backgroundColor: widget.editorAppbarColor,
@@ -1030,10 +1044,10 @@ class _PoetryEditorState extends State<PoetryEditor>
                           child: const Icon(Icons.save),
                           label: 'Save The Poem',
                           labelStyle: GoogleFonts.ebGaramond(
-                            textStyle: const TextStyle(
+                            textStyle: TextStyle(
                               color: Colors.black,
                               letterSpacing: .5,
-                              fontSize: 18,
+                              fontSize: isWideScreen ? 20 : 28,
                             ),
                           ),
                           backgroundColor: widget.editorAppbarColor,
@@ -1063,13 +1077,14 @@ class _PoetryEditorState extends State<PoetryEditor>
     await Fluttertoast.cancel();
 
     Fluttertoast.showToast(
-        msg: message,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: widget.editorAppbarColor,
-        textColor: widget.editorFontColor,
-        fontSize: 18.0);
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 1,
+      backgroundColor: widget.editorAppbarColor,
+      textColor: widget.editorFontColor,
+      fontSize: isWideScreen ? 20 : 28,
+    );
   }
 }
 
@@ -1104,8 +1119,12 @@ class AiToolsList extends StatefulWidget {
 
 class _AiToolsListState extends State<AiToolsList> {
   String wordResponse = "";
+  bool isWideScreen = false;
   @override
   Widget build(BuildContext context) {
+    if (MediaQuery.of(context).size.width >= 768) {
+      isWideScreen = true;
+    }
     final isRhymeSelectedLines =
         context.watch<AuthService>().isRhymeSelectedLines;
     final isConvertToMetre = context.watch<AuthService>().isConvertToMetre;
@@ -1191,10 +1210,10 @@ class _AiToolsListState extends State<AiToolsList> {
                     title: Text(
                       widget._aiTools[index][2],
                       style: GoogleFonts.ebGaramond(
-                        textStyle: const TextStyle(
+                        textStyle: TextStyle(
                           color: Colors.black,
                           letterSpacing: .5,
-                          fontSize: 15,
+                          fontSize: isWideScreen ? 20 : 28,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -1202,10 +1221,10 @@ class _AiToolsListState extends State<AiToolsList> {
                     subtitle: Text(
                       widget._aiTools[index][3],
                       style: GoogleFonts.ebGaramond(
-                        textStyle: const TextStyle(
+                        textStyle: TextStyle(
                           color: Colors.black,
                           letterSpacing: .5,
-                          fontSize: 15,
+                          fontSize: isWideScreen ? 20 : 28,
                         ),
                       ),
                     ),
@@ -1295,6 +1314,10 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    bool isWideScreen = false;
+    if (MediaQuery.of(context).size.width >= 768) {
+      isWideScreen = true;
+    }
     if (bookmark.isEmpty) {}
     void saveOrRemovePoem() {
       if (isClicked) {
@@ -1304,7 +1327,7 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
-          fontSize: 18.0,
+          fontSize: isWideScreen ? 20 : 28,
           backgroundColor: widget.buttonColor,
           textColor: widget.fontColor,
         );
@@ -1324,7 +1347,7 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
-          fontSize: 18.0,
+          fontSize: isWideScreen ? 20 : 28,
           backgroundColor: widget.buttonColor,
           textColor: widget.fontColor,
         );
@@ -1369,10 +1392,10 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
                   Text(
                     widget.title,
                     style: GoogleFonts.ebGaramond(
-                      textStyle: const TextStyle(
+                      textStyle: TextStyle(
                         color: Colors.black,
                         letterSpacing: .5,
-                        fontSize: 18,
+                        fontSize: isWideScreen ? 20 : 28,
                       ),
                     ),
                   ),
@@ -1418,10 +1441,10 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
                       child: Text(
                         widget.content,
                         style: GoogleFonts.ebGaramond(
-                          textStyle: const TextStyle(
+                          textStyle: TextStyle(
                             color: Colors.black,
                             letterSpacing: .5,
-                            fontSize: 15,
+                            fontSize: isWideScreen ? 20 : 28,
                           ),
                         ),
                       ),
@@ -1459,7 +1482,22 @@ class InfoPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Text("Write the info to help user here:");
+    bool isWideScreen = false;
+    if (MediaQuery.of(context).size.width >= 768) {
+      isWideScreen = true;
+    }
+    return Text(
+      "Write the info to help user here:",
+      style: !isWideScreen
+          ? TextStyle(
+              fontSize: 22,
+              color: Colors.black,
+              fontFamily: GoogleFonts.ebGaramond().fontFamily)
+          : TextStyle(
+              fontSize: 30,
+              color: Colors.black,
+              fontFamily: GoogleFonts.ebGaramond().fontFamily),
+    );
   }
 }
 
