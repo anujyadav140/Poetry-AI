@@ -289,6 +289,7 @@ class _HomePageState extends State<HomePage>
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: !isWideScreen
             ? Text(
                 //FIREBBASE FUNCTIONALITY CODE

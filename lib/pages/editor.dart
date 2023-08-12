@@ -56,6 +56,7 @@ class _PoetryEditorState extends State<PoetryEditor>
   bool reachedTheBottom = true;
   bool isExpanded = false;
   bool isWideScreen = false;
+  bool isSaved = false;
   Timer? _scrollTimer;
   late String poemTitle = "";
   List<String> poetryFeatures = [];
@@ -89,11 +90,9 @@ class _PoetryEditorState extends State<PoetryEditor>
     super.initState();
     _scrollController = ScrollController();
     var poemData = poemListBox.getAt(widget.poemIndex) as Map<dynamic, dynamic>;
-    // print(poemData);
     poemTitle = poemData['title'] as String;
     String? poetryContent = poemData['poetry'] as String?;
     String? poetryMetre = poemData['meter'] as String?;
-    print(poetryMetre);
     poetryFeatures = poemData['features'];
     String? poetryType = poemData['type'] as String;
     bookmarks = poemData['bookmarks'] as List<String>;
@@ -146,13 +145,24 @@ class _PoetryEditorState extends State<PoetryEditor>
       keepStyleOnNewLine: true,
       selection: const TextSelection.collapsed(offset: 0),
     );
-    bool _isFirstFocus = true;
+    bool isFirstFocus = true;
     _focusNode.addListener(() {
-      if (_focusNode.hasFocus && _isFirstFocus) {
+      if (_focusNode.hasFocus && isFirstFocus) {
         _scrollToCursor();
-        _isFirstFocus = false;
+        isFirstFocus = false;
       }
     });
+    controller.addListener(_onContentChanged);
+  }
+
+  void _onContentChanged() {
+    var poemData = poemListBox.getAt(widget.poemIndex) as Map<dynamic, dynamic>;
+    String? poetryContent = poemData['poetry'] as String?;
+    final hasNewContent = controller.document.toPlainText() != poetryContent;
+    if (hasNewContent) {
+      isSaved = false;
+      print("New content typed!");
+    }
   }
 
   void _scrollToCursor() {
@@ -223,10 +233,11 @@ class _PoetryEditorState extends State<PoetryEditor>
   String selectedLine2 = "";
   List<String> selectedLines = [];
   String multiSelectedLines = "";
-
+  final globalThemeBox = Hive.box('myThemeBox');
   bool tester = false;
   @override
   Widget build(BuildContext context) {
+    final themeValue = globalThemeBox.get('theme') ?? 'Classic';
     if (MediaQuery.of(context).size.width >= 768) {
       isWideScreen = true;
     }
@@ -252,11 +263,88 @@ class _PoetryEditorState extends State<PoetryEditor>
           leading: !isRhymeSelectedLines && !isConvertToMetre
               ? IconButton(
                   onPressed: () {
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const HomePage(),
-                        ));
+                    if (!isSaved) {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              backgroundColor: ColorTheme.accent(themeValue),
+                              title: Text(
+                                "Would You Like To Save ?",
+                                style: TextStyle(
+                                    fontSize: !isWideScreen ? 20 : 26,
+                                    color: Colors.black,
+                                    fontFamily:
+                                        GoogleFonts.ebGaramond().fontFamily),
+                              ),
+                              actions: [
+                                TextButton(
+                                    style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStatePropertyAll(
+                                                ColorTheme.primary(
+                                                    themeValue))),
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const HomePage(),
+                                          ));
+                                    },
+                                    child: Text(
+                                      "Cancel",
+                                      style: TextStyle(
+                                          fontSize: !isWideScreen ? 20 : 26,
+                                          color: Colors.black,
+                                          fontFamily: GoogleFonts.ebGaramond()
+                                              .fontFamily),
+                                    )),
+                                TextButton(
+                                    style: ButtonStyle(
+                                        backgroundColor:
+                                            MaterialStatePropertyAll(
+                                                ColorTheme.primary(
+                                                    themeValue))),
+                                    onPressed: () async {
+                                      setState(() {
+                                        isSaved = true;
+                                        var poemData =
+                                            poemListBox.getAt(widget.poemIndex)
+                                                as Map<dynamic, dynamic>;
+                                        poemData['poetry'] = jsonEncode(
+                                            controller.document
+                                                .toDelta()
+                                                .toJson());
+                                        poemListBox.putAt(
+                                            widget.poemIndex, poemData);
+                                        showToast("Poem Saved!");
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const HomePage(),
+                                            ));
+                                      });
+                                    },
+                                    child: Text(
+                                      "Save",
+                                      style: TextStyle(
+                                          fontSize: !isWideScreen ? 20 : 26,
+                                          color: Colors.black,
+                                          fontFamily: GoogleFonts.ebGaramond()
+                                              .fontFamily),
+                                    )),
+                              ],
+                            );
+                          });
+                    } else {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const HomePage(),
+                          ));
+                    }
                   },
                   icon: const Icon(
                     Icons.arrow_back,
@@ -1069,6 +1157,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                           backgroundColor: widget.editorAppbarColor,
                           onTap: () async {
                             setState(() {
+                              isSaved = true;
                               var poemData = poemListBox.getAt(widget.poemIndex)
                                   as Map<dynamic, dynamic>;
                               poemData['poetry'] = jsonEncode(
