@@ -883,6 +883,7 @@ class _HomePageState extends State<HomePage>
                 style: TextStyle(
                     fontSize: 16,
                     color: Colors.black,
+                    fontWeight: FontWeight.bold,
                     fontFamily: GoogleFonts.ebGaramond().fontFamily),
               )
             : Text(

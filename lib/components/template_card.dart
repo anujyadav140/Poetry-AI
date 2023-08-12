@@ -228,6 +228,7 @@ class Template extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 20,
                                 color: Colors.black,
+                                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                                 fontFamily:
                                     GoogleFonts.ebGaramond().fontFamily),
                           )

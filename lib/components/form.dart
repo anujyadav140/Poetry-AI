@@ -281,38 +281,28 @@ class _TemplateFormState extends State<TemplateForm> {
                           ),
                           DropdownButton(
                             menuMaxHeight: 300.0,
-                            items: syllableCountList
-                                .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(
-                                  value,
-                                  style: !isWideScreen
-                                      ? TextStyle(
-                                          fontSize: 18,
-                                          color: Colors.black,
-                                          fontFamily: GoogleFonts.ebGaramond()
-                                              .fontFamily)
-                                      : TextStyle(
-                                          fontSize: 26,
-                                          color: Colors.black,
-                                          fontFamily: GoogleFonts.ebGaramond()
-                                              .fontFamily),
-                                ),
-                              );
-                            }).toList(),
+                            items:
+                                syllableCountList.map<DropdownMenuItem<String>>(
+                              (String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(
+                                    value,
+                                    style: TextStyle(
+                                      fontSize: !isWideScreen ? 18 : 26,
+                                      color: Colors.black,
+                                      fontFamily:
+                                          GoogleFonts.ebGaramond().fontFamily,
+                                      fontWeight: value == dropdownSyllableCount
+                                          ? FontWeight.bold
+                                          : FontWeight
+                                              .normal, // Adjust font weight here
+                                    ),
+                                  ),
+                                );
+                              },
+                            ).toList(),
                             value: dropdownSyllableCount,
-                            style: !isWideScreen
-                                ? TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.black,
-                                    fontFamily:
-                                        GoogleFonts.ebGaramond().fontFamily)
-                                : TextStyle(
-                                    fontSize: 26,
-                                    color: Colors.black,
-                                    fontFamily:
-                                        GoogleFonts.ebGaramond().fontFamily),
                             onChanged: (String? value) {
                               setState(() {
                                 dropdownSyllableCount = value!;
@@ -369,17 +359,16 @@ class _TemplateFormState extends State<TemplateForm> {
                                 value: value,
                                 child: Text(
                                   value,
-                                  style: !isWideScreen
-                                      ? TextStyle(
-                                          fontSize: 18,
-                                          color: Colors.black,
-                                          fontFamily: GoogleFonts.ebGaramond()
-                                              .fontFamily)
-                                      : TextStyle(
-                                          fontSize: 26,
-                                          color: Colors.black,
-                                          fontFamily: GoogleFonts.ebGaramond()
-                                              .fontFamily),
+                                  style: TextStyle(
+                                    fontSize: !isWideScreen ? 18 : 26,
+                                    color: Colors.black,
+                                    fontFamily:
+                                        GoogleFonts.ebGaramond().fontFamily,
+                                    fontWeight: value == dropdownRhyme
+                                        ? FontWeight.bold
+                                        : FontWeight
+                                            .normal, // Adjust font weight here
+                                  ),
                                 ),
                               );
                             }).toList(),
