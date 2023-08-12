@@ -258,7 +258,10 @@ class _PoetryEditorState extends State<PoetryEditor>
                           builder: (context) => const HomePage(),
                         ));
                   },
-                  icon: const Icon(Icons.arrow_back))
+                  icon: const Icon(
+                    Icons.arrow_back,
+                    size: 30,
+                  ))
               : IconButton(
                   onPressed: () {
                     if (isRhymeSelectedLines) {
@@ -274,6 +277,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                       });
                     }
                   },
+                  iconSize: 30,
                   icon: const Icon(Icons.cancel_outlined),
                   tooltip: "Click on this if you want to cancel the selection",
                 ),
@@ -353,15 +357,19 @@ class _PoetryEditorState extends State<PoetryEditor>
                                     'Features',
                                     style: !isWideScreen
                                         ? TextStyle(
-                                            fontSize: 18,
+                                            fontSize: 20,
                                             color: widget.editorFontColor,
                                             letterSpacing: .5,
-                                          )
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: GoogleFonts.ebGaramond()
+                                                .fontFamily)
                                         : TextStyle(
                                             fontSize: 28,
                                             color: widget.editorFontColor,
                                             letterSpacing: .5,
-                                          ),
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: GoogleFonts.ebGaramond()
+                                                .fontFamily),
                                   ),
                                   const Divider(
                                     height: 1,
@@ -378,12 +386,16 @@ class _PoetryEditorState extends State<PoetryEditor>
                                               fontSize: 18,
                                               color: widget.editorFontColor,
                                               letterSpacing: .5,
-                                            )
+                                              fontFamily:
+                                                  GoogleFonts.ebGaramond()
+                                                      .fontFamily)
                                           : TextStyle(
                                               fontSize: 28,
                                               color: widget.editorFontColor,
                                               letterSpacing: .5,
-                                            ),
+                                              fontFamily:
+                                                  GoogleFonts.ebGaramond()
+                                                      .fontFamily),
                                     ),
                                   ),
                                 ],
@@ -394,6 +406,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                       );
                     },
                     icon: Icon(
+                      size: 30,
                       Icons.info,
                       color: widget.editorFontColor,
                     ),
@@ -789,9 +802,10 @@ class _PoetryEditorState extends State<PoetryEditor>
                                                         textStyle: TextStyle(
                                                           color: Colors.black,
                                                           letterSpacing: .5,
-                                                          fontSize: !isWideScreen
-                                                              ? 18
-                                                              : 28,
+                                                          fontSize:
+                                                              !isWideScreen
+                                                                  ? 18
+                                                                  : 28,
                                                         ),
                                                       ),
                                                       readMoreTextStyle:
@@ -802,9 +816,10 @@ class _PoetryEditorState extends State<PoetryEditor>
                                                           letterSpacing: .5,
                                                           fontWeight:
                                                               FontWeight.w600,
-                                                          fontSize: !isWideScreen
-                                                              ? 18
-                                                              : 28,
+                                                          fontSize:
+                                                              !isWideScreen
+                                                                  ? 18
+                                                                  : 28,
                                                         ),
                                                       ),
                                                       readMoreIconColor:
@@ -965,9 +980,10 @@ class _PoetryEditorState extends State<PoetryEditor>
                                                         textStyle: TextStyle(
                                                           color: Colors.black,
                                                           letterSpacing: .5,
-                                                          fontSize: !isWideScreen
-                                                              ? 22
-                                                              : 28,
+                                                          fontSize:
+                                                              !isWideScreen
+                                                                  ? 22
+                                                                  : 28,
                                                         ),
                                                       ),
                                                     ),
