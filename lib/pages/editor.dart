@@ -10,6 +10,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:poetry_ai/components/color_palette.dart';
+import 'package:poetry_ai/pages/give_title.dart';
 import 'package:poetry_ai/pages/home_page.dart';
 import 'package:poetry_ai/services/ai/poetry_tools.dart';
 import 'package:poetry_ai/services/authentication/auth_service.dart';
@@ -161,7 +162,6 @@ class _PoetryEditorState extends State<PoetryEditor>
     final hasNewContent = controller.document.toPlainText() != poetryContent;
     if (hasNewContent) {
       isSaved = false;
-      print("New content typed!");
     }
   }
 
@@ -1165,6 +1165,34 @@ class _PoetryEditorState extends State<PoetryEditor>
                               poemListBox.putAt(widget.poemIndex, poemData);
                               showToast("Poem Saved!");
                             });
+                          },
+                        ),
+                        SpeedDialChild(
+                          child: const Icon(Icons.check),
+                          label: 'Finish Poem',
+                          labelStyle: GoogleFonts.ebGaramond(
+                            textStyle: TextStyle(
+                              color: Colors.black,
+                              letterSpacing: .5,
+                              fontSize: !isWideScreen ? 18 : 28,
+                            ),
+                          ),
+                          backgroundColor: widget.editorAppbarColor,
+                          onTap: () async {
+                            isSaved = true;
+                            var poemData = poemListBox.getAt(widget.poemIndex)
+                                as Map<dynamic, dynamic>;
+                            poemData['poetry'] = jsonEncode(
+                                controller.document.toDelta().toJson());
+                            poemListBox.putAt(widget.poemIndex, poemData);
+                            showToast("Poem Saved!");
+                            String poem = controller.document.toPlainText();
+                            print(controller.document.toPlainText());
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => GiveTitle(poem: poem),
+                                ));
                           },
                         ),
                       ],
