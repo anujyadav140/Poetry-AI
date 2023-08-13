@@ -1,59 +1,16 @@
+import 'dart:convert';
+
 import 'package:langchain/langchain.dart';
 import 'package:langchain_openai/langchain_openai.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/services.dart';
 
+
 class PoetryTools {
+  late String url;
+  late var data;
+  final String? key = dotenv.env['OPENAI_API_KEY'];
   // final llm = OpenAI(apiKey: dotenv.env['OPENAI_API_KEY'], temperature: 0.9);
-  final llm = ChatOpenAI(
-    apiKey: dotenv.env['OPENAI_API_KEY'],
-    model: 'gpt-3.5-turbo-0613',
-    temperature: 0,
-  );
-  Future<void> rhymeAgent() async {}
-
-  Future<Map<String, String>> parseCmuDict() async {
-    try {
-      final cmuDictAsset =
-          await rootBundle.loadString('assets/data/cmudict.dict');
-      final cmuDictLines = cmuDictAsset.split('\n');
-
-      final Map<String, String> wordToPronunciation = {};
-
-      for (var line in cmuDictLines) {
-        line = line.trim();
-
-        if (line.startsWith(';;;') || line.isEmpty) {
-          continue;
-        }
-
-        final parts = line.split(RegExp(r'\s+'));
-        if (parts.isNotEmpty) {
-          final word = parts[0].toLowerCase();
-          final pronunciation = parts.skip(1).join(' ');
-
-          wordToPronunciation[word] = pronunciation;
-        }
-      }
-
-      return wordToPronunciation;
-    } catch (e) {
-      print("Error parsing CMUdict: $e");
-      return {};
-    }
-  }
-
-  Future<void> helloWorld(String text) async {
-    final openai =
-        OpenAI(apiKey: dotenv.env['OPENAI_API_KEY'], temperature: 0.9);
-    final result = await openai.generate(text);
-    print(text);
-    print(result);
-    final usage = result.usage;
-    print(usage?.promptTokens);
-    print(usage?.responseTokens);
-    print(usage?.totalTokens);
-  }
 
   Future<String> rhymeSchemePatternFinder(String poem) async {
     print(poem);
@@ -61,8 +18,7 @@ class PoetryTools {
   }
 
   Future<String> poeticMetreFinder(String poem) async {
-    final chat =
-        ChatOpenAI(apiKey: dotenv.env['OPENAI_API_KEY'], temperature: 0.9);
+    final chat = ChatOpenAI(apiKey: key, temperature: 0.9);
     const template =
         '''You are a helpful poetry tutor that highlights the metre of a given {poem},'
         return the whole poem- for stressed syllables uppercase the syllables & for unstressed lowercase;
