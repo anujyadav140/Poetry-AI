@@ -44,6 +44,7 @@ class _FinishPoemState extends State<FinishPoem> {
       isWideScreen = true;
     }
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      backgroundColor: widget.accentColor,
       content: Text(
         'Image saved successfully',
         style: TextStyle(
