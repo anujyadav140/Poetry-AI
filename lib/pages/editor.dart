@@ -41,6 +41,8 @@ class _PoetryEditorState extends State<PoetryEditor>
   final isOpenDial = ValueNotifier(false);
   final poemListBox = Hive.box('myPoemBox');
   final poemListIndexBox = Hive.box('myPoemListIndexBox');
+  final adsCounterStore = Hive.box('myAdsCounterStore');
+  int currentAdsCounter = 1;
   late AnimationController _animationController;
   quill.QuillController controller = quill.QuillController(
     document: quill.Document(),
@@ -80,12 +82,7 @@ class _PoetryEditorState extends State<PoetryEditor>
   List<String> bookmarks = [];
   @override
   void initState() {
-    _animationController = AnimationController(
-      duration: const Duration(
-        milliseconds: 800,
-      ),
-      vsync: this,
-    );
+    currentAdsCounter = adsCounterStore.get('adsCounter') ?? 1;
     super.initState();
     _scrollController = ScrollController();
     var poemData = poemListBox.getAt(widget.poemIndex) as Map<dynamic, dynamic>;
@@ -235,6 +232,7 @@ class _PoetryEditorState extends State<PoetryEditor>
   bool tester = false;
   @override
   Widget build(BuildContext context) {
+    int toAdsCount = context.watch<AuthService>().toAdsCount;
     final themeValue = globalThemeBox.get('theme') ?? 'Classic';
     if (MediaQuery.of(context).size.width >= 768) {
       isWideScreen = true;
@@ -420,6 +418,19 @@ class _PoetryEditorState extends State<PoetryEditor>
             !isRhymeSelectedLines && !isConvertToMetre
                 ? IconButton(
                     onPressed: () {
+                      final incrementCounter = context.read<AuthService>();
+                      incrementCounter.incrementAdsCounter();
+                      currentAdsCounter = toAdsCount;
+                      adsCounterStore.put('adsCounter', toAdsCount);
+                      print(currentAdsCounter);
+                      print("THE ADS COUNTER IS: $toAdsCount");
+                      if (currentAdsCounter >= 5) {
+                        final reset = context.read<AuthService>();
+                        reset.resetAdsCounter();
+                        currentAdsCounter = toAdsCount;
+                        adsCounterStore.put('adsCounter', currentAdsCounter);
+                        print("SHOW ME THE FUCKING ADS!");
+                      }
                       var poemData = poemListBox.getAt(widget.poemIndex)
                           as Map<dynamic, dynamic>;
                       poemTitle = poemData['title'] as String;

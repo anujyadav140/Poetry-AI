@@ -110,4 +110,18 @@ class AuthService extends ChangeNotifier {
     _isConvertToMetre = value;
     notifyListeners();
   }
+
+  int _toAdsCount = 1;
+
+  int get toAdsCount => _toAdsCount;
+
+  void incrementAdsCounter() {
+    _toAdsCount++;
+    notifyListeners();
+  }
+
+  void resetAdsCounter() {
+    _toAdsCount = 1;
+    notifyListeners();
+  }
 }
