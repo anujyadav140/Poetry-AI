@@ -3,6 +3,7 @@ import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:poetry_ai/api/poetry_ai.dart';
 import 'package:poetry_ai/pages/finish_poem.dart';
 import 'package:poetry_ai/pages/give_title.dart';
 import 'package:poetry_ai/components/parallax_bg.dart';
@@ -564,8 +565,8 @@ class _QuickModeState extends State<QuickMode> {
                                                                 isGenerationClicked =
                                                                     true;
                                                               });
-                                                              PoetryTools()
-                                                                  .generateQuickLines(
+                                                              PoetryAiTools()
+                                                                  .callGenerateQuickLinesFunction(
                                                                       previousLine,
                                                                       contextPreviousLines,
                                                                       contextNextLines,

@@ -8,6 +8,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:poetry_ai/api/poetry_ai.dart';
 import 'package:poetry_ai/components/color_palette.dart';
 import 'package:poetry_ai/pages/give_title.dart';
 import 'package:poetry_ai/pages/home_page.dart';
@@ -18,6 +19,8 @@ import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:read_more_text/read_more_text.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 
 class PoetryEditor extends StatefulWidget {
   final int poemIndex;
@@ -79,9 +82,35 @@ class _PoetryEditorState extends State<PoetryEditor>
   double _initialDragOffset = 0.0;
   double _minChildSize = 0.3;
 
+  // final HttpsCallable _addNumbers =
+  //     FirebaseFunctions.instanceFor(region: 'us-central1')
+  //         .httpsCallable('addNumbers');
+
+  // Future<void> _callAddNumbersFunction() async {
+  //   try {
+  //     final result = await _addNumbers.call({
+  //       'num1': 5,
+  //       'num2': 7,
+  //     });
+
+  //     final int sum = result.data['result'];
+  //     print('Sum: $sum');
+  //   } on FirebaseFunctionsException catch (e) {
+  //     print('Error calling addNumbers: $e');
+  //   } catch (e) {
+  //     print('Unexpected error calling addNumbers: $e');
+  //   }
+  // }
+
   List<String> bookmarks = [];
   @override
   void initState() {
+    _animationController = AnimationController(
+      duration: const Duration(
+        milliseconds: 800,
+      ),
+      vsync: this,
+    );
     currentAdsCounter = adsCounterStore.get('adsCounter') ?? 1;
     super.initState();
     _scrollController = ScrollController();
@@ -417,14 +446,18 @@ class _PoetryEditorState extends State<PoetryEditor>
           actions: [
             !isRhymeSelectedLines && !isConvertToMetre
                 ? IconButton(
-                    onPressed: () {
+                    onPressed: () async {
+                      // _callAddNumbersFunction();
+                      PoetryAiTools();
+                      // ignore: use_build_context_synchronously
                       final incrementCounter = context.read<AuthService>();
                       incrementCounter.incrementAdsCounter();
                       currentAdsCounter = toAdsCount;
                       adsCounterStore.put('adsCounter', toAdsCount);
-                      print(currentAdsCounter);
-                      print("THE ADS COUNTER IS: $toAdsCount");
+                      // print(currentAdsCounter);
+                      // print("THE ADS COUNTER IS: $toAdsCount");
                       if (currentAdsCounter >= 5) {
+                        // ignore: use_build_context_synchronously
                         final reset = context.read<AuthService>();
                         reset.resetAdsCounter();
                         currentAdsCounter = toAdsCount;
@@ -1655,8 +1688,9 @@ class AiToolsHandler {
     String plainText = "";
     int len = controller.document.length;
     plainText = controller.document.getPlainText(0, len - 1);
-    String response = await PoetryTools().rhymeSchemePatternFinder(plainText);
-    return response;
+    // String response = await PoetryTools().rhymeSchemePatternFinder(plainText);
+    // return response;
+    return "";
   }
 
   Future<String> metreHighlighter(quill.QuillController controller) async {
@@ -1664,7 +1698,8 @@ class AiToolsHandler {
     String plainText = "";
     int len = controller.document.length;
     plainText = controller.document.getPlainText(0, len - 1);
-    String response = await PoetryTools().poeticMetreFinder(plainText);
+    String response =
+        await PoetryAiTools().callPoeticMetreFinderFunction(plainText);
     return response;
   }
 
@@ -1676,25 +1711,26 @@ class AiToolsHandler {
   Future<String> convertLinesToProperMetreForm(
       String selectedLines, String poetryMetre) async {
     print('Executing convertLinesToProperMetreForm');
-    String response = await PoetryTools()
-        .changeLinesToFollowMetre(selectedLines, poetryMetre);
+    String response = await PoetryAiTools()
+        .callChangeLinesToFollowMetreFunction(selectedLines, poetryMetre);
     return response;
   }
 
   Future<String> reviewTheFeatures(
       quill.QuillController controller, List<String> poetryFeatures) async {
-    print('Executing RhymeSelectedLines...');
+    print('Executing reviewTheFeatures...');
     String plainText = "";
     int len = controller.document.length;
     plainText = controller.document.getPlainText(0, len - 1);
-    String response =
-        await PoetryTools().reviewTheFeatures(plainText, poetryFeatures);
+    String response = await PoetryAiTools()
+        .callReviewTheFeaturesFunction(plainText, poetryFeatures);
     return response;
   }
 
   Future<String> rhymeSelectedLines(List<String> selectedLines) async {
     print('Executing RhymeSelectedLines...');
-    String response = await PoetryTools().rhymeTwoSelectedLines(selectedLines);
+    String response =
+        await PoetryAiTools().callRhymeTwoSelectedLinesFunction(selectedLines);
     return response;
   }
 

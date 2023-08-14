@@ -52,6 +52,7 @@ dependencies:
   flutter_keyboard_visibility: ^5.4.1
   flutter_slidable: ^3.0.0
   wave: ^0.2.2
+  cloud_functions: ^4.3.4
   fluttertoast: ^8.2.2
   flutter_speed_dial: ^7.0.0
   read_more_text: ^0.0.5
