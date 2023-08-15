@@ -153,7 +153,12 @@ class _PoetryEditorState extends State<PoetryEditor>
         "Generate lines that adhere to the proper poetry metre form."
       ],
       [6, "images/rhyme.png", "Rhyme Whole Poem", "Placeholder text"],
-      [7, "images/poetry.png", "Few Lines For Inspiration", "Placeholder text"],
+      [
+        7,
+        "images/poetry.png",
+        "Few Lines For Inspiration",
+        "Generate few lines that inspire and help you unleash your creativity."
+      ],
       [8, "images/dante.png", "Get Inspired", "Placeholder text"],
       [9, "images/lines.png", "Generate Theme Ideas", "Placeholder text"],
       [10, "images/book.png", "What To Write About Next?", "Placeholder text"],

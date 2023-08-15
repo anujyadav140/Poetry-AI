@@ -69,6 +69,8 @@ class PoetryAiTools {
         'lines': lines,
       });
       final String res = result.data['result'];
+      var tokens = result.data['tokens'];
+      print(tokens);
       return res;
     } on FirebaseFunctionsException catch (e) {
       return 'Error occurred while calling generateFewLinesForInspiration $e';
