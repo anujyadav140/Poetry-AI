@@ -58,6 +58,25 @@ class PoetryAiTools {
     }
   }
 
+  final HttpsCallable _generateFewLinesForInspiration =
+      FirebaseFunctions.instanceFor(region: 'us-central1')
+          .httpsCallable('generateFewLinesForInspiration');
+
+  Future<String> callGenerateFewLinesForInspirationFunction(
+      String lines) async {
+    try {
+      final result = await _generateFewLinesForInspiration.call({
+        'lines': lines,
+      });
+      final String res = result.data['result'];
+      return res;
+    } on FirebaseFunctionsException catch (e) {
+      return 'Error occurred while calling generateFewLinesForInspiration $e';
+    } catch (e) {
+      return 'Unexpected error occurred $e';
+    }
+  }
+
   final HttpsCallable _generateQuickLines =
       FirebaseFunctions.instanceFor(region: 'us-central1')
           .httpsCallable('generateQuickLines');

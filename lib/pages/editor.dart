@@ -153,12 +153,7 @@ class _PoetryEditorState extends State<PoetryEditor>
         "Generate lines that adhere to the proper poetry metre form."
       ],
       [6, "images/rhyme.png", "Rhyme Whole Poem", "Placeholder text"],
-      [
-        7,
-        "images/poetry.png",
-        "Generate Few Lines For Inspiration",
-        "Placeholder text"
-      ],
+      [7, "images/poetry.png", "Few Lines For Inspiration", "Placeholder text"],
       [8, "images/dante.png", "Get Inspired", "Placeholder text"],
       [9, "images/lines.png", "Generate Theme Ideas", "Placeholder text"],
       [10, "images/book.png", "What To Write About Next?", "Placeholder text"],
@@ -605,6 +600,12 @@ class _PoetryEditorState extends State<PoetryEditor>
                                       poemIndex: widget.poemIndex,
                                       buttonColor: widget.editorAppbarColor,
                                       fontColor: widget.editorFontColor,
+                                      controller: controller,
+                                      multiSelectedLines: multiSelectedLines,
+                                      poetryFeatures: poetryFeatures,
+                                      poetryMetre: poetryMetre,
+                                      selectedLines: selectedLines,
+                                      userChoice: 5,
                                     );
                                   },
                                 );
@@ -667,6 +668,12 @@ class _PoetryEditorState extends State<PoetryEditor>
                                         poemIndex: widget.poemIndex,
                                         buttonColor: widget.editorAppbarColor,
                                         fontColor: widget.editorFontColor,
+                                        controller: controller,
+                                        multiSelectedLines: multiSelectedLines,
+                                        poetryFeatures: poetryFeatures,
+                                        selectedLines: selectedLines,
+                                        poetryMetre: poetryMetre,
+                                        userChoice: 2,
                                       );
                                     },
                                   );
@@ -1160,6 +1167,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                                                           .editorAppbarColor,
                                                       fontColor: widget
                                                           .editorFontColor,
+                                                      userChoice: 0,
                                                     ),
                                             ],
                                           ),
@@ -1282,6 +1290,7 @@ class AiToolsList extends StatefulWidget {
     required this.poemIndex,
     required this.primaryColor,
     required this.fontColor,
+    required this.userChoice,
   }) : _aiTools = aiTools;
 
   final List _aiTools;
@@ -1294,6 +1303,7 @@ class AiToolsList extends StatefulWidget {
   final int poemIndex;
   final Color primaryColor;
   final Color fontColor;
+  final int userChoice;
   @override
   State<AiToolsList> createState() => _AiToolsListState();
 }
@@ -1370,6 +1380,12 @@ class _AiToolsListState extends State<AiToolsList> {
                                 poemIndex: widget.poemIndex,
                                 buttonColor: widget.primaryColor,
                                 fontColor: widget.fontColor,
+                                controller: widget.controller,
+                                multiSelectedLines: widget.multiSelectedLines,
+                                poetryFeatures: widget.poetryFeatures,
+                                poetryMetre: widget.poetryMetre,
+                                selectedLines: widget.selectedLines,
+                                userChoice: widget._aiTools[index][0],
                               );
                             },
                           )
@@ -1425,7 +1441,7 @@ class _AiToolsListState extends State<AiToolsList> {
   }
 
   Future<String> aiToolsSelected(
-    int userChoice,
+    int? userChoice,
     quill.QuillController controller,
     List<String> poetryFeatures,
     List<String> selectedLines,
@@ -1449,6 +1465,8 @@ class _AiToolsListState extends State<AiToolsList> {
       case 6:
         aiToolsHandler.poemInspiration();
         return "";
+      case 7:
+        return await aiToolsHandler.generateFewLinesForInspiration(controller);
       default:
         print('Invalid choice.');
         return "";
@@ -1456,23 +1474,35 @@ class _AiToolsListState extends State<AiToolsList> {
   }
 }
 
-class BookmarkBottomSheet {}
-
+// ignore: must_be_immutable
 class CustomModalBottomSheet extends StatefulWidget {
   final String title;
-  final String content;
+  String content;
   final AnimationController animation;
   final int poemIndex;
   final Color buttonColor;
   final Color fontColor;
-  const CustomModalBottomSheet(
-      {super.key,
-      required this.title,
-      required this.content,
-      required this.animation,
-      required this.poemIndex,
-      required this.buttonColor,
-      required this.fontColor});
+  final quill.QuillController controller;
+  final List<String> poetryFeatures;
+  final List<String> selectedLines;
+  final String multiSelectedLines;
+  final String poetryMetre;
+  final int? userChoice;
+  CustomModalBottomSheet({
+    super.key,
+    required this.title,
+    required this.content,
+    required this.animation,
+    required this.poemIndex,
+    required this.buttonColor,
+    required this.fontColor,
+    required this.controller,
+    required this.poetryFeatures,
+    required this.selectedLines,
+    required this.multiSelectedLines,
+    required this.poetryMetre,
+    this.userChoice,
+  });
 
   @override
   State<CustomModalBottomSheet> createState() => _CustomModalBottomSheetState();
@@ -1483,7 +1513,9 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
   SMIInput<bool>? isRiveClicked;
   final poemListBox = Hive.box('myPoemBox');
   bool isClicked = false;
+  bool isRegenerated = false;
   List<String> bookmark = [];
+  late String newGeneratedLines = "";
   // List<String> poemBookmarks = [];
   @override
   void initState() {
@@ -1619,16 +1651,21 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
                     Padding(
                       padding: const EdgeInsets.only(
                           top: 8.0, left: 20.0, right: 8.0, bottom: 8.0),
-                      child: Text(
-                        widget.content,
-                        style: GoogleFonts.ebGaramond(
-                          textStyle: TextStyle(
-                            color: Colors.black,
-                            letterSpacing: .5,
-                            fontSize: !isWideScreen ? 18 : 28,
-                          ),
-                        ),
-                      ),
+                      child: !isRegenerated
+                          ? Text(
+                              widget.content,
+                              style: GoogleFonts.ebGaramond(
+                                textStyle: TextStyle(
+                                  color: Colors.black,
+                                  letterSpacing: .5,
+                                  fontSize: !isWideScreen ? 18 : 28,
+                                ),
+                              ),
+                            )
+                          : CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                  widget.buttonColor),
+                            ),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 25.0),
@@ -1643,7 +1680,28 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
                                     MaterialStateProperty.all(widget.fontColor),
                                 backgroundColor: MaterialStateProperty.all(
                                     widget.buttonColor)),
-                            onPressed: () {},
+                            onPressed: () {
+                              setState(() {
+                                isRegenerated = true;
+                                widget.content = "";
+                              });
+                              _AiToolsListState()
+                                  .aiToolsSelected(
+                                      widget.userChoice,
+                                      widget.controller,
+                                      widget.poetryFeatures,
+                                      widget.selectedLines,
+                                      widget.multiSelectedLines,
+                                      widget.poetryMetre)
+                                  .then((value) {
+                                setState(() {
+                                  widget.content = value;
+                                  if (widget.content.isNotEmpty) {
+                                    isRegenerated = false;
+                                  }
+                                });
+                              });
+                            },
                             child: const Icon(Icons.autorenew, size: 25),
                           )),
                     ),
@@ -1734,8 +1792,14 @@ class AiToolsHandler {
     return response;
   }
 
-  Future<void> generateFewLinesForInspiration() async {
+  Future<String> generateFewLinesForInspiration(
+      quill.QuillController controller) async {
     print('Executing GenerateFewLinesForInspiration...');
-    // Your implementation for GenerateFewLinesForInspiration here
+    String plainText = "";
+    int len = controller.document.length;
+    plainText = controller.document.getPlainText(0, len - 1);
+    String response = await PoetryAiTools()
+        .callGenerateFewLinesForInspirationFunction(plainText);
+    return response;
   }
 }
