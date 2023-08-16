@@ -11,6 +11,8 @@ class PoetryAiTools {
         'poem': poem,
       });
       final String res = result.data['result'];
+      var tokens = result.data['tokens'];
+      print(tokens);
       return res;
     } on FirebaseFunctionsException catch (e) {
       return 'Error occurred while calling poeticMetreFinder $e';
@@ -31,6 +33,8 @@ class PoetryAiTools {
         'features': features,
       });
       final String res = result.data['result'];
+      var tokens = result.data['tokens'];
+      print(tokens);
       return res;
     } on FirebaseFunctionsException catch (e) {
       return 'Error occurred while calling reviewTheFeatures $e';
@@ -50,6 +54,8 @@ class PoetryAiTools {
         'selectedLines': selectedLines,
       });
       final String res = result.data['result'];
+      var tokens = result.data['tokens'];
+      print(tokens);
       return res;
     } on FirebaseFunctionsException catch (e) {
       return 'Error occurred while calling rhymeTwoSelectedLines $e';
@@ -96,6 +102,8 @@ class PoetryAiTools {
         'features': features
       });
       final String res = result.data['result'];
+      var tokens = result.data['tokens'];
+      print(tokens);
       return res;
     } on FirebaseFunctionsException catch (e) {
       return 'Error occurred while calling generateQuickLines $e';
@@ -116,6 +124,8 @@ class PoetryAiTools {
         'metreFeature': metreFeature,
       });
       final String res = result.data['result'];
+      var tokens = result.data['tokens'];
+      print(tokens);
       return res;
     } on FirebaseFunctionsException catch (e) {
       return 'Error occurred while calling changeLinesToFollowMetre $e';

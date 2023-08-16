@@ -1525,11 +1525,9 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
   bool isRegenerated = false;
   List<String> bookmark = [];
   late String newGeneratedLines = "";
-  // List<String> poemBookmarks = [];
   @override
   void initState() {
     var poemData = poemListBox.getAt(widget.poemIndex) as Map<dynamic, dynamic>;
-    // poemBookmarks = poemData['bookmarks'] as List<String>;
     bookmark = poemData['bookmarks'];
     super.initState();
   }
@@ -1540,7 +1538,6 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
     if (MediaQuery.of(context).size.width >= 768) {
       isWideScreen = true;
     }
-    if (bookmark.isEmpty) {}
     void saveOrRemovePoem() {
       if (isClicked) {
         bookmark.removeLast();
@@ -1577,6 +1574,10 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
       setState(() {
         isClicked = !isClicked;
       });
+    }
+
+    void resetRiveAnimation() {
+      isRiveClicked?.change(false);
     }
 
     return SizedBox(
@@ -1716,6 +1717,12 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
                                   }
                                 });
                               });
+                              if (widget.content.isEmpty) {
+                                setState(() {
+                                  isClicked = false;
+                                });
+                                resetRiveAnimation();
+                              }
                             },
                             child: const Icon(Icons.autorenew, size: 25),
                           )),
