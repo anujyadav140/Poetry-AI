@@ -1768,9 +1768,8 @@ class AiToolsHandler {
     String plainText = "";
     int len = controller.document.length;
     plainText = controller.document.getPlainText(0, len - 1);
-    // String response = await PoetryTools().rhymeSchemePatternFinder(plainText);
-    // return response;
-    return "";
+    String response = await PoetryAiTools().callRhymeSchemeFinder(plainText);
+    return response;
   }
 
   Future<String> metreHighlighter(quill.QuillController controller) async {

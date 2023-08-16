@@ -54,8 +54,9 @@ class PoetryAiTools {
         'selectedLines': selectedLines,
       });
       final String res = result.data['result'];
-      var tokens = result.data['tokens'];
-      print(tokens);
+      dynamic tokens = result.data['tokens'];
+      int totalTokens = tokens['tokenUsage']['totalTokens'];
+      print("Total Tokens: $totalTokens");
       return res;
     } on FirebaseFunctionsException catch (e) {
       return 'Error occurred while calling rhymeTwoSelectedLines $e';
@@ -129,6 +130,26 @@ class PoetryAiTools {
       return res;
     } on FirebaseFunctionsException catch (e) {
       return 'Error occurred while calling changeLinesToFollowMetre $e';
+    } catch (e) {
+      return 'Unexpected error occurred $e';
+    }
+  }
+
+  final HttpsCallable _rhymeScheme =
+      FirebaseFunctions.instanceFor(region: 'us-central1')
+          .httpsCallable('rhymeScheme');
+
+  Future<String> callRhymeSchemeFinder(String poem) async {
+    try {
+      final result = await _rhymeScheme.call({
+        'poem': poem,
+      });
+      final String res = result.data['result'];
+      var tokens = result.data['tokens'];
+      print(tokens);
+      return res;
+    } on FirebaseFunctionsException catch (e) {
+      return 'Error occurred while calling rhymeScheme $e';
     } catch (e) {
       return 'Unexpected error occurred $e';
     }
