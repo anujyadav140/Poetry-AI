@@ -447,8 +447,6 @@ class _PoetryEditorState extends State<PoetryEditor>
             !isRhymeSelectedLines && !isConvertToMetre
                 ? IconButton(
                     onPressed: () async {
-                      // _callAddNumbersFunction();
-                      PoetryAiTools();
                       // ignore: use_build_context_synchronously
                       final incrementCounter = context.read<AuthService>();
                       incrementCounter.incrementAdsCounter();
@@ -579,6 +577,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                                 });
                               });
                               showToast("Converting ...");
+                              print(selectedLines);
                               _AiToolsListState()
                                   .aiToolsSelected(
                                       5,
@@ -588,7 +587,6 @@ class _PoetryEditorState extends State<PoetryEditor>
                                       multiSelectedLines,
                                       metre)
                                   .then((value) {
-                                print(metre);
                                 showModalBottomSheet(
                                   context: context,
                                   shape: const RoundedRectangleBorder(
@@ -598,6 +596,10 @@ class _PoetryEditorState extends State<PoetryEditor>
                                     ),
                                   ),
                                   builder: (context) {
+                                    print(controller);
+                                    print(poetryFeatures);
+                                    print(metre);
+                                    print(selectedLines);
                                     return CustomModalBottomSheet(
                                       title: "Convert Into Proper Metre",
                                       content: value,
@@ -608,7 +610,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                                       controller: controller,
                                       multiSelectedLines: multiSelectedLines,
                                       poetryFeatures: poetryFeatures,
-                                      poetryMetre: poetryMetre,
+                                      poetryMetre: metre,
                                       selectedLines: selectedLines,
                                       userChoice: 5,
                                     );
@@ -655,6 +657,8 @@ class _PoetryEditorState extends State<PoetryEditor>
                               )
                                   .then(
                                 (value) {
+                                  List<String> regenerateSelectedLines = [];
+                                  regenerateSelectedLines = selectedLines;
                                   print(selectedLines);
                                   selectedLines = [];
                                   showModalBottomSheet(
@@ -676,8 +680,8 @@ class _PoetryEditorState extends State<PoetryEditor>
                                         controller: controller,
                                         multiSelectedLines: multiSelectedLines,
                                         poetryFeatures: poetryFeatures,
-                                        selectedLines: selectedLines,
-                                        poetryMetre: poetryMetre,
+                                        selectedLines: regenerateSelectedLines,
+                                        poetryMetre: metre,
                                         userChoice: 2,
                                       );
                                     },
@@ -1489,7 +1493,7 @@ class CustomModalBottomSheet extends StatefulWidget {
   final Color fontColor;
   final quill.QuillController controller;
   final List<String> poetryFeatures;
-  final List<String> selectedLines;
+  List<String> selectedLines;
   final String multiSelectedLines;
   final String poetryMetre;
   final int? userChoice;
@@ -1699,6 +1703,12 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
                                       widget.multiSelectedLines,
                                       widget.poetryMetre)
                                   .then((value) {
+                                print(widget.userChoice);
+                                print(widget.controller);
+                                print(widget.poetryFeatures);
+                                print(widget.selectedLines);
+                                print(widget.multiSelectedLines);
+                                print(widget.poetryMetre);
                                 setState(() {
                                   widget.content = value;
                                   if (widget.content.isNotEmpty) {
