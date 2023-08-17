@@ -10,6 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:poetry_ai/api/poetry_ai.dart';
 import 'package:poetry_ai/components/color_palette.dart';
+import 'package:poetry_ai/components/inline_adaptive_banner.dart';
 import 'package:poetry_ai/pages/give_title.dart';
 import 'package:poetry_ai/pages/home_page.dart';
 import 'package:poetry_ai/services/ai/poetry_tools.dart';
@@ -159,7 +160,12 @@ class _PoetryEditorState extends State<PoetryEditor>
         "Few Lines For Inspiration",
         "Generate few lines that inspire and help you unleash your creativity."
       ],
-      [8, "images/dante.png", "Get Inspired", "Placeholder text"],
+      [
+        8,
+        "images/dante.png",
+        "Get Inspired",
+        "Find Inspiration, Recommendation, Trivia, Anecdote or Advice based on your poetry to unleash your creativity."
+      ],
       [9, "images/lines.png", "Generate Theme Ideas", "Placeholder text"],
       [10, "images/book.png", "What To Write About Next?", "Placeholder text"],
     ];
@@ -310,11 +316,17 @@ class _PoetryEditorState extends State<PoetryEditor>
                                                 ColorTheme.primary(
                                                     themeValue))),
                                     onPressed: () {
+                                      // Navigator.push(
+                                      //     context,
+                                      //     MaterialPageRoute(
+                                      //       builder: (context) =>
+                                      //           const HomePage(),
+                                      //     ));
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
-                                                const HomePage(),
+                                                const InlineAdaptiveBannerAd(),
                                           ));
                                     },
                                     child: Text(
@@ -344,11 +356,17 @@ class _PoetryEditorState extends State<PoetryEditor>
                                         poemListBox.putAt(
                                             widget.poemIndex, poemData);
                                         showToast("Poem Saved!");
+                                        // Navigator.push(
+                                        //     context,
+                                        //     MaterialPageRoute(
+                                        //       builder: (context) =>
+                                        //           const HomePage(),
+                                        //     ));
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
-                                                  const HomePage(),
+                                                  const InlineAdaptiveBannerAd(),
                                             ));
                                       });
                                     },
@@ -364,10 +382,16 @@ class _PoetryEditorState extends State<PoetryEditor>
                             );
                           });
                     } else {
+                      // Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //       builder: (context) => const HomePage(),
+                      //     ));
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const HomePage(),
+                            builder: (context) =>
+                                const InlineAdaptiveBannerAd(),
                           ));
                     }
                   },
@@ -1472,10 +1496,11 @@ class _AiToolsListState extends State<AiToolsList> {
         return await aiToolsHandler.convertLinesToProperMetreForm(
             multiSelectedLines, poetryMetre);
       case 6:
-        aiToolsHandler.poemInspiration();
-        return "";
+        return await aiToolsHandler.poemInspiration(controller);
       case 7:
         return await aiToolsHandler.generateFewLinesForInspiration(controller);
+      case 8:
+        return await aiToolsHandler.poemInspiration(controller);
       default:
         print('Invalid choice.');
         return "";
@@ -1782,9 +1807,13 @@ class AiToolsHandler {
     return response;
   }
 
-  Future<void> poemInspiration() async {
+  Future<String> poemInspiration(quill.QuillController controller) async {
     print('Executing PoemInspiration...');
-    // Your implementation for PoemInspiration here
+    String plainText = "";
+    int len = controller.document.length;
+    plainText = controller.document.getPlainText(0, len - 1);
+    String response = await PoetryAiTools().callGetInspiredFunction(plainText);
+    return response;
   }
 
   Future<String> convertLinesToProperMetreForm(
