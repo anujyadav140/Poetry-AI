@@ -133,10 +133,18 @@ class _PoetryEditorState extends State<PoetryEditor>
   void _showRewardsSnackBar() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('Watch an ad for 20 Ai Tool Generation?'),
+        content: Text(
+          'Watch an ad for 20 ad-free poetry tool generations?',
+          style: TextStyle(
+              fontSize: !isWideScreen ? 20 : 26,
+              color: Colors.black,
+              fontFamily: GoogleFonts.ebGaramond().fontFamily),
+        ),
         duration: const Duration(seconds: 15),
         action: SnackBarAction(
           label: 'Watch Ads',
+          backgroundColor: Colors.white,
+          textColor: Colors.black,
           onPressed: () {
             // You can trigger the rewarded ad here
             rewardedAd?.show(
