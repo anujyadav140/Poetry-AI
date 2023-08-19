@@ -2,8 +2,6 @@ import 'dart:convert';
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -14,16 +12,11 @@ import 'package:poetry_ai/api/poetry_ai.dart';
 import 'package:poetry_ai/components/color_palette.dart';
 import 'package:poetry_ai/components/inline_adaptive_banner.dart';
 import 'package:poetry_ai/pages/give_title.dart';
-import 'package:poetry_ai/pages/home_page.dart';
-import 'package:poetry_ai/services/ai/poetry_tools.dart';
 import 'package:poetry_ai/services/authentication/auth_service.dart';
 import 'package:rive/rive.dart';
-import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:read_more_text/read_more_text.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_functions/cloud_functions.dart';
 
 class PoetryEditor extends StatefulWidget {
   final int poemIndex;
@@ -55,7 +48,7 @@ class _PoetryEditorState extends State<PoetryEditor>
     keepStyleOnNewLine: true,
     selection: const TextSelection.collapsed(offset: 0),
   );
-  bool _isRhymeLines = false;
+  final bool _isRhymeLines = false;
   bool _isInfoClicked = false;
   bool showBookmarkModal = false;
   bool scrollToBottomOfBookmark = false;
@@ -81,9 +74,9 @@ class _PoetryEditorState extends State<PoetryEditor>
   late List<dynamic> _aiTools;
   late String poetryMetre = "";
   bool _dialVisible = true;
-  double _currentSheetHeight = 0.3;
-  double _initialDragOffset = 0.0;
-  double _minChildSize = 0.3;
+  final double _currentSheetHeight = 0.3;
+  final double _initialDragOffset = 0.0;
+  final double _minChildSize = 0.3;
 
   // final HttpsCallable _addNumbers =
   //     FirebaseFunctions.instanceFor(region: 'us-central1')
@@ -105,14 +98,15 @@ class _PoetryEditorState extends State<PoetryEditor>
   //   }
   // }
   RewardedAd? rewardedAd;
-
+  int rewardGenerations = 0;
+  bool isRewardAdWatched = false;
   // TODO: replace this test ad unit with your own ad unit.
   final adUnitId = Platform.isAndroid
       ? 'ca-app-pub-3940256099942544/5224354917'
       : 'ca-app-pub-3940256099942544/1712485313';
 
   /// Loads a rewarded ad.
-  void loadAd() {
+  void loadRewardAd() {
     RewardedAd.load(
         adUnitId: adUnitId,
         request: const AdRequest(),
@@ -126,6 +120,32 @@ class _PoetryEditorState extends State<PoetryEditor>
           // Called when an ad request failed.
           onAdFailedToLoad: (LoadAdError error) {
             debugPrint('RewardedAd failed to load: $error');
+            loadRewardAd();
+          },
+        ));
+  }
+
+  InterstitialAd? _interstitialAd;
+
+  // TODO: replace this test ad unit with your own ad unit.
+  final adInterUnitId = Platform.isAndroid
+      ? 'ca-app-pub-3940256099942544/1033173712'
+      : 'ca-app-pub-3940256099942544/4411468910';
+
+  void loadInterAd() {
+    InterstitialAd.load(
+        adUnitId: adInterUnitId,
+        request: const AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(
+          // Called when an ad is successfully received.
+          onAdLoaded: (ad) {
+            debugPrint('$ad loaded.');
+            // Keep a reference to the ad so you can show it later.
+            _interstitialAd = ad;
+          },
+          // Called when an ad request failed.
+          onAdFailedToLoad: (LoadAdError error) {
+            debugPrint('InterstitialAd failed to load: $error');
           },
         ));
   }
@@ -134,10 +154,10 @@ class _PoetryEditorState extends State<PoetryEditor>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          'Watch an ad for 20 ad-free poetry tool generations?',
+          'Watch an ad for 10 consecutive ad-free poetry tool generations?',
           style: TextStyle(
-              fontSize: !isWideScreen ? 20 : 26,
-              color: Colors.black,
+              fontSize: !isWideScreen ? 18 : 24,
+              color: Colors.white,
               fontFamily: GoogleFonts.ebGaramond().fontFamily),
         ),
         duration: const Duration(seconds: 15),
@@ -148,7 +168,12 @@ class _PoetryEditorState extends State<PoetryEditor>
           onPressed: () {
             // You can trigger the rewarded ad here
             rewardedAd?.show(
-              onUserEarnedReward: (ad, reward) {},
+              onUserEarnedReward: (ad, reward) {
+                setState(() {
+                  isRewardAdWatched = true;
+                  rewardGenerations = 10;
+                });
+              },
             );
           },
         ),
@@ -159,10 +184,12 @@ class _PoetryEditorState extends State<PoetryEditor>
   List<String> bookmarks = [];
   @override
   void initState() {
-    loadAd();
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    loadRewardAd();
+    loadInterAd();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _showRewardsSnackBar();
     });
+    isRewardAdWatched = false;
     _animationController = AnimationController(
       duration: const Duration(
         milliseconds: 800,
@@ -270,6 +297,7 @@ class _PoetryEditorState extends State<PoetryEditor>
     _scrollController.dispose();
     _animationController.dispose();
     rewardedAd!.dispose();
+    _interstitialAd?.dispose();
     // keyboardSubscription.cancel();
     super.dispose();
   }
@@ -291,7 +319,7 @@ class _PoetryEditorState extends State<PoetryEditor>
     final start = selection.start;
     final end = selection.end;
 
-    if (start != null && end != null && start < end) {
+    if (start < end) {
       final selectedPlainText =
           controller.document.toPlainText().substring(start, end);
       return selectedPlainText;
@@ -323,34 +351,6 @@ class _PoetryEditorState extends State<PoetryEditor>
   String multiSelectedLines = "";
   final globalThemeBox = Hive.box('myThemeBox');
   bool tester = false;
-
-  Future<void> showAds() async {
-    int toAdsCount = context.watch<AuthService>().toAdsCount;
-    // ignore: use_build_context_synchronously
-    final incrementCounter = context.read<AuthService>();
-    incrementCounter.incrementAdsCounter();
-    currentAdsCounter = toAdsCount;
-    adsCounterStore.put('adsCounter', toAdsCount);
-    // print(currentAdsCounter);
-    // print("THE ADS COUNTER IS: $toAdsCount");
-    if (currentAdsCounter >= 5) {
-      // ignore: use_build_context_synchronously
-      //   rewardedAd?.show(
-      //       onUserEarnedReward: (AdWithoutView ad, RewardItem rewardItem) {
-      //     final reset = context.read<AuthService>();
-      //     reset.resetAdsCounter();
-      //     currentAdsCounter = toAdsCount;
-      //     adsCounterStore.put('adsCounter', currentAdsCounter);
-      //     showToast("You got 5 Poetry Ai Tool Generations!");
-      //     print("SHOW ME THE FUCKING ADS!");
-      //   });
-      // }
-      rewardedAd?.show(
-          onUserEarnedReward: (AdWithoutView ad, RewardItem rewardItem) {
-        // Reward the user for watching an ad.
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -557,9 +557,8 @@ class _PoetryEditorState extends State<PoetryEditor>
             !isRhymeSelectedLines && !isConvertToMetre
                 ? IconButton(
                     onPressed: () async {
-                      rewardedAd!.show(
-                        onUserEarnedReward: (ad, reward) {},
-                      );
+                      // _interstitialAd?.show();
+                      // loadInterAd();
                       var poemData = poemListBox.getAt(widget.poemIndex)
                           as Map<dynamic, dynamic>;
                       poemTitle = poemData['title'] as String;
@@ -640,7 +639,8 @@ class _PoetryEditorState extends State<PoetryEditor>
                 : !isFirstLineSelected && !isConvertToMetreSelected
                     ? IconButton(
                         onPressed: () {
-                          showAds;
+                          // _interstitialAd?.show();
+                          // loadInterAd();
                           if (isRhymeSelectedLines) {
                             setState(() {
                               selectedLine1 =
@@ -725,7 +725,8 @@ class _PoetryEditorState extends State<PoetryEditor>
                       )
                     : IconButton(
                         onPressed: () {
-                          showAds;
+                          // _interstitialAd?.show();
+                          // loadInterAd();
                           setState(() {
                             selectedLine2 =
                                 getSelectedTextAsPlaintext(controller);
@@ -1167,9 +1168,36 @@ class _PoetryEditorState extends State<PoetryEditor>
                             ),
                             backgroundColor: widget.editorAppbarColor,
                             onTap: () {
-                              setState(() {
-                                showBookmarkModal = false;
-                              });
+                              // _interstitialAd?.show();
+                              // loadInterAd();
+                              // rewardedAd?.show(
+                              //   onUserEarnedReward: (ad, reward) {},
+                              // );
+                              // loadRewardAd();
+                              // setState(() {
+                              //   showBookmarkModal = false;
+                              // });
+                              int toAdsCount = context
+                                  .read<AuthService>()
+                                  .toAdsCount; // Use read() instead of watch()
+                              final incrementCounter =
+                                  context.read<AuthService>();
+                              incrementCounter.incrementAdsCounter();
+                              currentAdsCounter = toAdsCount;
+                              adsCounterStore.put('adsCounter', toAdsCount);
+
+                              if (currentAdsCounter >= 5) {
+                                final reset = context.read<AuthService>();
+                                reset.resetAdsCounter();
+                                currentAdsCounter = toAdsCount;
+                                adsCounterStore.put(
+                                    'adsCounter', currentAdsCounter);
+                                print("SHOW ME THE ADS!");
+                                rewardedAd?.show(
+                                  onUserEarnedReward: (ad, reward) {},
+                                );
+                                loadRewardAd();
+                              }
                               showModalBottomSheet(
                                   backgroundColor: Colors.transparent,
                                   context: context,
@@ -1338,6 +1366,10 @@ class _PoetryEditorState extends State<PoetryEditor>
                           ),
                           backgroundColor: widget.editorAppbarColor,
                           onTap: () async {
+                            rewardedAd?.show(
+                              onUserEarnedReward: (ad, reward) {},
+                            );
+                            loadRewardAd();
                             isSaved = true;
                             var poemData = poemListBox.getAt(widget.poemIndex)
                                 as Map<dynamic, dynamic>;
@@ -1792,7 +1824,7 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
                                 backgroundColor: MaterialStateProperty.all(
                                     widget.buttonColor)),
                             onPressed: () {
-                              _PoetryEditorState().showAds();
+                              // _PoetryEditorState().showAds();
                               setState(() {
                                 isRegenerated = true;
                                 widget.content = "";

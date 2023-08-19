@@ -5,10 +5,9 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:poetry_ai/pages/home_page.dart';
 
 class InlineAdaptiveBannerAd extends StatefulWidget {
-  const InlineAdaptiveBannerAd({Key? key}) : super(key: key);
-
+  const InlineAdaptiveBannerAd({super.key});
   @override
-  _InlineAdaptiveBannerAdState createState() => _InlineAdaptiveBannerAdState();
+  State<InlineAdaptiveBannerAd> createState() => _InlineAdaptiveBannerAdState();
 }
 
 class _InlineAdaptiveBannerAdState extends State<InlineAdaptiveBannerAd> {

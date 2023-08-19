@@ -8,11 +8,7 @@ import 'package:poetry_ai/components/form.dart';
 import 'package:poetry_ai/components/template_card.dart';
 import 'package:poetry_ai/pages/editor.dart';
 import 'package:poetry_ai/pages/quick_editor.dart';
-import 'package:poetry_ai/services/authentication/auth_service.dart';
 import 'package:rive/rive.dart';
-import 'dart:math' as math;
-import 'package:wave/config.dart';
-import 'package:wave/wave.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
