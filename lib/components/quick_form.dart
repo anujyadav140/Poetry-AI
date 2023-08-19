@@ -18,6 +18,7 @@ class TemplateForm extends StatefulWidget {
 
 class _TemplateFormState extends State<TemplateForm> {
   bool isCouplet = false;
+  bool isFreeVerse = false;
   List<String> quickPoeticForms = ["Quartrain", "Couplet", "Free Verse"];
   int selectedRadio = 0;
   final List<String> rhymeSchemeList = <String>[
@@ -76,7 +77,10 @@ class _TemplateFormState extends State<TemplateForm> {
     if (isCouplet) {
       selectedRhyme = "AABB";
     }
-
+    if (isFreeVerse) {
+      selectedRhyme =
+          "No Rhyme, Free Verse has no specific rhyme scheme pattern";
+    }
     widget.onFormSubmit(
         selectedPoeticForm, selectedSyllableCount, selectedRhyme);
   }
@@ -165,12 +169,21 @@ class _TemplateFormState extends State<TemplateForm> {
                                               if (index == 1) {
                                                 setState(() {
                                                   isCouplet =
-                                                      true; // Set isCouplet to true
+                                                      true; 
                                                 });
                                               } else {
                                                 setState(() {
                                                   isCouplet =
-                                                      false; // Set isCouplet to false
+                                                      false;
+                                                });
+                                              }
+                                              if (index == 3) {
+                                                setState(() {
+                                                  isFreeVerse = true;
+                                                });
+                                              } else {
+                                                setState(() {
+                                                  isFreeVerse = false;
                                                 });
                                               }
                                               setSelectedRadio(val!);
@@ -331,7 +344,7 @@ class _TemplateFormState extends State<TemplateForm> {
                         height: 18,
                       ),
                       Visibility(
-                        visible: !isCouplet,
+                        visible: !isCouplet && !isFreeVerse,
                         child: Column(
                           children: [
                             Container(

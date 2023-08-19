@@ -19,6 +19,7 @@ class _CustomFormState extends State<CustomForm> {
   bool isCouplet = false;
   bool isHaiku = false;
   bool isBlankVerse = false;
+  bool isFreeVerse = false;
   List<String> customPoeticForms = [
     "Custom Poetry",
     "Quartrain",
@@ -150,6 +151,10 @@ class _CustomFormState extends State<CustomForm> {
       selectedRhyme =
           "No Rhyme, Blank Verse has no specific rhyme scheme pattern";
     }
+    if (isFreeVerse) {
+      selectedRhyme =
+          "No Rhyme, Free Verse has no specific rhyme scheme pattern";
+    }
     widget.onFormSubmit(selectedPoeticForm, selectedFootStyle,
         selectedSyllableCount, selectedRhyme);
   }
@@ -240,13 +245,20 @@ class _CustomFormState extends State<CustomForm> {
                                               }
                                               if (index == 1) {
                                                 setState(() {
-                                                  isCouplet =
-                                                      true; // Set isCouplet to true
+                                                  isCouplet = true;
                                                 });
                                               } else {
                                                 setState(() {
-                                                  isCouplet =
-                                                      false; // Set isCouplet to false
+                                                  isCouplet = false;
+                                                });
+                                              }
+                                              if (index == 3) {
+                                                setState(() {
+                                                  isFreeVerse = true;
+                                                });
+                                              } else {
+                                                setState(() {
+                                                  isFreeVerse = false;
                                                 });
                                               }
                                               if (index == 4) {
@@ -520,7 +532,10 @@ class _CustomFormState extends State<CustomForm> {
                         height: 18,
                       ),
                       Visibility(
-                        visible: !isCouplet && !isHaiku && !isBlankVerse,
+                        visible: !isCouplet &&
+                            !isHaiku &&
+                            !isBlankVerse &&
+                            !isFreeVerse,
                         child: Column(
                           children: [
                             Container(
