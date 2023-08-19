@@ -1,12 +1,18 @@
 import 'dart:async';
+import 'dart:io';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:poetry_ai/api/poetry_ai.dart';
+import 'package:poetry_ai/components/inline_adaptive_banner.dart';
 import 'package:poetry_ai/pages/give_title.dart';
 import 'package:poetry_ai/components/parallax_bg.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:poetry_ai/services/authentication/auth_service.dart';
+import 'package:provider/provider.dart';
 
 class QuickMode extends StatefulWidget {
   const QuickMode({super.key, required this.features});
@@ -55,9 +61,33 @@ class _QuickModeState extends State<QuickMode> {
   bool isWideScreen = false;
   List<String> poemLines = [];
   List<String> reloadPoemLines = [];
+  InterstitialAd? _interstitialAd;
+  // TODO: replace this test ad unit with your own ad unit.
+  final adInterUnitId = Platform.isAndroid
+      ? 'ca-app-pub-3940256099942544/1033173712'
+      : 'ca-app-pub-3940256099942544/4411468910';
+
+  void loadInterAd() {
+    InterstitialAd.load(
+        adUnitId: adInterUnitId,
+        request: const AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(
+          // Called when an ad is successfully received.
+          onAdLoaded: (ad) {
+            debugPrint('$ad loaded.');
+            // Keep a reference to the ad so you can show it later.
+            _interstitialAd = ad;
+          },
+          // Called when an ad request failed.
+          onAdFailedToLoad: (LoadAdError error) {
+            debugPrint('InterstitialAd failed to load: $error');
+          },
+        ));
+  }
+
   @override
   void initState() {
-    print(widget.features);
+    loadInterAd();
     textControllers = List.generate(4, (_) => TextEditingController());
     focusNodes = List.generate(4, (_) => FocusNode());
     super.initState();
@@ -71,9 +101,12 @@ class _QuickModeState extends State<QuickMode> {
       controller.dispose();
     }
     _scrollController.dispose();
+    _interstitialAd?.dispose();
     super.dispose();
   }
 
+  final adsCounterStore = Hive.box('myAdsCounterStore');
+  int currentAdsCounter = 1;
   @override
   Widget build(BuildContext context) {
     if (MediaQuery.of(context).size.width >= 768) {
@@ -450,7 +483,7 @@ class _QuickModeState extends State<QuickMode> {
                                                             .centerRight,
                                                         padding:
                                                             const EdgeInsets
-                                                                    .only(
+                                                                .only(
                                                                 top: 20,
                                                                 left: 0,
                                                                 right: 0),
@@ -465,6 +498,39 @@ class _QuickModeState extends State<QuickMode> {
                                                                 color: Colors
                                                                     .white),
                                                             onPressed: () {
+                                                              int toAdsCount = context
+                                                                  .read<
+                                                                      AuthService>()
+                                                                  .toAdsCount; // Use read() instead of watch()
+                                                              final incrementCounter =
+                                                                  context.read<
+                                                                      AuthService>();
+                                                              incrementCounter
+                                                                  .incrementAdsCounter();
+                                                              currentAdsCounter =
+                                                                  toAdsCount;
+                                                              adsCounterStore.put(
+                                                                  'adsCounter',
+                                                                  toAdsCount);
+
+                                                              if (currentAdsCounter >=
+                                                                  5) {
+                                                                final reset =
+                                                                    context.read<
+                                                                        AuthService>();
+                                                                reset
+                                                                    .resetAdsCounter();
+                                                                currentAdsCounter =
+                                                                    toAdsCount;
+                                                                adsCounterStore.put(
+                                                                    'adsCounter',
+                                                                    currentAdsCounter);
+                                                                print(
+                                                                    "SHOW ME THE ADS!");
+                                                                _interstitialAd
+                                                                    ?.show();
+                                                                loadInterAd();
+                                                              }
                                                               FocusManager
                                                                   .instance
                                                                   .primaryFocus
@@ -656,7 +722,7 @@ class _QuickModeState extends State<QuickMode> {
                                                     : Container(
                                                         padding:
                                                             const EdgeInsets
-                                                                    .only(
+                                                                .only(
                                                                 left: 20.0),
                                                         child: Text(
                                                           "Write poetry & generate suggestions ...",
@@ -793,7 +859,11 @@ class _QuickModeState extends State<QuickMode> {
                   child: const Icon(Icons.arrow_back,
                       size: 30, color: Colors.white),
                   onPressed: () {
-                    Navigator.pop(context);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const InlineAdaptiveBannerAd(),
+                        ));
                   },
                 ),
               ),
@@ -879,6 +949,8 @@ class _QuickModeState extends State<QuickMode> {
                             tooltip: "Finish",
                             backgroundColor: Colors.white,
                             onPressed: () {
+                              _interstitialAd?.show();
+                              loadInterAd();
                               List<String> finishedPoemLines = [];
                               for (var controller in textControllers) {
                                 setState(() {

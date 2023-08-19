@@ -118,20 +118,6 @@ class PoetryTypesData {
           'images/meter.png',
         ],
         'Iambic Pentameter - Heroic Couplets'),
-    PoetryType(
-        'Prose Poetry',
-        'A lyrical poem that celebrates or pays tribute to a person, event, or object. Odes often express deep emotions and employ a formal tone.',
-        [
-          'No specific rhyme or meter',
-          'Combines elements of prose and poetry',
-          'More like a paragraph with poetic language and imagery',
-        ],
-        [
-          'images/lines.png',
-          'images/meter.png',
-          'images/book.png',
-        ],
-        'No Meter')
   ];
 
   static PoetryType getPoetryTypeByName(String name) {
@@ -226,16 +212,18 @@ class Template extends StatelessWidget {
                         ? Text(
                             name,
                             style: TextStyle(
-                              fontSize: 20,
+                                fontSize: 20,
                                 color: Colors.black,
-                                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                fontWeight: isSelected
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
                                 fontFamily:
                                     GoogleFonts.ebGaramond().fontFamily),
                           )
                         : Text(
                             name,
                             style: TextStyle(
-                              fontSize: 26,
+                                fontSize: 26,
                                 color: Colors.black,
                                 fontFamily:
                                     GoogleFonts.ebGaramond().fontFamily),

@@ -74,8 +74,6 @@ class _PoetryEditorState extends State<PoetryEditor>
   bool _dialVisible = true;
 
   RewardedAd? rewardedAd;
-  int rewardGenerations = 0;
-  bool isRewardAdWatched = false;
   // TODO: replace this test ad unit with your own ad unit.
   final adUnitId = Platform.isAndroid
       ? 'ca-app-pub-3940256099942544/5224354917'
@@ -130,7 +128,6 @@ class _PoetryEditorState extends State<PoetryEditor>
   void initState() {
     loadRewardAd();
     loadInterAd();
-    isRewardAdWatched = false;
     _animationController = AnimationController(
       duration: const Duration(
         milliseconds: 800,
@@ -426,12 +423,6 @@ class _PoetryEditorState extends State<PoetryEditor>
                                                 ColorTheme.primary(
                                                     themeValue))),
                                     onPressed: () {
-                                      // Navigator.push(
-                                      //     context,
-                                      //     MaterialPageRoute(
-                                      //       builder: (context) =>
-                                      //           const HomePage(),
-                                      //     ));
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -466,12 +457,6 @@ class _PoetryEditorState extends State<PoetryEditor>
                                         poemListBox.putAt(
                                             widget.poemIndex, poemData);
                                         showToast("Poem Saved!");
-                                        // Navigator.push(
-                                        //     context,
-                                        //     MaterialPageRoute(
-                                        //       builder: (context) =>
-                                        //           const HomePage(),
-                                        //     ));
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(

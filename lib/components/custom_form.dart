@@ -249,7 +249,7 @@ class _CustomFormState extends State<CustomForm> {
                                                       false; // Set isCouplet to false
                                                 });
                                               }
-                                              if (index == 3) {
+                                              if (index == 4) {
                                                 setState(() {
                                                   isHaiku = true;
                                                 });
@@ -258,7 +258,7 @@ class _CustomFormState extends State<CustomForm> {
                                                   isHaiku = false;
                                                 });
                                               }
-                                              if (index == 5) {
+                                              if (index == 6) {
                                                 setState(() {
                                                   isBlankVerse = true;
                                                 });
