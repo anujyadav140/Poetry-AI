@@ -4,7 +4,8 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:poetry_ai/components/color_palette.dart';
-import 'package:poetry_ai/components/form.dart';
+import 'package:poetry_ai/components/custom_form.dart';
+import 'package:poetry_ai/components/quick_form.dart';
 import 'package:poetry_ai/components/template_card.dart';
 import 'package:poetry_ai/pages/editor.dart';
 import 'package:poetry_ai/pages/quick_editor.dart';
@@ -205,6 +206,7 @@ class _HomePageState extends State<HomePage>
     );
   }
 
+  bool isCustom = false;
   @override
   Widget build(BuildContext context) {
     if (MediaQuery.of(context).size.width >= 768) {
@@ -228,6 +230,16 @@ class _HomePageState extends State<HomePage>
     // }
 
     void onTapCustomTemplate(int index) {
+      print(index);
+      if (index == 1) {
+        setState(() {
+          isCustom = true;
+        });
+      } else if (index == 0) {
+        setState(() {
+          isCustom = false;
+        });
+      }
       setState(() {
         // Check if the same custom template is clicked again
         if (selectedCustomTemplateIndex == index) {
@@ -412,19 +424,39 @@ class _HomePageState extends State<HomePage>
                             visible: isCustomTemplate,
                             child: Scrollbar(
                               child: SingleChildScrollView(
-                                  child: TemplateForm(
-                                description: selectedDescription,
-                                onFormSubmit: (String poeticForm,
-                                    String syllables, String rhyme) {
-                                  customPoetryTemplateSelection.clear();
-                                  customPoetryTemplateSelection.insert(
-                                      0, poeticForm);
-                                  customPoetryTemplateSelection.insert(
-                                      1, syllables);
-                                  customPoetryTemplateSelection.insert(
-                                      2, rhyme);
-                                },
-                              )),
+                                  child: isCustom
+                                      ? CustomForm(
+                                          description: selectedDescription,
+                                          onFormSubmit: (String poeticForm,
+                                              String syllables,
+                                              String rhyme,
+                                              String footStyle) {
+                                            customPoetryTemplateSelection
+                                                .clear();
+                                            customPoetryTemplateSelection
+                                                .insert(0, poeticForm);
+                                            customPoetryTemplateSelection
+                                                .insert(1, syllables);
+                                            customPoetryTemplateSelection
+                                                .insert(2, rhyme);
+                                            customPoetryTemplateSelection
+                                                .insert(3, footStyle);
+                                          },
+                                        )
+                                      : TemplateForm(
+                                          description: selectedDescription,
+                                          onFormSubmit: (String poeticForm,
+                                              String syllables, String rhyme) {
+                                            customPoetryTemplateSelection
+                                                .clear();
+                                            customPoetryTemplateSelection
+                                                .insert(0, poeticForm);
+                                            customPoetryTemplateSelection
+                                                .insert(1, syllables);
+                                            customPoetryTemplateSelection
+                                                .insert(2, rhyme);
+                                          },
+                                        )),
                             ),
                           )
                         : isTemplateClicked

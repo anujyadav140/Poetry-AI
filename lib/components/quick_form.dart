@@ -4,8 +4,11 @@ import 'package:wave/config.dart';
 import 'package:wave/wave.dart';
 
 class TemplateForm extends StatefulWidget {
-  const TemplateForm(
-      {super.key, required this.description, required this.onFormSubmit});
+  const TemplateForm({
+    super.key,
+    required this.description,
+    required this.onFormSubmit,
+  });
   final String description;
   final Function(String, String, String) onFormSubmit;
 
@@ -14,7 +17,8 @@ class TemplateForm extends StatefulWidget {
 }
 
 class _TemplateFormState extends State<TemplateForm> {
-  List<String> poeticForms = ["Quartrain", "Couplet", "Free Verse"];
+  bool isCouplet = false;
+  List<String> quickPoeticForms = ["Quartrain", "Couplet", "Free Verse"];
   int selectedRadio = 0;
   final List<String> rhymeSchemeList = <String>[
     'ABAB',
@@ -57,9 +61,8 @@ class _TemplateFormState extends State<TemplateForm> {
           "Free verse is a poem that is free of rules, such as no distinct rhyme pattern.",
       "Sample Poem":
           "I celebrate myself, and sing myself,\nAnd what I assume you shall assume,\nFor every atom belonging to me as good belongs to you."
-    }
+    },
   };
-
   setSelectedRadio(int val) {
     setState(() {
       selectedRadio = val;
@@ -67,9 +70,12 @@ class _TemplateFormState extends State<TemplateForm> {
   }
 
   void submitForm() {
-    final selectedPoeticForm = poeticForms[selectedRadio];
+    final selectedPoeticForm = quickPoeticForms[selectedRadio];
     final selectedSyllableCount = dropdownSyllableCount;
-    final selectedRhyme = dropdownRhyme;
+    String selectedRhyme = dropdownRhyme;
+    if (isCouplet) {
+      selectedRhyme = "AABB";
+    }
 
     widget.onFormSubmit(
         selectedPoeticForm, selectedSyllableCount, selectedRhyme);
@@ -142,7 +148,7 @@ class _TemplateFormState extends State<TemplateForm> {
                                 height: 100,
                                 child: ListView.builder(
                                   scrollDirection: Axis.horizontal,
-                                  itemCount: poeticForms.length,
+                                  itemCount: quickPoeticForms.length,
                                   itemBuilder: (context, index) {
                                     return Padding(
                                       padding:
@@ -156,12 +162,23 @@ class _TemplateFormState extends State<TemplateForm> {
                                             value: index,
                                             groupValue: selectedRadio,
                                             onChanged: (val) {
+                                              if (index == 1) {
+                                                setState(() {
+                                                  isCouplet =
+                                                      true; // Set isCouplet to true
+                                                });
+                                              } else {
+                                                setState(() {
+                                                  isCouplet =
+                                                      false; // Set isCouplet to false
+                                                });
+                                              }
                                               setSelectedRadio(val!);
                                               submitForm();
                                             },
                                           ),
                                           Text(
-                                            poeticForms[index],
+                                            quickPoeticForms[index],
                                             style: !isWideScreen
                                                 ? TextStyle(
                                                     fontWeight:
@@ -195,9 +212,8 @@ class _TemplateFormState extends State<TemplateForm> {
                                 child: Column(
                                   children: [
                                     Text(
-                                      formDescriptions[
-                                                  poeticForms[selectedRadio]]
-                                              ?["Description"] ??
+                                      formDescriptions[quickPoeticForms[
+                                              selectedRadio]]?["Description"] ??
                                           "",
                                       style: !isWideScreen
                                           ? TextStyle(
@@ -215,9 +231,8 @@ class _TemplateFormState extends State<TemplateForm> {
                                     ),
                                     const SizedBox(height: 10),
                                     Text(
-                                      formDescriptions[
-                                                  poeticForms[selectedRadio]]
-                                              ?["Sample Poem"] ??
+                                      formDescriptions[quickPoeticForms[
+                                              selectedRadio]]?["Sample Poem"] ??
                                           "",
                                       style: !isWideScreen
                                           ? TextStyle(
@@ -315,83 +330,87 @@ class _TemplateFormState extends State<TemplateForm> {
                       const SizedBox(
                         height: 18,
                       ),
-                      Column(
-                        children: [
-                          Container(
-                            alignment: Alignment.topLeft,
-                            child: Text(
-                              "Rhyme:",
-                              style: !isWideScreen
-                                  ? TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.black,
-                                      fontFamily:
-                                          GoogleFonts.ebGaramond().fontFamily)
-                                  : TextStyle(
-                                      fontSize: 26,
-                                      color: Colors.black,
-                                      fontFamily:
-                                          GoogleFonts.ebGaramond().fontFamily),
+                      Visibility(
+                        visible: !isCouplet,
+                        child: Column(
+                          children: [
+                            Container(
+                              alignment: Alignment.topLeft,
+                              child: Text(
+                                "Rhyme:",
+                                style: !isWideScreen
+                                    ? TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.black,
+                                        fontFamily:
+                                            GoogleFonts.ebGaramond().fontFamily)
+                                    : TextStyle(
+                                        fontSize: 26,
+                                        color: Colors.black,
+                                        fontFamily: GoogleFonts.ebGaramond()
+                                            .fontFamily),
+                              ),
                             ),
-                          ),
-                          Container(
-                            alignment: Alignment.topLeft,
-                            child: Text(
-                              "The letters indicate which lines of the poem rhyme",
-                              style: !isWideScreen
-                                  ? TextStyle(
-                                      fontSize: 18,
-                                      color: Colors.black,
-                                      fontFamily:
-                                          GoogleFonts.ebGaramond().fontFamily)
-                                  : TextStyle(
-                                      fontSize: 26,
-                                      color: Colors.black,
-                                      fontFamily:
-                                          GoogleFonts.ebGaramond().fontFamily),
+                            Container(
+                              alignment: Alignment.topLeft,
+                              child: Text(
+                                "The letters indicate which lines of the poem rhyme",
+                                style: !isWideScreen
+                                    ? TextStyle(
+                                        fontSize: 18,
+                                        color: Colors.black,
+                                        fontFamily:
+                                            GoogleFonts.ebGaramond().fontFamily)
+                                    : TextStyle(
+                                        fontSize: 26,
+                                        color: Colors.black,
+                                        fontFamily: GoogleFonts.ebGaramond()
+                                            .fontFamily),
+                              ),
                             ),
-                          ),
-                          DropdownButton(
-                            menuMaxHeight: 300.0,
-                            items: rhymeSchemeList
-                                .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(
-                                  value,
-                                  style: TextStyle(
-                                    fontSize: !isWideScreen ? 18 : 26,
-                                    color: Colors.black,
-                                    fontFamily:
-                                        GoogleFonts.ebGaramond().fontFamily,
-                                    fontWeight: value == dropdownRhyme
-                                        ? FontWeight.bold
-                                        : FontWeight
-                                            .normal, // Adjust font weight here
+                            DropdownButton(
+                              menuMaxHeight: 300.0,
+                              items: rhymeSchemeList
+                                  .map<DropdownMenuItem<String>>(
+                                      (String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(
+                                    value,
+                                    style: TextStyle(
+                                      fontSize: !isWideScreen ? 18 : 26,
+                                      color: Colors.black,
+                                      fontFamily:
+                                          GoogleFonts.ebGaramond().fontFamily,
+                                      fontWeight: value == dropdownRhyme
+                                          ? FontWeight.bold
+                                          : FontWeight
+                                              .normal, // Adjust font weight here
+                                    ),
                                   ),
-                                ),
-                              );
-                            }).toList(),
-                            style: !isWideScreen
-                                ? TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.black,
-                                    fontFamily:
-                                        GoogleFonts.ebGaramond().fontFamily)
-                                : TextStyle(
-                                    fontSize: 26,
-                                    color: Colors.black,
-                                    fontFamily:
-                                        GoogleFonts.ebGaramond().fontFamily),
-                            value: dropdownRhyme,
-                            onChanged: (String? value) {
-                              setState(() {
-                                dropdownRhyme = value!;
-                                submitForm();
-                              });
-                            },
-                          ),
-                        ],
+                                );
+                              }).toList(),
+                              style: !isWideScreen
+                                  ? TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.black,
+                                      fontFamily:
+                                          GoogleFonts.ebGaramond().fontFamily)
+                                  : TextStyle(
+                                      fontSize: 26,
+                                      color: Colors.black,
+                                      fontFamily:
+                                          GoogleFonts.ebGaramond().fontFamily),
+                              value: dropdownRhyme,
+                              onChanged: (String? value) {
+                                setState(() {
+                                  dropdownRhyme = value!;
+                                  submitForm();
+                                });
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),

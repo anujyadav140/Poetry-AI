@@ -48,7 +48,6 @@ class _PoetryEditorState extends State<PoetryEditor>
     keepStyleOnNewLine: true,
     selection: const TextSelection.collapsed(offset: 0),
   );
-  final bool _isRhymeLines = false;
   bool _isInfoClicked = false;
   bool showBookmarkModal = false;
   bool scrollToBottomOfBookmark = false;
@@ -57,7 +56,6 @@ class _PoetryEditorState extends State<PoetryEditor>
   bool isExpanded = false;
   bool isWideScreen = false;
   bool isSaved = false;
-  Timer? _scrollTimer;
   late String poemTitle = "";
   List<String> poetryFeatures = [];
   late ScrollController _scrollController;
@@ -74,29 +72,7 @@ class _PoetryEditorState extends State<PoetryEditor>
   late List<dynamic> _aiTools;
   late String poetryMetre = "";
   bool _dialVisible = true;
-  final double _currentSheetHeight = 0.3;
-  final double _initialDragOffset = 0.0;
-  final double _minChildSize = 0.3;
 
-  // final HttpsCallable _addNumbers =
-  //     FirebaseFunctions.instanceFor(region: 'us-central1')
-  //         .httpsCallable('addNumbers');
-
-  // Future<void> _callAddNumbersFunction() async {
-  //   try {
-  //     final result = await _addNumbers.call({
-  //       'num1': 5,
-  //       'num2': 7,
-  //     });
-
-  //     final int sum = result.data['result'];
-  //     print('Sum: $sum');
-  //   } on FirebaseFunctionsException catch (e) {
-  //     print('Error calling addNumbers: $e');
-  //   } catch (e) {
-  //     print('Unexpected error calling addNumbers: $e');
-  //   }
-  // }
   RewardedAd? rewardedAd;
   int rewardGenerations = 0;
   bool isRewardAdWatched = false;
@@ -126,7 +102,6 @@ class _PoetryEditorState extends State<PoetryEditor>
   }
 
   InterstitialAd? _interstitialAd;
-
   // TODO: replace this test ad unit with your own ad unit.
   final adInterUnitId = Platform.isAndroid
       ? 'ca-app-pub-3940256099942544/1033173712'
@@ -150,45 +125,11 @@ class _PoetryEditorState extends State<PoetryEditor>
         ));
   }
 
-  void _showRewardsSnackBar() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Watch an ad for 10 consecutive ad-free poetry tool generations?',
-          style: TextStyle(
-              fontSize: !isWideScreen ? 18 : 24,
-              color: Colors.white,
-              fontFamily: GoogleFonts.ebGaramond().fontFamily),
-        ),
-        duration: const Duration(seconds: 15),
-        action: SnackBarAction(
-          label: 'Watch Ads',
-          backgroundColor: Colors.white,
-          textColor: Colors.black,
-          onPressed: () {
-            // You can trigger the rewarded ad here
-            rewardedAd?.show(
-              onUserEarnedReward: (ad, reward) {
-                setState(() {
-                  isRewardAdWatched = true;
-                  rewardGenerations = 10;
-                });
-              },
-            );
-          },
-        ),
-      ),
-    );
-  }
-
   List<String> bookmarks = [];
   @override
   void initState() {
     loadRewardAd();
     loadInterAd();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _showRewardsSnackBar();
-    });
     isRewardAdWatched = false;
     _animationController = AnimationController(
       duration: const Duration(
@@ -351,6 +292,89 @@ class _PoetryEditorState extends State<PoetryEditor>
   String multiSelectedLines = "";
   final globalThemeBox = Hive.box('myThemeBox');
   bool tester = false;
+  static const _insets = 16.0;
+  BannerAd? _inlineAdaptiveAd;
+  bool _isLoaded = false;
+  AdSize? _adSize;
+  late Orientation _currentOrientation = MediaQuery.of(context).orientation;
+
+  double get _adWidth => MediaQuery.of(context).size.width - (2 * _insets);
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _currentOrientation = MediaQuery.of(context).orientation;
+    _loadBannerAd();
+  }
+
+  void _loadBannerAd() async {
+    await _inlineAdaptiveAd?.dispose();
+    setState(() {
+      _inlineAdaptiveAd = null;
+      _isLoaded = false;
+    });
+
+    // Get an inline adaptive size for the current orientation.
+    AdSize size = AdSize.getCurrentOrientationInlineAdaptiveBannerAdSize(
+        _adWidth.truncate());
+
+    _inlineAdaptiveAd = BannerAd(
+      // TODO: replace this test ad unit with your own ad unit.
+      adUnitId: 'ca-app-pub-3940256099942544/9214589741',
+      size: size,
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (Ad ad) async {
+          print('Inline adaptive banner loaded: ${ad.responseInfo}');
+
+          // After the ad is loaded, get the platform ad size and use it to
+          // update the height of the container. This is necessary because the
+          // height can change after the ad is loaded.
+          BannerAd bannerAd = (ad as BannerAd);
+          final AdSize? size = await bannerAd.getPlatformAdSize();
+          if (size == null) {
+            print('Error: getPlatformAdSize() returned null for $bannerAd');
+            return;
+          }
+
+          setState(() {
+            _inlineAdaptiveAd = bannerAd;
+            _isLoaded = true;
+            _adSize = size;
+          });
+        },
+        onAdFailedToLoad: (Ad ad, LoadAdError error) {
+          print('Inline adaptive banner failedToLoad: $error');
+          ad.dispose();
+        },
+      ),
+    );
+    await _inlineAdaptiveAd!.load();
+  }
+
+  Widget _getAdWidget() {
+    return OrientationBuilder(
+      builder: (context, orientation) {
+        if (_currentOrientation == orientation &&
+            _inlineAdaptiveAd != null &&
+            _isLoaded &&
+            _adSize != null) {
+          return Align(
+            child: SizedBox(
+              width: _adWidth,
+              height: _adSize!.height.toDouble(),
+              child: AdWidget(ad: _inlineAdaptiveAd!),
+            ),
+          );
+        }
+        if (_currentOrientation != orientation) {
+          _currentOrientation = orientation;
+          _loadBannerAd();
+        }
+        return Container();
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -949,13 +973,23 @@ class _PoetryEditorState extends State<PoetryEditor>
                                 if (poemBookmarks.isEmpty)
                                   SliverToBoxAdapter(
                                     child: Center(
-                                      child: Text(
-                                        "No Bookmarks Yet ...",
-                                        style: TextStyle(
-                                            fontSize: !isWideScreen ? 18 : 28,
-                                            color: Colors.black,
-                                            fontFamily: GoogleFonts.ebGaramond()
-                                                .fontFamily),
+                                      child: Column(
+                                        children: [
+                                          Text(
+                                            "No Bookmarks Yet ...",
+                                            style: TextStyle(
+                                                fontSize:
+                                                    !isWideScreen ? 20 : 28,
+                                                color: Colors.black,
+                                                fontFamily:
+                                                    GoogleFonts.ebGaramond()
+                                                        .fontFamily),
+                                          ),
+                                          const SizedBox(
+                                            height: 25,
+                                          ),
+                                          _getAdWidget(),
+                                        ],
                                       ),
                                     ),
                                   )
@@ -971,6 +1005,17 @@ class _PoetryEditorState extends State<PoetryEditor>
                                             poemData['bookmarks'][index];
                                         List<String> bookmark =
                                             poemData['bookmarks'];
+                                        if (index == 2) {
+                                          return Column(
+                                            children: [
+                                              _getAdWidget(),
+                                              const Divider(
+                                                height: 1,
+                                                color: Colors.grey,
+                                              ),
+                                            ],
+                                          );
+                                        }
                                         return Slidable(
                                           key: const ValueKey(0),
                                           enabled: readMoreClicked,
@@ -1658,11 +1703,43 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
   bool isRegenerated = false;
   List<String> bookmark = [];
   late String newGeneratedLines = "";
+  int currentAdsCounter = 1;
+  final adsCounterStore = Hive.box('myAdsCounterStore');
   @override
   void initState() {
+    loadRewardAd();
     var poemData = poemListBox.getAt(widget.poemIndex) as Map<dynamic, dynamic>;
     bookmark = poemData['bookmarks'];
+    currentAdsCounter = adsCounterStore.get('adsCounter') ?? 1;
     super.initState();
+  }
+
+  RewardedAd? rewardedAd;
+  int rewardGenerations = 0;
+  bool isRewardAdWatched = false;
+  // TODO: replace this test ad unit with your own ad unit.
+  final adUnitId = Platform.isAndroid
+      ? 'ca-app-pub-3940256099942544/5224354917'
+      : 'ca-app-pub-3940256099942544/1712485313';
+
+  /// Loads a rewarded ad.
+  void loadRewardAd() {
+    RewardedAd.load(
+        adUnitId: adUnitId,
+        request: const AdRequest(),
+        rewardedAdLoadCallback: RewardedAdLoadCallback(
+          // Called when an ad is successfully received.
+          onAdLoaded: (ad) {
+            debugPrint('$ad loaded.');
+            // Keep a reference to the ad so you can show it later.
+            rewardedAd = ad;
+          },
+          // Called when an ad request failed.
+          onAdFailedToLoad: (LoadAdError error) {
+            debugPrint('RewardedAd failed to load: $error');
+            loadRewardAd();
+          },
+        ));
   }
 
   @override
@@ -1844,6 +1921,27 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
                                 print(widget.selectedLines);
                                 print(widget.multiSelectedLines);
                                 print(widget.poetryMetre);
+                                int toAdsCount = context
+                                    .read<AuthService>()
+                                    .toAdsCount; // Use read() instead of watch()
+                                final incrementCounter =
+                                    context.read<AuthService>();
+                                incrementCounter.incrementAdsCounter();
+                                currentAdsCounter = toAdsCount;
+                                adsCounterStore.put('adsCounter', toAdsCount);
+
+                                if (currentAdsCounter >= 5) {
+                                  final reset = context.read<AuthService>();
+                                  reset.resetAdsCounter();
+                                  currentAdsCounter = toAdsCount;
+                                  adsCounterStore.put(
+                                      'adsCounter', currentAdsCounter);
+                                  print("SHOW ME THE ADS!");
+                                  rewardedAd?.show(
+                                    onUserEarnedReward: (ad, reward) {},
+                                  );
+                                  loadRewardAd();
+                                }
                                 setState(() {
                                   widget.content = value;
                                   if (widget.content.isNotEmpty) {
