@@ -152,15 +152,10 @@ class _HomePageState extends State<HomePage>
         return AlertDialog(
           title: Text(
             'Pick a theme ...',
-            style: !isWideScreen
-                ? TextStyle(
-                    fontSize: 20,
-                    color: Colors.black,
-                    fontFamily: GoogleFonts.ebGaramond().fontFamily)
-                : TextStyle(
-                    fontSize: 26,
-                    color: Colors.black,
-                    fontFamily: GoogleFonts.ebGaramond().fontFamily),
+            style: TextStyle(
+                fontSize: !isWideScreen ? 20 : 26,
+                color: Colors.black,
+                fontFamily: GoogleFonts.ebGaramond().fontFamily),
           ),
           content: SingleChildScrollView(
             child: ListBody(
@@ -168,15 +163,10 @@ class _HomePageState extends State<HomePage>
                 return ListTile(
                   title: Text(
                     theme,
-                    style: !isWideScreen
-                        ? TextStyle(
-                            fontSize: 20,
-                            color: Colors.black,
-                            fontFamily: GoogleFonts.ebGaramond().fontFamily)
-                        : TextStyle(
-                            fontSize: 26,
-                            color: Colors.black,
-                            fontFamily: GoogleFonts.ebGaramond().fontFamily),
+                    style: TextStyle(
+                        fontSize: !isWideScreen ? 20 : 26,
+                        color: Colors.black,
+                        fontFamily: GoogleFonts.ebGaramond().fontFamily),
                   ),
                   onTap: () {
                     if (theme == "Purple") {

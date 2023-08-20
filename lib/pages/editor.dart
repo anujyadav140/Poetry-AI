@@ -175,7 +175,12 @@ class _PoetryEditorState extends State<PoetryEditor>
         "Convert Your Lines Into $poetryMetre",
         "Generate lines that adhere to the proper poetry metre form."
       ],
-      [6, "images/rhyme.png", "Rhyme Whole Poem", "Placeholder text"],
+      [
+        6,
+        "images/rhyme.png",
+        "Rhyme Whole Poem",
+        "Rhyme the whole poem with any rhyme scheme you want."
+      ],
       [
         7,
         "images/poetry.png",
@@ -384,7 +389,6 @@ class _PoetryEditorState extends State<PoetryEditor>
     final isRhymeSelectedLines =
         context.watch<AuthService>().isRhymeSelectedLines;
     final isConvertToMetre = context.watch<AuthService>().isConvertToMetre;
-
     return WillPopScope(
       onWillPop: () async {
         if (isOpenDial.value) {
@@ -686,14 +690,9 @@ class _PoetryEditorState extends State<PoetryEditor>
                               });
                               showToast("Converting ...");
                               print(selectedLines);
-                              _AiToolsListState()
-                                  .aiToolsSelected(
-                                      5,
-                                      controller,
-                                      poetryFeatures,
-                                      selectedLines,
-                                      multiSelectedLines,
-                                      metre)
+                              PoetryAiTools()
+                                  .callChangeLinesToFollowMetreFunction(
+                                      multiSelectedLines, poetryMetre)
                                   .then((value) {
                                 showModalBottomSheet(
                                   context: context,
@@ -720,7 +719,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                                       poetryFeatures: poetryFeatures,
                                       poetryMetre: metre,
                                       selectedLines: selectedLines,
-                                      userChoice: 5,
+                                      userChoice: 10,
                                     );
                                   },
                                 );
@@ -756,48 +755,39 @@ class _PoetryEditorState extends State<PoetryEditor>
                                 isSecondLineSelected = false;
                               });
                               showToast("Rhyming In Process ...");
-                              _AiToolsListState()
-                                  .aiToolsSelected(
-                                2,
-                                controller,
-                                poetryFeatures,
-                                selectedLines,
-                                multiSelectedLines,
-                                poetryMetre,
-                              )
-                                  .then(
-                                (value) {
-                                  List<String> regenerateSelectedLines = [];
-                                  regenerateSelectedLines = selectedLines;
-                                  print(selectedLines);
-                                  selectedLines = [];
-                                  showModalBottomSheet(
-                                    context: context,
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(20.0),
-                                        topRight: Radius.circular(20.0),
-                                      ),
+                              AiToolsHandler()
+                                  .rhymeSelectedLines(selectedLines)
+                                  .then((value) {
+                                List<String> regenerateSelectedLines = [];
+                                regenerateSelectedLines = selectedLines;
+                                print(selectedLines);
+                                selectedLines = [];
+                                showModalBottomSheet(
+                                  context: context,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(20.0),
+                                      topRight: Radius.circular(20.0),
                                     ),
-                                    builder: (context) {
-                                      return CustomModalBottomSheet(
-                                        title: "Rhyme Selected Lines",
-                                        content: value,
-                                        animation: _animationController,
-                                        poemIndex: widget.poemIndex,
-                                        buttonColor: widget.editorAppbarColor,
-                                        fontColor: widget.editorFontColor,
-                                        controller: controller,
-                                        multiSelectedLines: multiSelectedLines,
-                                        poetryFeatures: poetryFeatures,
-                                        selectedLines: regenerateSelectedLines,
-                                        poetryMetre: metre,
-                                        userChoice: 2,
-                                      );
-                                    },
-                                  );
-                                },
-                              );
+                                  ),
+                                  builder: (context) {
+                                    return CustomModalBottomSheet(
+                                      title: "Rhyme Selected Lines",
+                                      content: value,
+                                      animation: _animationController,
+                                      poemIndex: widget.poemIndex,
+                                      buttonColor: widget.editorAppbarColor,
+                                      fontColor: widget.editorFontColor,
+                                      controller: controller,
+                                      multiSelectedLines: multiSelectedLines,
+                                      poetryFeatures: poetryFeatures,
+                                      selectedLines: regenerateSelectedLines,
+                                      poetryMetre: metre,
+                                      userChoice: 9,
+                                    );
+                                  },
+                                );
+                              });
                             }
                           }
                         },
@@ -1482,8 +1472,11 @@ class AiToolsList extends StatefulWidget {
 class _AiToolsListState extends State<AiToolsList> {
   String wordResponse = "";
   bool isWideScreen = false;
+  final globalThemeBox = Hive.box('myThemeBox');
+  bool isRhymeTheWholePoem = false;
   @override
   Widget build(BuildContext context) {
+    final themeValue = globalThemeBox.get('theme') ?? 'Classic';
     if (MediaQuery.of(context).size.width >= 768) {
       isWideScreen = true;
     }
@@ -1519,7 +1512,6 @@ class _AiToolsListState extends State<AiToolsList> {
                   widget.multiSelectedLines,
                   widget.poetryMetre,
                 ).then((response) {
-                  // print(response);
                   setState(() {
                     if (widget._aiTools[index][0] == 5) {
                       context.read<AuthService>().isConvertToMetre =
@@ -1531,10 +1523,98 @@ class _AiToolsListState extends State<AiToolsList> {
                           !isRhymeSelectedLines;
                       Navigator.of(context).pop();
                     }
+                    // if (widget._aiTools[index][0] == 6) {
+                    //   isRhymeTheWholePoem = true;
+                    //   showDialog(
+                    //     context: context,
+                    //     builder: (context) {
+                    //       return AlertDialog(
+                    //         backgroundColor: ColorTheme.accent(themeValue),
+                    //         title: Text(
+                    //           "Edit the poem title:",
+                    //           style: TextStyle(
+                    //               fontSize: !isWideScreen ? 20 : 26,
+                    //               color: ColorTheme.text(themeValue),
+                    //               fontFamily:
+                    //                   GoogleFonts.ebGaramond().fontFamily),
+                    //         ),
+                    //         content: Column(
+                    //           mainAxisSize: MainAxisSize.min,
+                    //           children: [
+                    //             TextField(
+                    //               onChanged: (value) {},
+                    //               cursorColor: ColorTheme.text(themeValue),
+                    //               decoration: InputDecoration(
+                    //                 focusedBorder: OutlineInputBorder(
+                    //                   borderRadius: BorderRadius.circular(8.0),
+                    //                   borderSide: BorderSide(
+                    //                       color: ColorTheme.text(
+                    //                           themeValue)), // Set the focused border color to black
+                    //                 ),
+                    //                 focusColor: ColorTheme.accent(themeValue),
+                    //                 hintText: "Write Rhyme Scheme",
+                    //                 hintStyle: TextStyle(
+                    //                     fontSize: !isWideScreen ? 20 : 26,
+                    //                     color: ColorTheme.text(themeValue),
+                    //                     fontFamily: GoogleFonts.ebGaramond()
+                    //                         .fontFamily),
+                    //                 border: OutlineInputBorder(
+                    //                   borderRadius: BorderRadius.circular(8.0),
+                    //                   borderSide:
+                    //                       const BorderSide(color: Colors.grey),
+                    //                 ),
+                    //                 filled: true,
+                    //                 fillColor: Colors.grey[200],
+                    //                 contentPadding: const EdgeInsets.symmetric(
+                    //                   vertical: 12.0,
+                    //                   horizontal: 16.0,
+                    //                 ),
+                    //               ),
+                    //             ),
+                    //           ],
+                    //         ),
+                    //         actions: [
+                    //           TextButton(
+                    //               style: ButtonStyle(
+                    //                   backgroundColor: MaterialStatePropertyAll(
+                    //                       ColorTheme.primary(themeValue))),
+                    //               onPressed: () {
+                    //                 Navigator.pop(context);
+                    //               },
+                    //               child: Text(
+                    //                 "Cancel",
+                    //                 style: TextStyle(
+                    //                     fontSize: !isWideScreen ? 20 : 26,
+                    //                     color: ColorTheme.text(themeValue),
+                    //                     fontFamily: GoogleFonts.ebGaramond()
+                    //                         .fontFamily),
+                    //               )),
+                    //           TextButton(
+                    //             style: ButtonStyle(
+                    //                 backgroundColor: MaterialStatePropertyAll(
+                    //                     ColorTheme.primary(themeValue))),
+                    //             onPressed: () {
+                    //               Navigator.pop(context);
+                    //             },
+                    //             child: Text(
+                    //               "Save",
+                    //               style: TextStyle(
+                    //                   fontSize: !isWideScreen ? 20 : 26,
+                    //                   color: ColorTheme.text(themeValue),
+                    //                   fontFamily:
+                    //                       GoogleFonts.ebGaramond().fontFamily),
+                    //             ),
+                    //           ),
+                    //         ],
+                    //       );
+                    //     },
+                    //   );
+                    // }
                     wordResponse = response;
                     Navigator.of(context).pop();
                     !context.read<AuthService>().isRhymeSelectedLines &&
-                            !context.read<AuthService>().isConvertToMetre
+                            !context.read<AuthService>().isConvertToMetre &&
+                            !isRhymeTheWholePoem
                         ? showModalBottomSheet(
                             context: context,
                             shape: const RoundedRectangleBorder(
@@ -1625,20 +1705,24 @@ class _AiToolsListState extends State<AiToolsList> {
         return await aiToolsHandler.reviewTheFeatures(
             controller, poetryFeatures);
       case 2:
-        return await aiToolsHandler.rhymeSelectedLines(selectedLines);
+        return "";
       case 3:
         return await aiToolsHandler.metreHighlighter(controller);
       case 4:
         return await aiToolsHandler.rhymeSchemePattern(controller);
       case 5:
-        return await aiToolsHandler.convertLinesToProperMetreForm(
-            multiSelectedLines, poetryMetre);
+        return "";
       case 6:
-        return await aiToolsHandler.poemInspiration(controller);
+        return "";
       case 7:
         return await aiToolsHandler.generateFewLinesForInspiration(controller);
       case 8:
         return await aiToolsHandler.poemInspiration(controller);
+      case 9:
+        return await aiToolsHandler.rhymeSelectedLines(selectedLines);
+      case 10:
+        return await aiToolsHandler.convertLinesToProperMetreForm(
+            multiSelectedLines, poetryMetre);
       default:
         print('Invalid choice.');
         return "";
