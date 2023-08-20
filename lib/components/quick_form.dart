@@ -8,10 +8,11 @@ class TemplateForm extends StatefulWidget {
     super.key,
     required this.description,
     required this.onFormSubmit,
+    required this.waveColor,
   });
   final String description;
   final Function(String, String, String) onFormSubmit;
-
+  final String waveColor;
   @override
   State<TemplateForm> createState() => _TemplateFormState();
 }
@@ -85,8 +86,31 @@ class _TemplateFormState extends State<TemplateForm> {
         selectedPoeticForm, selectedSyllableCount, selectedRhyme);
   }
 
+  List<List<Color>>? gradients = [];
   @override
   Widget build(BuildContext context) {
+    if (widget.waveColor == "Classic") {
+      setState(() {
+        gradients = [
+          [Colors.grey, Colors.grey.shade200],
+          [Colors.grey.shade200, Colors.grey.shade300],
+        ];
+      });
+    } else if (widget.waveColor == "Purple") {
+      setState(() {
+        gradients = [
+          [Colors.purple, Colors.purple.shade200],
+          [Colors.purple.shade200, Colors.purple.shade300],
+        ];
+      });
+    } else if (widget.waveColor == "Green") {
+      setState(() {
+        gradients = [
+          [Colors.green, Colors.green.shade200],
+          [Colors.green.shade200, Colors.green.shade300],
+        ];
+      });
+    }
     bool isWideScreen = false;
     bool isLongScreen = false;
     if (MediaQuery.of(context).size.width >= 768) {
@@ -168,13 +192,11 @@ class _TemplateFormState extends State<TemplateForm> {
                                             onChanged: (val) {
                                               if (index == 1) {
                                                 setState(() {
-                                                  isCouplet =
-                                                      true; 
+                                                  isCouplet = true;
                                                 });
                                               } else {
                                                 setState(() {
-                                                  isCouplet =
-                                                      false;
+                                                  isCouplet = false;
                                                 });
                                               }
                                               if (index == 3) {
@@ -440,10 +462,7 @@ class _TemplateFormState extends State<TemplateForm> {
               //   [Colors.blue, Colors.blue.shade180],
               //   [Colors.blue.shade180, Colors.blue.shade100],
               // ],
-              gradients: [
-                [Colors.grey, Colors.grey.shade200],
-                [Colors.grey.shade200, Colors.grey.shade300],
-              ],
+              gradients: gradients,
               durations: [3500, 5000],
               heightPercentages: [0.05, 0.1],
             ),
