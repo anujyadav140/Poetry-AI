@@ -1315,7 +1315,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                                                 color: Colors.grey,
                                               ),
                                               _isInfoClicked
-                                                  ? const InfoPage()
+                                                  ? InfoPage()
                                                   : AiToolsList(
                                                       aiTools: _aiTools,
                                                       controller: controller,
@@ -1956,25 +1956,43 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
 }
 
 class InfoPage extends StatelessWidget {
-  const InfoPage({super.key});
-
+  InfoPage({super.key});
+  final List<String> infoTexts = [
+    "1. Click on any of the AI tools to generate responses from the AI.",
+    "2. Look at the App Bar above, If you want to rhyme lines or do selected lines related tasks.",
+    "3. Read the title and the sub-title of the AI tool carefully.",
+    "4. Wait for each of the AI tools to load properly after clicking on them.",
+    "5. The response will be generated in a popup.",
+  ];
   @override
   Widget build(BuildContext context) {
     bool isWideScreen = false;
     if (MediaQuery.of(context).size.width >= 768) {
       isWideScreen = true;
     }
+    return Expanded(
+      child: Container(
+        height: MediaQuery.of(context).size.height * 0.45,
+        width: MediaQuery.of(context).size.width,
+        padding: const EdgeInsets.only(left: 15.0),
+        child: ListView.builder(
+          itemCount: infoTexts.length,
+          itemBuilder: (context, index) {
+            return _buildText(index, infoTexts[index], !isWideScreen);
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildText(int index, String text, bool isWideScreen) {
     return Text(
-      "Write the info to help user here:",
-      style: !isWideScreen
-          ? TextStyle(
-              fontSize: 20,
-              color: Colors.black,
-              fontFamily: GoogleFonts.ebGaramond().fontFamily)
-          : TextStyle(
-              fontSize: 30,
-              color: Colors.black,
-              fontFamily: GoogleFonts.ebGaramond().fontFamily),
+      text,
+      style: TextStyle(
+        fontSize: !isWideScreen ? 30 : 20,
+        color: Colors.black,
+        fontFamily: GoogleFonts.ebGaramond().fontFamily,
+      ),
     );
   }
 }

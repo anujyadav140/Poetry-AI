@@ -446,7 +446,7 @@ class _HomePageState extends State<HomePage>
                                                 .insert(2, rhyme);
                                             customPoetryTemplateSelection
                                                 .insert(3, footStyle);
-                                          },
+                                          }, waveColor: waveColor,
                                         )
                                       : TemplateForm(
                                           description: selectedDescription,
