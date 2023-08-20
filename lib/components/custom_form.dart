@@ -2,23 +2,24 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:wave/config.dart';
 import 'package:wave/wave.dart';
 
 class CustomForm extends StatefulWidget {
-  const CustomForm(
-      {super.key,
-      required this.description,
-      required this.onFormSubmit,
-      required this.waveColor});
+  const CustomForm({
+    super.key,
+    required this.description,
+    required this.onFormSubmit,
+  });
   final String description;
   final Function(String, String, String, String) onFormSubmit;
-  final String waveColor;
   @override
   State<CustomForm> createState() => _CustomFormState();
 }
 
 class _CustomFormState extends State<CustomForm> {
+  final globalThemeBox = Hive.box('myThemeBox');
   bool isCustom = true;
   bool isCouplet = false;
   bool isHaiku = false;
@@ -166,21 +167,22 @@ class _CustomFormState extends State<CustomForm> {
   List<List<Color>>? gradients = [];
   @override
   Widget build(BuildContext context) {
-    if (widget.waveColor == "Classic") {
+    final themeValue = globalThemeBox.get('theme') ?? 'Classic';
+    if (themeValue == "Classic") {
       setState(() {
         gradients = [
           [Colors.grey, Colors.grey.shade200],
           [Colors.grey.shade200, Colors.grey.shade300],
         ];
       });
-    } else if (widget.waveColor == "Purple") {
+    } else if (themeValue == "Purple") {
       setState(() {
         gradients = [
           [Colors.purple, Colors.purple.shade200],
           [Colors.purple.shade200, Colors.purple.shade300],
         ];
       });
-    } else if (widget.waveColor == "Green") {
+    } else if (themeValue == "Green") {
       setState(() {
         gradients = [
           [Colors.green, Colors.green.shade200],

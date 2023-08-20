@@ -145,8 +145,6 @@ class _HomePageState extends State<HomePage>
     });
   }
 
-  String waveColor = "";
-
   void showThemeDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -184,19 +182,16 @@ class _HomePageState extends State<HomePage>
                     if (theme == "Purple") {
                       setState(() {
                         setGlobalTheme(theme);
-                        waveColor = "Purple";
                       });
                       print("Purple Theme Selected");
                     } else if (theme == "Green") {
                       setState(() {
                         setGlobalTheme(theme);
-                        waveColor = "Green";
                       });
                       print("Green Theme Selected");
                     } else if (theme == "Classic") {
                       setState(() {
                         setGlobalTheme(theme);
-                        waveColor = "Classic";
                       });
                       print("Classic Theme Selected");
                     }
@@ -446,7 +441,7 @@ class _HomePageState extends State<HomePage>
                                                 .insert(2, rhyme);
                                             customPoetryTemplateSelection
                                                 .insert(3, footStyle);
-                                          }, waveColor: waveColor,
+                                          },
                                         )
                                       : TemplateForm(
                                           description: selectedDescription,
@@ -461,7 +456,6 @@ class _HomePageState extends State<HomePage>
                                             customPoetryTemplateSelection
                                                 .insert(2, rhyme);
                                           },
-                                          waveColor: waveColor,
                                         )),
                             ),
                           )

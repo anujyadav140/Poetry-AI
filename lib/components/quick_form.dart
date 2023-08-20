@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:wave/config.dart';
 import 'package:wave/wave.dart';
 
@@ -8,16 +9,15 @@ class TemplateForm extends StatefulWidget {
     super.key,
     required this.description,
     required this.onFormSubmit,
-    required this.waveColor,
   });
   final String description;
   final Function(String, String, String) onFormSubmit;
-  final String waveColor;
   @override
   State<TemplateForm> createState() => _TemplateFormState();
 }
 
 class _TemplateFormState extends State<TemplateForm> {
+  final globalThemeBox = Hive.box('myThemeBox');
   bool isCouplet = false;
   bool isFreeVerse = false;
   List<String> quickPoeticForms = ["Quartrain", "Couplet", "Free Verse"];
@@ -89,21 +89,22 @@ class _TemplateFormState extends State<TemplateForm> {
   List<List<Color>>? gradients = [];
   @override
   Widget build(BuildContext context) {
-    if (widget.waveColor == "Classic") {
+    final themeValue = globalThemeBox.get('theme') ?? 'Classic';
+    if (themeValue == "Classic") {
       setState(() {
         gradients = [
           [Colors.grey, Colors.grey.shade200],
           [Colors.grey.shade200, Colors.grey.shade300],
         ];
       });
-    } else if (widget.waveColor == "Purple") {
+    } else if (themeValue == "Purple") {
       setState(() {
         gradients = [
           [Colors.purple, Colors.purple.shade200],
           [Colors.purple.shade200, Colors.purple.shade300],
         ];
       });
-    } else if (widget.waveColor == "Green") {
+    } else if (themeValue == "Green") {
       setState(() {
         gradients = [
           [Colors.green, Colors.green.shade200],
