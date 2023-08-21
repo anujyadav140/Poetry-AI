@@ -905,7 +905,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                                     multiSelectedLines: multiSelectedLines,
                                     poetryFeatures: poetryFeatures,
                                     poetryMetre: metre,
-                                    selectedLines: selectedLines,
+                                    selectedLines: regenerateSelectedLines,
                                     userChoice: 9,
                                     selectedWholeRhyme: '',
                                   );
@@ -915,6 +915,9 @@ class _PoetryEditorState extends State<PoetryEditor>
                                   .callRhymeTwoSelectedLinesFunction(
                                       selectedLines);
                               if (isBottomSheetOpen) {
+                                regenerateSelectedLines = selectedLines;
+                                print(selectedLines);
+                                selectedLines = [];
                                 // ignore: use_build_context_synchronously
                                 Navigator.pop(
                                     context); // Close the current bottom sheet
@@ -933,46 +936,13 @@ class _PoetryEditorState extends State<PoetryEditor>
                                       multiSelectedLines: multiSelectedLines,
                                       poetryFeatures: poetryFeatures,
                                       poetryMetre: metre,
-                                      selectedLines: selectedLines,
+                                      selectedLines: regenerateSelectedLines,
                                       userChoice: 9,
                                       selectedWholeRhyme: '',
                                     );
                                   },
                                 );
                               }
-                              // AiToolsHandler()
-                              //     .rhymeSelectedLines(selectedLines)
-                              //     .then((value) {
-                              //   regenerateSelectedLines = selectedLines;
-                              //   print(selectedLines);
-                              //   selectedLines = [];
-                              //   showModalBottomSheet(
-                              //     context: context,
-                              //     shape: const RoundedRectangleBorder(
-                              //       borderRadius: BorderRadius.only(
-                              //         topLeft: Radius.circular(20.0),
-                              //         topRight: Radius.circular(20.0),
-                              //       ),
-                              //     ),
-                              //     builder: (context) {
-                              //       return CustomModalBottomSheet(
-                              //         title: "Rhyme Selected Lines",
-                              //         content: value,
-                              //         animation: _animationController,
-                              //         poemIndex: widget.poemIndex,
-                              //         buttonColor: widget.editorAppbarColor,
-                              //         fontColor: widget.editorFontColor,
-                              //         controller: controller,
-                              //         multiSelectedLines: multiSelectedLines,
-                              //         poetryFeatures: poetryFeatures,
-                              //         selectedLines: regenerateSelectedLines,
-                              //         poetryMetre: metre,
-                              //         userChoice: 9,
-                              //         selectedWholeRhyme: '',
-                              //       );
-                              //     },
-                              //   );
-                              // });
                             }
                           }
                         },
@@ -2234,74 +2204,80 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
                       child: SizedBox(
                           width: 60,
                           height: 60,
-                          child: ElevatedButton(
-                            style: ButtonStyle(
-                                foregroundColor:
-                                    MaterialStateProperty.all(widget.fontColor),
-                                iconColor:
-                                    MaterialStateProperty.all(widget.fontColor),
-                                backgroundColor: MaterialStateProperty.all(
-                                    widget.buttonColor)),
-                            onPressed: () {
-                              // _PoetryEditorState().showAds();
-                              setState(() {
-                                isRegenerated = true;
-                                widget.content = "";
-                              });
-                              _AiToolsListState()
-                                  .aiToolsSelected(
-                                widget.userChoice,
-                                widget.controller,
-                                widget.poetryFeatures,
-                                widget.selectedLines,
-                                widget.multiSelectedLines,
-                                widget.poetryMetre,
-                                widget.selectedWholeRhyme,
-                              )
-                                  .then((value) {
-                                print(widget.userChoice);
-                                print(widget.controller);
-                                print(widget.poetryFeatures);
-                                print(widget.selectedLines);
-                                print(widget.multiSelectedLines);
-                                print(widget.poetryMetre);
-                                int toAdsCount = context
-                                    .read<AuthService>()
-                                    .toAdsCount; // Use read() instead of watch()
-                                final incrementCounter =
-                                    context.read<AuthService>();
-                                incrementCounter.incrementAdsCounter();
-                                currentAdsCounter = toAdsCount;
-                                adsCounterStore.put('adsCounter', toAdsCount);
+                          child: widget.content.isNotEmpty
+                              ? ElevatedButton(
+                                  style: ButtonStyle(
+                                      foregroundColor:
+                                          MaterialStateProperty.all(
+                                              widget.fontColor),
+                                      iconColor: MaterialStateProperty.all(
+                                          widget.fontColor),
+                                      backgroundColor:
+                                          MaterialStateProperty.all(
+                                              widget.buttonColor)),
+                                  onPressed: () {
+                                    // _PoetryEditorState().showAds();
+                                    setState(() {
+                                      isRegenerated = true;
+                                      widget.content = "";
+                                    });
+                                    _AiToolsListState()
+                                        .aiToolsSelected(
+                                      widget.userChoice,
+                                      widget.controller,
+                                      widget.poetryFeatures,
+                                      widget.selectedLines,
+                                      widget.multiSelectedLines,
+                                      widget.poetryMetre,
+                                      widget.selectedWholeRhyme,
+                                    )
+                                        .then((value) {
+                                      print(widget.userChoice);
+                                      print(widget.controller);
+                                      print(widget.poetryFeatures);
+                                      print(widget.selectedLines);
+                                      print(widget.multiSelectedLines);
+                                      print(widget.poetryMetre);
+                                      int toAdsCount = context
+                                          .read<AuthService>()
+                                          .toAdsCount; // Use read() instead of watch()
+                                      final incrementCounter =
+                                          context.read<AuthService>();
+                                      incrementCounter.incrementAdsCounter();
+                                      currentAdsCounter = toAdsCount;
+                                      adsCounterStore.put(
+                                          'adsCounter', toAdsCount);
 
-                                if (currentAdsCounter >= 5) {
-                                  final reset = context.read<AuthService>();
-                                  reset.resetAdsCounter();
-                                  currentAdsCounter = toAdsCount;
-                                  adsCounterStore.put(
-                                      'adsCounter', currentAdsCounter);
-                                  print("SHOW ME THE ADS!");
-                                  rewardedAd?.show(
-                                    onUserEarnedReward: (ad, reward) {},
-                                  );
-                                  loadRewardAd();
-                                }
-                                setState(() {
-                                  widget.content = value;
-                                  if (widget.content.isNotEmpty) {
-                                    isRegenerated = false;
-                                  }
-                                });
-                              });
-                              if (widget.content.isEmpty) {
-                                setState(() {
-                                  isClicked = false;
-                                });
-                                resetRiveAnimation();
-                              }
-                            },
-                            child: const Icon(Icons.autorenew, size: 25),
-                          )),
+                                      if (currentAdsCounter >= 5) {
+                                        final reset =
+                                            context.read<AuthService>();
+                                        reset.resetAdsCounter();
+                                        currentAdsCounter = toAdsCount;
+                                        adsCounterStore.put(
+                                            'adsCounter', currentAdsCounter);
+                                        print("SHOW ME THE ADS!");
+                                        rewardedAd?.show(
+                                          onUserEarnedReward: (ad, reward) {},
+                                        );
+                                        loadRewardAd();
+                                      }
+                                      setState(() {
+                                        widget.content = value;
+                                        if (widget.content.isNotEmpty) {
+                                          isRegenerated = false;
+                                        }
+                                      });
+                                    });
+                                    if (widget.content.isEmpty) {
+                                      setState(() {
+                                        isClicked = false;
+                                      });
+                                      resetRiveAnimation();
+                                    }
+                                  },
+                                  child: const Icon(Icons.autorenew, size: 25),
+                                )
+                              : null),
                     ),
                   ],
                 ),
