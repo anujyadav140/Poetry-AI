@@ -1299,126 +1299,152 @@ class _PoetryEditorState extends State<PoetryEditor>
                                         List<String> bookmark =
                                             poemData['bookmarks'];
 
-                                        return Slidable(
-                                          key: const ValueKey(0),
-                                          enabled: readMoreClicked,
-                                          endActionPane: ActionPane(
-                                            motion: const ScrollMotion(),
-                                            children: [
-                                              // SlidableAction(
-                                              //   onPressed: (context) {},
-                                              //   backgroundColor:
-                                              //       const Color(0xFF21B7CA),
-                                              //   foregroundColor:
-                                              //       Colors.white,
-                                              //   icon: Icons.share,
-                                              //   label: 'Share',
-                                              // ),
-                                              SlidableAction(
-                                                onPressed: (context) {
-                                                  setState(() {
-                                                    bookmark.removeAt(index);
-                                                  });
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    SnackBar(
-                                                      backgroundColor: widget
-                                                          .editorAppbarColor,
-                                                      content: Text(
-                                                        'Bookmark deleted.',
-                                                        style: TextStyle(
-                                                            fontSize:
-                                                                !isWideScreen
-                                                                    ? 18
-                                                                    : 28,
-                                                            color: widget
-                                                                .editorFontColor),
-                                                      ),
-                                                      action: SnackBarAction(
-                                                        backgroundColor: widget
-                                                            .editorPrimaryColor,
-                                                        label: 'Undo',
-                                                        textColor: widget
-                                                            .editorFontColor,
-                                                        onPressed: () {
-                                                          setState(() {
-                                                            bookmark
-                                                                .add(content);
-                                                          });
-                                                        },
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                                backgroundColor:
-                                                    const Color(0xFFFE4A49),
-                                                foregroundColor: Colors.white,
-                                                icon: Icons.delete,
-                                                label: 'Delete',
+                                        return Column(
+                                          children: [
+                                            if (index == 0)
+                                              Column(
+                                                children: [
+                                                  _getAdWidget(),
+                                                  const Divider(
+                                                    height: 1,
+                                                    color: Colors.grey,
+                                                  ),
+                                                ],
                                               ),
-                                            ],
-                                          ),
-                                          child: Column(
-                                            children: [
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
+                                            Slidable(
+                                              key: const ValueKey(0),
+                                              enabled: readMoreClicked,
+                                              endActionPane: ActionPane(
+                                                motion: const ScrollMotion(),
+                                                children: [
+                                                  // SlidableAction(
+                                                  //   onPressed: (context) {},
+                                                  //   backgroundColor:
+                                                  //       const Color(0xFF21B7CA),
+                                                  //   foregroundColor:
+                                                  //       Colors.white,
+                                                  //   icon: Icons.share,
+                                                  //   label: 'Share',
+                                                  // ),
+                                                  SlidableAction(
+                                                    onPressed: (context) {
+                                                      setState(() {
+                                                        bookmark
+                                                            .removeAt(index);
+                                                      });
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
+                                                        SnackBar(
+                                                          backgroundColor: widget
+                                                              .editorAppbarColor,
+                                                          content: Text(
+                                                            'Bookmark deleted.',
+                                                            style: TextStyle(
+                                                                fontSize:
+                                                                    !isWideScreen
+                                                                        ? 18
+                                                                        : 28,
+                                                                color: widget
+                                                                    .editorFontColor),
+                                                          ),
+                                                          action:
+                                                              SnackBarAction(
+                                                            backgroundColor: widget
+                                                                .editorPrimaryColor,
+                                                            label: 'Undo',
+                                                            textColor: widget
+                                                                .editorFontColor,
+                                                            onPressed: () {
+                                                              setState(() {
+                                                                bookmark.add(
+                                                                    content);
+                                                              });
+                                                            },
+                                                          ),
+                                                        ),
+                                                      );
+                                                    },
+                                                    backgroundColor:
+                                                        const Color(0xFFFE4A49),
+                                                    foregroundColor:
+                                                        Colors.white,
+                                                    icon: Icons.delete,
+                                                    label: 'Delete',
+                                                  ),
+                                                ],
+                                              ),
+                                              child: Column(
+                                                children: [
+                                                  Padding(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
                                                         vertical: 8.0,
                                                         horizontal: 16.0),
-                                                child: Container(
-                                                  color: Colors.white,
-                                                  child: ListTile(
-                                                    title:
-                                                        ReadMoreText.selectable(
-                                                      content,
-                                                      numLines: 4,
-                                                      style: GoogleFonts
-                                                          .ebGaramond(
-                                                        textStyle: TextStyle(
-                                                          color: Colors.black,
-                                                          letterSpacing: .5,
-                                                          fontSize:
-                                                              !isWideScreen
-                                                                  ? 18
-                                                                  : 28,
-                                                        ),
-                                                      ),
-                                                      readMoreTextStyle:
-                                                          GoogleFonts
+                                                    child: Container(
+                                                      color: Colors.white,
+                                                      child: ListTile(
+                                                        title: ReadMoreText
+                                                            .selectable(
+                                                          content,
+                                                          numLines: 4,
+                                                          style: GoogleFonts
                                                               .ebGaramond(
-                                                        textStyle: TextStyle(
-                                                          color: Colors.black,
-                                                          letterSpacing: .5,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          fontSize:
-                                                              !isWideScreen
-                                                                  ? 18
-                                                                  : 28,
+                                                            textStyle:
+                                                                TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              letterSpacing: .5,
+                                                              fontSize:
+                                                                  !isWideScreen
+                                                                      ? 18
+                                                                      : 28,
+                                                            ),
+                                                          ),
+                                                          readMoreTextStyle:
+                                                              GoogleFonts
+                                                                  .ebGaramond(
+                                                            textStyle:
+                                                                TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              letterSpacing: .5,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              fontSize:
+                                                                  !isWideScreen
+                                                                      ? 18
+                                                                      : 28,
+                                                            ),
+                                                          ),
+                                                          readMoreIconColor:
+                                                              Colors.black,
+                                                          readMoreText:
+                                                              'Read more',
+                                                          onReadMoreClicked:
+                                                              () =>
+                                                                  setState(() {
+                                                            readMoreClicked =
+                                                                !readMoreClicked;
+                                                          }),
+                                                          readLessText:
+                                                              'Read less',
+                                                          readMoreAlign:
+                                                              AlignmentDirectional
+                                                                  .bottomStart,
                                                         ),
                                                       ),
-                                                      readMoreIconColor:
-                                                          Colors.black,
-                                                      readMoreText: 'Read more',
-                                                      onReadMoreClicked: () =>
-                                                          setState(() {
-                                                        readMoreClicked =
-                                                            !readMoreClicked;
-                                                      }),
-                                                      readLessText: 'Read less',
-                                                      readMoreAlign:
-                                                          AlignmentDirectional
-                                                              .bottomStart,
                                                     ),
                                                   ),
-                                                ),
+                                                  const Divider(
+                                                    height: 1,
+                                                    color: Colors.grey,
+                                                  ),
+                                                ],
                                               ),
-                                              const Divider(
-                                                height: 1,
-                                                color: Colors.grey,
-                                              ),
-                                            ],
-                                          ),
+                                            ),
+                                          ],
                                         );
                                       },
                                       childCount: poemBookmarks.length,
