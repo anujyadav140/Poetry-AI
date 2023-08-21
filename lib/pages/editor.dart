@@ -923,6 +923,12 @@ class _PoetryEditorState extends State<PoetryEditor>
                                     context); // Close the current bottom sheet
                                 // ignore: use_build_context_synchronously
                                 showModalBottomSheet(
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(15.0),
+                                      topRight: Radius.circular(15.0),
+                                    ),
+                                  ),
                                   context: context,
                                   builder: (context) {
                                     return CustomModalBottomSheet(
@@ -1292,17 +1298,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                                             poemData['bookmarks'][index];
                                         List<String> bookmark =
                                             poemData['bookmarks'];
-                                        if (index == 2) {
-                                          return Column(
-                                            children: [
-                                              _getAdWidget(),
-                                              const Divider(
-                                                height: 1,
-                                                color: Colors.grey,
-                                              ),
-                                            ],
-                                          );
-                                        }
+
                                         return Slidable(
                                           key: const ValueKey(0),
                                           enabled: readMoreClicked,
@@ -1375,7 +1371,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                                                     title:
                                                         ReadMoreText.selectable(
                                                       content,
-                                                      numLines: 2,
+                                                      numLines: 4,
                                                       style: GoogleFonts
                                                           .ebGaramond(
                                                         textStyle: TextStyle(
@@ -2144,31 +2140,34 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
                       ),
                     ),
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      if (isRiveClicked == null) return;
-                      final isClick = isRiveClicked?.value ?? false;
-                      isRiveClicked?.change(!isClick);
-                      saveOrRemovePoem();
-                    },
-                    child: SizedBox(
-                      width: 50,
-                      height: 50,
-                      child: RiveAnimation.asset(
-                        'assets/bookmark.riv',
-                        fit: BoxFit.cover,
-                        stateMachines: const ['Bookmark State Machine'],
-                        onInit: (artboard) {
-                          _riveController = StateMachineController.fromArtboard(
-                              artboard, "Bookmark State Machine");
-                          if (_riveController == null) return;
-                          artboard.addController(_riveController!);
-                          isRiveClicked =
-                              _riveController?.findInput<bool>("Marked");
-                        },
-                      ),
-                    ),
-                  )
+                  widget.content.isNotEmpty
+                      ? GestureDetector(
+                          onTap: () {
+                            if (isRiveClicked == null) return;
+                            final isClick = isRiveClicked?.value ?? false;
+                            isRiveClicked?.change(!isClick);
+                            saveOrRemovePoem();
+                          },
+                          child: SizedBox(
+                            width: 50,
+                            height: 50,
+                            child: RiveAnimation.asset(
+                              'assets/bookmark.riv',
+                              fit: BoxFit.cover,
+                              stateMachines: const ['Bookmark State Machine'],
+                              onInit: (artboard) {
+                                _riveController =
+                                    StateMachineController.fromArtboard(
+                                        artboard, "Bookmark State Machine");
+                                if (_riveController == null) return;
+                                artboard.addController(_riveController!);
+                                isRiveClicked =
+                                    _riveController?.findInput<bool>("Marked");
+                              },
+                            ),
+                          ),
+                        )
+                      : Container()
                 ],
               ),
             ),
