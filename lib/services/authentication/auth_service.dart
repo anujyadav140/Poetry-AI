@@ -111,6 +111,15 @@ class AuthService extends ChangeNotifier {
     notifyListeners();
   }
 
+  bool _isConvertToRhyme = false;
+
+  bool get isConvertToRhyme => _isConvertToRhyme;
+
+  set isConvertToRhyme(bool value) {
+    _isConvertToRhyme = value;
+    notifyListeners();
+  }
+
   int _toAdsCount = 1;
 
   int get toAdsCount => _toAdsCount;

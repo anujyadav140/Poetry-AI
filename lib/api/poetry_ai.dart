@@ -21,6 +21,28 @@ class PoetryAiTools {
     }
   }
 
+  final HttpsCallable _rhymeWholePoem =
+      FirebaseFunctions.instanceFor(region: 'us-central1')
+          .httpsCallable('rhymeWholePoem');
+
+  Future<String> callRhymeWholePoemFunction(
+      String lines, String rhymeScheme) async {
+    try {
+      final result = await _rhymeWholePoem.call({
+        'lines': lines,
+        'rhymeScheme': rhymeScheme,
+      });
+      final String res = result.data['result'];
+      var tokens = result.data['tokens'];
+      print(tokens);
+      return res;
+    } on FirebaseFunctionsException catch (e) {
+      return 'Error occurred while calling rhymeWholePoem $e';
+    } catch (e) {
+      return 'Unexpected error occurred $e';
+    }
+  }
+
   final HttpsCallable _getInspired =
       FirebaseFunctions.instanceFor(region: 'us-central1')
           .httpsCallable('getInspired');
@@ -178,5 +200,6 @@ class PoetryAiTools {
     }
   }
 
-  convertLinesToProperMetreForm(String multiSelectedLines, String poetryMetre) {}
+  convertLinesToProperMetreForm(
+      String multiSelectedLines, String poetryMetre) {}
 }
