@@ -746,7 +746,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                   )
                 : !isFirstLineSelected && !isConvertToMetreSelected
                     ? IconButton(
-                        onPressed: () {
+                        onPressed: () async {
                           // _interstitialAd?.show();
                           // loadInterAd();
                           if (isRhymeSelectedLines) {
@@ -784,42 +784,54 @@ class _PoetryEditorState extends State<PoetryEditor>
                                 });
                               });
                               showToast("Converting ...");
-                              print(selectedLines);
-                              PoetryAiTools()
+
+                              String convertedText = await PoetryAiTools()
                                   .callChangeLinesToFollowMetreFunction(
-                                      multiSelectedLines, poetryMetre)
-                                  .then((value) {
-                                showModalBottomSheet(
-                                  context: context,
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(20.0),
-                                      topRight: Radius.circular(20.0),
-                                    ),
+                                      multiSelectedLines, poetryMetre);
+                              // ignore: use_build_context_synchronously
+                              showModalBottomSheet(
+                                context: context,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(20.0),
+                                    topRight: Radius.circular(20.0),
                                   ),
-                                  builder: (context) {
-                                    print(controller);
-                                    print(poetryFeatures);
-                                    print(metre);
-                                    print(selectedLines);
-                                    return CustomModalBottomSheet(
-                                      title: "Convert Into Proper Metre",
-                                      content: value,
-                                      animation: _animationController,
-                                      poemIndex: widget.poemIndex,
-                                      buttonColor: widget.editorAppbarColor,
-                                      fontColor: widget.editorFontColor,
-                                      controller: controller,
-                                      multiSelectedLines: multiSelectedLines,
-                                      poetryFeatures: poetryFeatures,
-                                      poetryMetre: metre,
-                                      selectedLines: selectedLines,
-                                      userChoice: 10,
-                                      selectedWholeRhyme: '',
-                                    );
-                                  },
-                                );
-                              });
+                                ),
+                                builder: (context) {
+                                  return FutureBuilder<String>(
+                                    future: Future.value(convertedText),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return const Center(
+                                          child: CircularProgressIndicator(),
+                                        );
+                                      } else if (snapshot.hasError) {
+                                        return const Center(
+                                          child: Text("Error converting data."),
+                                        );
+                                      } else {
+                                        return CustomModalBottomSheet(
+                                          title: "Convert Into Proper Metre",
+                                          content: snapshot.data ?? '',
+                                          animation: _animationController,
+                                          poemIndex: widget.poemIndex,
+                                          buttonColor: widget.editorAppbarColor,
+                                          fontColor: widget.editorFontColor,
+                                          controller: controller,
+                                          multiSelectedLines:
+                                              multiSelectedLines,
+                                          poetryFeatures: poetryFeatures,
+                                          poetryMetre: metre,
+                                          selectedLines: selectedLines,
+                                          userChoice: 10,
+                                          selectedWholeRhyme: '',
+                                        );
+                                      }
+                                    },
+                                  );
+                                },
+                              );
                             }
                           }
                         },
@@ -999,7 +1011,8 @@ class _PoetryEditorState extends State<PoetryEditor>
                             backgroundColor: MaterialStatePropertyAll(
                                 ColorTheme.accent(themeValue))),
                         onPressed: () async {
-                          context.read<AuthService>().isConvertToRhyme = false;
+                          // String wordResponse = await AiToolsHandler()
+                          //     .rhymeWholePoem(controller, selectedRhymeScheme);
                           // ignore: use_build_context_synchronously
                           showModalBottomSheet(
                             context: context,
