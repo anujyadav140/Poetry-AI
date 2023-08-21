@@ -784,10 +784,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                                 });
                               });
                               showToast("Converting ...");
-
-                              String convertedText = await PoetryAiTools()
-                                  .callChangeLinesToFollowMetreFunction(
-                                      multiSelectedLines, poetryMetre);
+                              String convertedText = "";
                               // ignore: use_build_context_synchronously
                               showModalBottomSheet(
                                 context: context,
@@ -798,40 +795,28 @@ class _PoetryEditorState extends State<PoetryEditor>
                                   ),
                                 ),
                                 builder: (context) {
-                                  return FutureBuilder<String>(
-                                    future: Future.value(convertedText),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState ==
-                                          ConnectionState.waiting) {
-                                        return const Center(
-                                          child: CircularProgressIndicator(),
-                                        );
-                                      } else if (snapshot.hasError) {
-                                        return const Center(
-                                          child: Text("Error converting data."),
-                                        );
-                                      } else {
-                                        return CustomModalBottomSheet(
-                                          title: "Convert Into Proper Metre",
-                                          content: snapshot.data ?? '',
-                                          animation: _animationController,
-                                          poemIndex: widget.poemIndex,
-                                          buttonColor: widget.editorAppbarColor,
-                                          fontColor: widget.editorFontColor,
-                                          controller: controller,
-                                          multiSelectedLines:
-                                              multiSelectedLines,
-                                          poetryFeatures: poetryFeatures,
-                                          poetryMetre: metre,
-                                          selectedLines: selectedLines,
-                                          userChoice: 10,
-                                          selectedWholeRhyme: '',
-                                        );
-                                      }
-                                    },
+                                  return CustomModalBottomSheet(
+                                    title: "Convert Into Proper Metre",
+                                    content: convertedText,
+                                    animation: _animationController,
+                                    poemIndex: widget.poemIndex,
+                                    buttonColor: widget.editorAppbarColor,
+                                    fontColor: widget.editorFontColor,
+                                    controller: controller,
+                                    multiSelectedLines: multiSelectedLines,
+                                    poetryFeatures: poetryFeatures,
+                                    poetryMetre: metre,
+                                    selectedLines: selectedLines,
+                                    userChoice: 10,
+                                    selectedWholeRhyme: '',
                                   );
                                 },
                               );
+                              setState(() async {
+                                convertedText = await PoetryAiTools()
+                                    .callChangeLinesToFollowMetreFunction(
+                                        multiSelectedLines, poetryMetre);
+                              });
                             }
                           }
                         },
@@ -1011,8 +996,14 @@ class _PoetryEditorState extends State<PoetryEditor>
                             backgroundColor: MaterialStatePropertyAll(
                                 ColorTheme.accent(themeValue))),
                         onPressed: () async {
-                          // String wordResponse = await AiToolsHandler()
-                          //     .rhymeWholePoem(controller, selectedRhymeScheme);
+                          setState(() {
+                            context.read<AuthService>().isConvertToRhyme =
+                                false;
+                          });
+                          showToast(
+                              "Converting to rhyme scheme, please wait...");
+                          String wordResponse = await AiToolsHandler()
+                              .rhymeWholePoem(controller, selectedRhymeScheme);
                           // ignore: use_build_context_synchronously
                           showModalBottomSheet(
                             context: context,
@@ -1024,8 +1015,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                             ),
                             builder: (context) {
                               return FutureBuilder<String>(
-                                future: AiToolsHandler().rhymeWholePoem(
-                                    controller, selectedRhymeScheme),
+                                future: Future.value(wordResponse),
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
