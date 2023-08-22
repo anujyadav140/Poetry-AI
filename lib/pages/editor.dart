@@ -816,8 +816,8 @@ class _PoetryEditorState extends State<PoetryEditor>
                                 },
                               );
 
-                              convertedText = await PoetryAiTools()
-                                  .callChangeLinesToFollowMetreFunction(
+                              convertedText = await AiToolsHandler()
+                                  .convertLinesToProperMetreForm(
                                       multiSelectedLines, poetryMetre);
                               if (isBottomSheetOpen) {
                                 // ignore: use_build_context_synchronously
@@ -911,9 +911,8 @@ class _PoetryEditorState extends State<PoetryEditor>
                                   );
                                 },
                               );
-                              convertedText = await PoetryAiTools()
-                                  .callRhymeTwoSelectedLinesFunction(
-                                      selectedLines);
+                              convertedText = await AiToolsHandler()
+                                  .rhymeSelectedLines(selectedLines);
                               if (isBottomSheetOpen) {
                                 regenerateSelectedLines = selectedLines;
                                 print(selectedLines);
@@ -1463,31 +1462,28 @@ class _PoetryEditorState extends State<PoetryEditor>
           ]),
         ),
         floatingActionButton: showBookmarkModal
-            ? Visibility(
-                visible: reachedTheBottom,
-                child: bookmarks.isNotEmpty
-                    ? FloatingActionButton.small(
-                        backgroundColor: widget.editorAppbarColor,
-                        child: Icon(
-                          Icons.arrow_downward,
-                          color: widget.editorFontColor,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            scrollToBottomOfBookmark = true;
-                          });
-                          if (scrollToBottomOfBookmark) {
-                            _sheetScrollController.animateTo(
-                              _sheetScrollController.position.maxScrollExtent,
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeInOut,
-                            );
-                            reachedTheBottom = false;
-                          }
-                        },
-                      )
-                    : Container(),
-              )
+            ? bookmarks.isNotEmpty
+                ? FloatingActionButton.small(
+                    backgroundColor: widget.editorAppbarColor,
+                    child: Icon(
+                      Icons.arrow_downward,
+                      color: widget.editorFontColor,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        scrollToBottomOfBookmark = true;
+                      });
+                      if (scrollToBottomOfBookmark) {
+                        _sheetScrollController.animateTo(
+                          _sheetScrollController.position.maxScrollExtent,
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
+                        reachedTheBottom = false;
+                      }
+                    },
+                  )
+                : Container()
             : !isRhymeSelectedLines && !isConvertToMetre && !isConvertToRhyme
                 ? Padding(
                     padding: EdgeInsets.only(
@@ -1831,78 +1827,96 @@ class _AiToolsListState extends State<AiToolsList> {
           itemBuilder: (context, index) {
             return InkWell(
               onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return Center(
-                      child: CircularProgressIndicator(
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(widget.primaryColor),
-                      ),
-                    );
-                  },
-                );
                 String aiToolsSelectTitle = widget._aiTools[index][2];
-                aiToolsSelected(
-                        widget._aiTools[index][0],
-                        widget.controller,
-                        widget.poetryFeatures,
-                        widget.selectedLines,
-                        widget.multiSelectedLines,
-                        widget.poetryMetre,
-                        widget.selectedWholeRhyme)
-                    .then((response) {
-                  setState(() {
-                    if (widget._aiTools[index][0] == 5) {
-                      context.read<AuthService>().isConvertToMetre =
-                          !isConvertToMetre;
-                      Navigator.of(context).pop();
-                    }
-                    if (widget._aiTools[index][0] == 2) {
-                      context.read<AuthService>().isRhymeSelectedLines =
-                          !isRhymeSelectedLines;
-                      Navigator.of(context).pop();
-                    }
-                    if (widget._aiTools[index][0] == 6) {
-                      context.read<AuthService>().isConvertToRhyme =
-                          !isConvertToRhyme;
-                      Navigator.of(context).pop();
-                    }
-                    wordResponse = response;
-                    Navigator.of(context).pop();
-                    !context.read<AuthService>().isRhymeSelectedLines &&
-                            !context.read<AuthService>().isConvertToMetre &&
-                            !context.read<AuthService>().isConvertToRhyme
-                        ? showModalBottomSheet(
-                            context: context,
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(20.0),
-                                topRight: Radius.circular(20.0),
-                              ),
+                bool isBottomSheetOpen = false;
+                String wordResponse = "";
+                if (widget._aiTools[index][0] == 5) {
+                  context.read<AuthService>().isConvertToMetre =
+                      !isConvertToMetre;
+                  Navigator.of(context).pop();
+                } else if (widget._aiTools[index][0] == 2) {
+                  context.read<AuthService>().isRhymeSelectedLines =
+                      !isRhymeSelectedLines;
+                  Navigator.of(context).pop();
+                } else if (widget._aiTools[index][0] == 6) {
+                  context.read<AuthService>().isConvertToRhyme =
+                      !isConvertToRhyme;
+                  Navigator.of(context).pop();
+                } else {
+                  !context.read<AuthService>().isRhymeSelectedLines &&
+                          !context.read<AuthService>().isConvertToMetre &&
+                          !context.read<AuthService>().isConvertToRhyme
+                      ? showModalBottomSheet(
+                          context: context,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(20.0),
+                              topRight: Radius.circular(20.0),
                             ),
-                            builder: (context) {
-                              return CustomModalBottomSheet(
-                                title: aiToolsSelectTitle,
-                                content: wordResponse,
-                                animation: widget.animation,
-                                poemIndex: widget.poemIndex,
-                                buttonColor: widget.primaryColor,
-                                fontColor: widget.fontColor,
-                                controller: widget.controller,
-                                multiSelectedLines: widget.multiSelectedLines,
-                                poetryFeatures: widget.poetryFeatures,
-                                poetryMetre: widget.poetryMetre,
-                                selectedLines: widget.selectedLines,
-                                userChoice: widget._aiTools[index][0],
-                                selectedWholeRhyme: '',
-                              );
-                            },
-                          )
-                        : null;
+                          ),
+                          builder: (context) {
+                            isBottomSheetOpen = true; // Set the flag to true
+                            return CustomModalBottomSheet(
+                              title: aiToolsSelectTitle,
+                              content: wordResponse,
+                              animation: widget.animation,
+                              poemIndex: widget.poemIndex,
+                              buttonColor: widget.primaryColor,
+                              fontColor: widget.fontColor,
+                              controller: widget.controller,
+                              multiSelectedLines: widget.multiSelectedLines,
+                              poetryFeatures: widget.poetryFeatures,
+                              poetryMetre: widget.poetryMetre,
+                              selectedLines: widget.selectedLines,
+                              userChoice: widget._aiTools[index][0],
+                              selectedWholeRhyme: '',
+                            );
+                          },
+                        )
+                      : null;
+                  aiToolsSelected(
+                          widget._aiTools[index][0],
+                          widget.controller,
+                          widget.poetryFeatures,
+                          widget.selectedLines,
+                          widget.multiSelectedLines,
+                          widget.poetryMetre,
+                          widget.selectedWholeRhyme)
+                      .then((response) {
+                    wordResponse = response;
+                    if (isBottomSheetOpen) {
+                      // ignore: use_build_context_synchronously
+                      Navigator.pop(context); // Close the current bottom sheet
+                      // ignore: use_build_context_synchronously
+                      showModalBottomSheet(
+                        context: context,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20.0),
+                            topRight: Radius.circular(20.0),
+                          ),
+                        ),
+                        builder: (context) {
+                          return CustomModalBottomSheet(
+                            title: aiToolsSelectTitle,
+                            content: wordResponse,
+                            animation: widget.animation,
+                            poemIndex: widget.poemIndex,
+                            buttonColor: widget.primaryColor,
+                            fontColor: widget.fontColor,
+                            controller: widget.controller,
+                            multiSelectedLines: widget.multiSelectedLines,
+                            poetryFeatures: widget.poetryFeatures,
+                            poetryMetre: widget.poetryMetre,
+                            selectedLines: widget.selectedLines,
+                            userChoice: widget._aiTools[index][0],
+                            selectedWholeRhyme: '',
+                          );
+                        },
+                      ).then((value) => Navigator.pop(context));
+                    }
                   });
-                });
-                // Navigator.of(context).pop();
+                }
               },
               splashColor: Colors.grey,
               highlightColor: Colors.transparent,
