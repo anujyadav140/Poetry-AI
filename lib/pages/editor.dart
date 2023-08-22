@@ -682,13 +682,15 @@ class _PoetryEditorState extends State<PoetryEditor>
                             // print(selectedLine1);
                             if (selectedLine1.isEmpty) {
                               showToast(
-                                  "Select a line so that you can rhyme them!", true);
+                                  "Select a line so that you can rhyme them!",
+                                  true);
                             } else if (selectedLine1.isNotEmpty) {
                               setState(() {
                                 isFirstLineSelected = true;
                               });
                               showToast(
-                                  "Select another line to rhyme with the last selected line!", true);
+                                  "Select another line to rhyme with the last selected line!",
+                                  true);
                             }
                           }
                           if (isConvertToMetre) {
@@ -698,7 +700,8 @@ class _PoetryEditorState extends State<PoetryEditor>
                             });
                             if (multiSelectedLines.isEmpty) {
                               showToast(
-                                  "Select a line, convert it into proper metre form!", true);
+                                  "Select a line, convert it into proper metre form!",
+                                  true);
                             } else if (multiSelectedLines.isNotEmpty) {
                               setState(() {
                                 context.read<AuthService>().isConvertToMetre =
@@ -792,7 +795,8 @@ class _PoetryEditorState extends State<PoetryEditor>
                           });
                           if (selectedLine2.isEmpty) {
                             showToast(
-                                "Select the second line so that you can rhyme them!", true);
+                                "Select the second line so that you can rhyme them!",
+                                true);
                           } else if (selectedLine2.isNotEmpty) {
                             setState(() {
                               isSecondLineSelected = true;
@@ -992,7 +996,8 @@ class _PoetryEditorState extends State<PoetryEditor>
                                 false;
                           });
                           showToast(
-                              "Converting to rhyme scheme, please wait...", false);
+                              "Converting to rhyme scheme, please wait...",
+                              false);
                           bool isBottomSheetOpen = false;
                           String convertedText = "";
                           // ignore: use_build_context_synchronously
@@ -1088,7 +1093,6 @@ class _PoetryEditorState extends State<PoetryEditor>
                     return true;
                   },
                   child: quill.QuillEditor(
-                    placeholder: "Write your poetry here ...",
                     controller: controller,
                     focusNode: _focusNode,
                     autoFocus: true,
@@ -1112,16 +1116,6 @@ class _PoetryEditorState extends State<PoetryEditor>
                 ),
                 Visibility(
                   visible: showBookmarkModal,
-                  // child: NotificationListener<DraggableScrollableNotification>(
-                  //   onNotification: (notification) {
-                  //     if (notification.extent == notification.minExtent) {
-                  //       setState(() {
-                  //         // showBookmarkModal = false;
-                  //         // tester = true;
-                  //       });
-                  //     }
-                  //     return false;
-                  //   },
                   child: NotificationListener<ScrollNotification>(
                     onNotification: (notification) {
                       if (notification is ScrollStartNotification) {
@@ -1201,10 +1195,6 @@ class _PoetryEditorState extends State<PoetryEditor>
                                                     GoogleFonts.ebGaramond()
                                                         .fontFamily),
                                           ),
-                                          const SizedBox(
-                                            height: 25,
-                                          ),
-                                          _getAdWidget(),
                                         ],
                                       ),
                                     ),
@@ -1221,7 +1211,6 @@ class _PoetryEditorState extends State<PoetryEditor>
                                             poemData['bookmarks'][index];
                                         List<String> bookmark =
                                             poemData['bookmarks'];
-
                                         return Column(
                                           children: [
                                             if (index == 0)
@@ -1263,13 +1252,20 @@ class _PoetryEditorState extends State<PoetryEditor>
                                                               .editorAppbarColor,
                                                           content: Text(
                                                             'Bookmark deleted.',
-                                                            style: TextStyle(
+                                                            style: GoogleFonts
+                                                                .ebGaramond(
+                                                              textStyle:
+                                                                  TextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                                letterSpacing:
+                                                                    .5,
                                                                 fontSize:
                                                                     !isWideScreen
                                                                         ? 18
                                                                         : 28,
-                                                                color: widget
-                                                                    .editorFontColor),
+                                                              ),
+                                                            ),
                                                           ),
                                                           action:
                                                               SnackBarAction(
