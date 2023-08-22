@@ -1542,7 +1542,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                               currentAdsCounter = toAdsCount;
                               adsCounterStore.put('adsCounter', toAdsCount);
 
-                              if (currentAdsCounter >= 5) {
+                              if (currentAdsCounter >= 3) {
                                 final reset = context.read<AuthService>();
                                 reset.resetAdsCounter();
                                 currentAdsCounter = toAdsCount;
@@ -2298,7 +2298,7 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
                                       adsCounterStore.put(
                                           'adsCounter', toAdsCount);
 
-                                      if (currentAdsCounter >= 5) {
+                                      if (currentAdsCounter >= 3) {
                                         final reset =
                                             context.read<AuthService>();
                                         reset.resetAdsCounter();

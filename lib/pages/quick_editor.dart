@@ -514,7 +514,7 @@ class _QuickModeState extends State<QuickMode> {
                                                                   toAdsCount);
 
                                                               if (currentAdsCounter >=
-                                                                  5) {
+                                                                  4) {
                                                                 final reset =
                                                                     context.read<
                                                                         AuthService>();
