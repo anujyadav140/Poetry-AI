@@ -414,88 +414,6 @@ class _PoetryEditorState extends State<PoetryEditor>
         context.watch<AuthService>().isRhymeSelectedLines;
     final isConvertToMetre = context.watch<AuthService>().isConvertToMetre;
     final isConvertToRhyme = context.watch<AuthService>().isConvertToRhyme;
-    // if (isConvertToRhyme) {
-    //   showToast("It is a wrap");
-    //   showDialog(
-    //     context: context,
-    //     builder: (context) {
-    //       return AlertDialog(
-    //         backgroundColor: ColorTheme.accent(themeValue),
-    //         title: Text(
-    //           "Write the Rhyme Scheme:",
-    //           style: TextStyle(
-    //               fontSize: !isWideScreen ? 20 : 26,
-    //               color: ColorTheme.text(themeValue),
-    //               fontFamily: GoogleFonts.ebGaramond().fontFamily),
-    //         ),
-    //         content: Column(
-    //           mainAxisSize: MainAxisSize.min,
-    //           children: [
-    //             TextField(
-    //               onChanged: (value) {},
-    //               cursorColor: ColorTheme.text(themeValue),
-    //               decoration: InputDecoration(
-    //                 focusedBorder: OutlineInputBorder(
-    //                   borderRadius: BorderRadius.circular(8.0),
-    //                   borderSide: BorderSide(
-    //                       color: ColorTheme.text(
-    //                           themeValue)), // Set the focused border color to black
-    //                 ),
-    //                 focusColor: ColorTheme.accent(themeValue),
-    //                 hintText: "Write Rhyme Scheme",
-    //                 hintStyle: TextStyle(
-    //                     fontSize: !isWideScreen ? 20 : 26,
-    //                     color: ColorTheme.text(themeValue),
-    //                     fontFamily: GoogleFonts.ebGaramond().fontFamily),
-    //                 border: OutlineInputBorder(
-    //                   borderRadius: BorderRadius.circular(8.0),
-    //                   borderSide: const BorderSide(color: Colors.grey),
-    //                 ),
-    //                 filled: true,
-    //                 fillColor: Colors.grey[200],
-    //                 contentPadding: const EdgeInsets.symmetric(
-    //                   vertical: 12.0,
-    //                   horizontal: 16.0,
-    //                 ),
-    //               ),
-    //             ),
-    //           ],
-    //         ),
-    //         actions: [
-    //           TextButton(
-    //               style: ButtonStyle(
-    //                   backgroundColor: MaterialStatePropertyAll(
-    //                       ColorTheme.primary(themeValue))),
-    //               onPressed: () {
-    //                 Navigator.pop(context);
-    //               },
-    //               child: Text(
-    //                 "Cancel",
-    //                 style: TextStyle(
-    //                     fontSize: !isWideScreen ? 20 : 26,
-    //                     color: ColorTheme.text(themeValue),
-    //                     fontFamily: GoogleFonts.ebGaramond().fontFamily),
-    //               )),
-    //           TextButton(
-    //             style: ButtonStyle(
-    //                 backgroundColor: MaterialStatePropertyAll(
-    //                     ColorTheme.primary(themeValue))),
-    //             onPressed: () {
-    //               Navigator.pop(context);
-    //             },
-    //             child: Text(
-    //               "Save",
-    //               style: TextStyle(
-    //                   fontSize: !isWideScreen ? 20 : 26,
-    //                   color: ColorTheme.text(themeValue),
-    //                   fontFamily: GoogleFonts.ebGaramond().fontFamily),
-    //             ),
-    //           ),
-    //         ],
-    //       );
-    //     },
-    //   );
-    // }
     return WillPopScope(
       onWillPop: () async {
         if (isOpenDial.value) {
@@ -567,7 +485,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                                                 .toJson());
                                         poemListBox.putAt(
                                             widget.poemIndex, poemData);
-                                        showToast("Poem Saved!");
+                                        showToast("Poem Saved!", true);
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
@@ -764,13 +682,13 @@ class _PoetryEditorState extends State<PoetryEditor>
                             // print(selectedLine1);
                             if (selectedLine1.isEmpty) {
                               showToast(
-                                  "Select a line so that you can rhyme them!");
+                                  "Select a line so that you can rhyme them!", true);
                             } else if (selectedLine1.isNotEmpty) {
                               setState(() {
                                 isFirstLineSelected = true;
                               });
                               showToast(
-                                  "Select another line to rhyme with the last selected line!");
+                                  "Select another line to rhyme with the last selected line!", true);
                             }
                           }
                           if (isConvertToMetre) {
@@ -780,7 +698,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                             });
                             if (multiSelectedLines.isEmpty) {
                               showToast(
-                                  "Select a line, convert it into proper metre form!");
+                                  "Select a line, convert it into proper metre form!", true);
                             } else if (multiSelectedLines.isNotEmpty) {
                               setState(() {
                                 context.read<AuthService>().isConvertToMetre =
@@ -790,7 +708,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                                 });
                               });
                               bool isBottomSheetOpen = false;
-                              showToast("Converting ...");
+                              showToast("Converting ...", false);
                               String convertedText = "";
                               // ignore: use_build_context_synchronously
                               showModalBottomSheet(
@@ -874,7 +792,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                           });
                           if (selectedLine2.isEmpty) {
                             showToast(
-                                "Select the second line so that you can rhyme them!");
+                                "Select the second line so that you can rhyme them!", true);
                           } else if (selectedLine2.isNotEmpty) {
                             setState(() {
                               isSecondLineSelected = true;
@@ -887,7 +805,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                                 isSecondLineSelected = false;
                               });
                               bool isBottomSheetOpen = false;
-                              showToast("Rhyming In Process ...");
+                              showToast("Rhyming In Process ...", false);
                               String convertedText = "";
                               showModalBottomSheet(
                                 context: context,
@@ -1074,7 +992,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                                 false;
                           });
                           showToast(
-                              "Converting to rhyme scheme, please wait...");
+                              "Converting to rhyme scheme, please wait...", false);
                           bool isBottomSheetOpen = false;
                           String convertedText = "";
                           // ignore: use_build_context_synchronously
@@ -1708,7 +1626,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                               poemData['poetry'] = jsonEncode(
                                   controller.document.toDelta().toJson());
                               poemListBox.putAt(widget.poemIndex, poemData);
-                              showToast("Poem Saved!");
+                              showToast("Poem Saved!", true);
                             });
                           },
                         ),
@@ -1734,7 +1652,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                             poemData['poetry'] = jsonEncode(
                                 controller.document.toDelta().toJson());
                             poemListBox.putAt(widget.poemIndex, poemData);
-                            showToast("Poem Saved!");
+                            showToast("Poem Saved!", true);
                             String poem = controller.document.toPlainText();
                             print(controller.document.toPlainText());
                             Navigator.push(
@@ -1761,13 +1679,13 @@ class _PoetryEditorState extends State<PoetryEditor>
     );
   }
 
-  Future showToast(String message) async {
+  Future showToast(String message, bool isCenter) async {
     await Fluttertoast.cancel();
 
     Fluttertoast.showToast(
       msg: message,
       toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.CENTER,
+      gravity: isCenter ? ToastGravity.CENTER : ToastGravity.BOTTOM,
       timeInSecForIosWeb: 1,
       backgroundColor: widget.editorAppbarColor,
       textColor: widget.editorFontColor,
