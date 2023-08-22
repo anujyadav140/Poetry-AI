@@ -41,8 +41,6 @@ dependencies:
   firebase_auth: ^4.7.1
   provider:
   cloud_firestore:
-  langchain: ^0.0.3
-  langchain_openai: ^0.0.3
   google_sign_in: ^6.1.4
   rive: ^0.11.4
   animated_text_kit: ^4.2.2
