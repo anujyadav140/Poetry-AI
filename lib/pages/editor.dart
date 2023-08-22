@@ -193,8 +193,14 @@ class _PoetryEditorState extends State<PoetryEditor>
         "Get Inspired",
         "Find Inspiration, Recommendation, Trivia, Anecdote or Advice based on your poetry to unleash your creativity."
       ],
-      [9, "images/lines.png", "Generate Theme Ideas", "Placeholder text"],
-      [10, "images/book.png", "What To Write About Next?", "Placeholder text"],
+      [
+        12,
+        "images/book.png",
+        "Recommendations",
+        "Get poetry recommendations depending your poetry writing style to enhance your poetry writing skills."
+      ],
+      // [9, "images/lines.png", "Generate Theme Ideas", "Placeholder text"],
+      // [10, "images/book.png", "What To Write About Next?", "Placeholder text"],
     ];
     var myJSON = poetryContent != null ? jsonDecode(poetryContent) : null;
     controller = quill.QuillController(
@@ -810,7 +816,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                                     poetryFeatures: poetryFeatures,
                                     poetryMetre: metre,
                                     selectedLines: selectedLines,
-                                    userChoice: 10,
+                                    userChoice: 11,
                                     selectedWholeRhyme: '',
                                   );
                                 },
@@ -845,7 +851,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                                         poetryFeatures: poetryFeatures,
                                         poetryMetre: metre,
                                         selectedLines: selectedLines,
-                                        userChoice: 10,
+                                        userChoice: 11,
                                         selectedWholeRhyme: '',
                                       );
                                     });
@@ -906,7 +912,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                                     poetryFeatures: poetryFeatures,
                                     poetryMetre: metre,
                                     selectedLines: regenerateSelectedLines,
-                                    userChoice: 9,
+                                    userChoice: 10,
                                     selectedWholeRhyme: '',
                                   );
                                 },
@@ -942,7 +948,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                                       poetryFeatures: poetryFeatures,
                                       poetryMetre: metre,
                                       selectedLines: regenerateSelectedLines,
-                                      userChoice: 9,
+                                      userChoice: 10,
                                       selectedWholeRhyme: '',
                                     );
                                   },
@@ -1083,7 +1089,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                             builder: (context) {
                               isBottomSheetOpen = true; // Set the flag to true
                               return CustomModalBottomSheet(
-                                title: "Convert Into Proper Metre",
+                                title: "Rhyme Whole Poem",
                                 content: convertedText,
                                 animation: _animationController,
                                 poemIndex: widget.poemIndex,
@@ -1094,7 +1100,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                                 poetryFeatures: poetryFeatures,
                                 poetryMetre: metre,
                                 selectedLines: selectedLines,
-                                userChoice: 10,
+                                userChoice: 12,
                                 selectedWholeRhyme: '',
                               );
                             },
@@ -1128,7 +1134,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                                     poetryFeatures: poetryFeatures,
                                     poetryMetre: metre,
                                     selectedLines: selectedLines,
-                                    userChoice: 11,
+                                    userChoice: 12,
                                     selectedWholeRhyme: selectedRhymeScheme,
                                   );
                                 });
@@ -1827,6 +1833,9 @@ class _AiToolsListState extends State<AiToolsList> {
           itemBuilder: (context, index) {
             return InkWell(
               onTap: () {
+                print("-----------------------------------------");
+                print(widget._aiTools[index][0]);
+                print("-----------------------------------------");
                 String aiToolsSelectTitle = widget._aiTools[index][2];
                 bool isBottomSheetOpen = false;
                 String wordResponse = "";
@@ -1993,11 +2002,13 @@ class _AiToolsListState extends State<AiToolsList> {
       case 8:
         return await aiToolsHandler.poemInspiration(controller);
       case 9:
-        return await aiToolsHandler.rhymeSelectedLines(selectedLines);
+        return await aiToolsHandler.recommendPoem(controller);
       case 10:
+        return await aiToolsHandler.rhymeSelectedLines(selectedLines);
+      case 11:
         return await aiToolsHandler.convertLinesToProperMetreForm(
             multiSelectedLines, poetryMetre);
-      case 11:
+      case 12:
         return await aiToolsHandler.rhymeWholePoem(
             controller, selectedWholeRhyme);
       default:
@@ -2445,6 +2456,16 @@ class AiToolsHandler {
     plainText = controller.document.getPlainText(0, len - 1);
     String response = await PoetryAiTools()
         .callRhymeWholePoemFunction(plainText, rhymeScheme);
+    return response;
+  }
+
+  Future<String> recommendPoem(quill.QuillController controller) async {
+    print('Executing recommendPoem...');
+    String plainText = "";
+    int len = controller.document.length;
+    plainText = controller.document.getPlainText(0, len - 1);
+    String response =
+        await PoetryAiTools().callRecommendPoemFunction(plainText);
     return response;
   }
 }
