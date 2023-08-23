@@ -2,13 +2,13 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:poetry_ai/components/rate_my_app.dart';
 import 'package:poetry_ai/firebase_options.dart';
 import 'package:poetry_ai/pages/home_page.dart';
 import 'package:poetry_ai/services/authentication/auth_service.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -60,10 +60,9 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       // home: const AuthGate(),
-      home: const HomePage(),
-      // home: const QuickMode(),
-      // home: const BannerAdaptive(),
-      // home: const InlineAdaptiveBannerAd(),
+      home: RateAppInitWidget(
+        builder: (rateMyApp) => HomePage(rateMyApp: rateMyApp),
+      ),
     );
   }
 }

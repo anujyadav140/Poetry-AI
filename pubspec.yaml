@@ -51,6 +51,7 @@ dependencies:
   flutter_slidable: ^3.0.0
   wave: ^0.2.2
   cloud_functions: ^4.3.4
+  rate_my_app: ^2.0.0
   google_mobile_ads: ^3.0.0
   fluttertoast: ^8.2.2
   flutter_speed_dial: ^7.0.0

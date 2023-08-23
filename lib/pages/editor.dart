@@ -1229,15 +1229,6 @@ class _PoetryEditorState extends State<PoetryEditor>
                                               endActionPane: ActionPane(
                                                 motion: const ScrollMotion(),
                                                 children: [
-                                                  // SlidableAction(
-                                                  //   onPressed: (context) {},
-                                                  //   backgroundColor:
-                                                  //       const Color(0xFF21B7CA),
-                                                  //   foregroundColor:
-                                                  //       Colors.white,
-                                                  //   icon: Icons.share,
-                                                  //   label: 'Share',
-                                                  // ),
                                                   SlidableAction(
                                                     onPressed: (context) {
                                                       setState(() {

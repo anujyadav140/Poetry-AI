@@ -9,10 +9,12 @@ import 'package:poetry_ai/components/quick_form.dart';
 import 'package:poetry_ai/components/template_card.dart';
 import 'package:poetry_ai/pages/editor.dart';
 import 'package:poetry_ai/pages/quick_editor.dart';
+import 'package:rate_my_app/rate_my_app.dart';
 import 'package:rive/rive.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final RateMyApp rateMyApp;
+  const HomePage({super.key, required this.rateMyApp});
 
   @override
   State<HomePage> createState() => _HomePageState();

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:poetry_ai/pages/home_page.dart';
+import 'package:rate_my_app/rate_my_app.dart';
 
 class InlineAdaptiveBannerAd extends StatefulWidget {
   const InlineAdaptiveBannerAd({super.key});
@@ -108,7 +109,9 @@ class _InlineAdaptiveBannerAdState extends State<InlineAdaptiveBannerAd> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const HomePage(),
+                      builder: (context) => HomePage(
+                          rateMyApp: RateMyApp.customConditions(
+                              conditions: List.empty())),
                     ),
                   );
                 },
@@ -157,7 +160,9 @@ class _InlineAdaptiveBannerAdState extends State<InlineAdaptiveBannerAd> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const HomePage(),
+                        builder: (context) => HomePage(
+                            rateMyApp: RateMyApp.customConditions(
+                                conditions: List.empty())),
                       ),
                     );
                   },
