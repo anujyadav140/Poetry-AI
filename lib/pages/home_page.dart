@@ -289,27 +289,16 @@ class _HomePageState extends State<HomePage>
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: !isWideScreen
-            ? Text(
-                //FIREBBASE FUNCTIONALITY CODE
-                // "Welcome, $user!",
-                "Welcome, Dear Poet",
-                maxLines: 4,
-                style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.black,
-                    fontFamily: GoogleFonts.ebGaramond().fontFamily),
-              )
-            : Text(
-                //FIREBBASE FUNCTIONALITY CODE
-                // "Welcome, $user!",
-                "Welcome, Dear Poet",
-                maxLines: 4,
-                style: TextStyle(
-                    fontSize: 26,
-                    color: Colors.black,
-                    fontFamily: GoogleFonts.ebGaramond().fontFamily),
-              ),
+        title: Text(
+          //FIREBBASE FUNCTIONALITY CODE
+          // "Welcome, $user!",
+          "Welcome, Dear Poet",
+          maxLines: 4,
+          style: TextStyle(
+              fontSize: !isWideScreen ? 20 : 26,
+              color: Colors.black,
+              fontFamily: GoogleFonts.ebGaramond().fontFamily),
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0.0,
         actions: [
@@ -335,15 +324,10 @@ class _HomePageState extends State<HomePage>
                   leading: const Icon(Icons.palette),
                   title: Text(
                     "Themes",
-                    style: !isWideScreen
-                        ? TextStyle(
-                            fontSize: 20,
-                            color: Colors.black,
-                            fontFamily: GoogleFonts.ebGaramond().fontFamily)
-                        : TextStyle(
-                            fontSize: 26,
-                            color: Colors.black,
-                            fontFamily: GoogleFonts.ebGaramond().fontFamily),
+                    style: TextStyle(
+                        fontSize: !isWideScreen ? 20 : 26,
+                        color: Colors.black,
+                        fontFamily: GoogleFonts.ebGaramond().fontFamily),
                   ),
                 ),
               ),
@@ -897,22 +881,14 @@ class _HomePageState extends State<HomePage>
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        label: !isWideScreen
-            ? Text(
-                "Add Poem",
-                style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: GoogleFonts.ebGaramond().fontFamily),
-              )
-            : Text(
-                "Add Poem",
-                style: TextStyle(
-                    fontSize: 26,
-                    color: Colors.black,
-                    fontFamily: GoogleFonts.ebGaramond().fontFamily),
-              ),
+        label: Text(
+          "Add Poem",
+          style: TextStyle(
+              fontSize: !isWideScreen ? 16 : 26,
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontFamily: GoogleFonts.ebGaramond().fontFamily),
+        ),
         backgroundColor: ColorTheme.accent(themeValue),
         onPressed: () {
           if (isTemplateClicked) {
