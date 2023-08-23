@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:poetry_ai/api/firebase_push.dart';
 import 'package:poetry_ai/components/rate_my_app.dart';
 import 'package:poetry_ai/firebase_options.dart';
 import 'package:poetry_ai/pages/home_page.dart';
@@ -27,6 +28,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await FirebaseApi().initNotifications();
   runApp(ChangeNotifierProvider(
     create: (context) => AuthService(),
     child: const MyApp(),
