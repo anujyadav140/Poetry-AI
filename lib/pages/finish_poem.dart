@@ -44,7 +44,7 @@ class _FinishPoemState extends State<FinishPoem> {
   Future<void> successful() async {
     MyNotification.showBigTextNotification(
         title: "Poetry AI",
-        body: "A creative success!\nYou have successfully completed a poem!",
+        body: "A creative success!\nYou have completed a poem!",
         fln: flutterLocalNotificationsPlugin);
   }
 
