@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -9,6 +10,7 @@ import 'package:poetry_ai/components/quick_form.dart';
 import 'package:poetry_ai/components/template_card.dart';
 import 'package:poetry_ai/pages/editor.dart';
 import 'package:poetry_ai/pages/quick_editor.dart';
+import 'package:poetry_ai/services/local_notif.dart';
 import 'package:rate_my_app/rate_my_app.dart';
 import 'package:rive/rive.dart';
 
@@ -42,6 +44,8 @@ class CustomPoem {
 
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
   int currentPoemIndex = -1;
   late AnimationController _controller;
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
@@ -72,6 +76,12 @@ class _HomePageState extends State<HomePage>
   List<String> customPoetryTemplateSelection = ["Quartrain", "10", "ABAB"];
   @override
   void initState() {
+    // MyNotification.showScheduledNotif(
+    //     title: "Poetry AI",
+    //     body: "You just added a new poem!\nKeep Writing!",
+    //     seconds: 4,
+    //     fln: flutterLocalNotificationsPlugin,
+    //     id: 0);
     currentPoemIndex = poemListIndexBox.get('poemIndex') ?? -1;
     //FIREBASE FUNCTIONALITY CODE
     // if (firebaseAuth.currentUser?.displayName != null) {
@@ -891,6 +901,10 @@ class _HomePageState extends State<HomePage>
         ),
         backgroundColor: ColorTheme.accent(themeValue),
         onPressed: () {
+          // MyNotification.showBigTextNotification(
+          //     title: "Poetry AI",
+          //     body: "You just added a new poem!\nKeep Writing!",
+          //     fln: flutterLocalNotificationsPlugin);
           if (isTemplateClicked) {
             int newPoemIndex = currentPoemIndex + 1;
             poemListIndexBox.put('poemIndex', newPoemIndex);

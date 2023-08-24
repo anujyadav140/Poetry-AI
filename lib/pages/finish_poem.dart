@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:poetry_ai/services/local_notif.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -32,10 +34,18 @@ class FinishPoem extends StatefulWidget {
 class _FinishPoemState extends State<FinishPoem> {
   //Create an instance of ScreenshotController
   ScreenshotController screenshotController = ScreenshotController();
-
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
   @override
   void initState() {
     super.initState();
+  }
+
+  Future<void> successful() async {
+    MyNotification.showBigTextNotification(
+        title: "Poetry AI",
+        body: "A creative success!\nYou have successfully completed a poem!",
+        fln: flutterLocalNotificationsPlugin);
   }
 
   Future<void> showSuccessSnackbar() async {
@@ -220,6 +230,7 @@ class _FinishPoemState extends State<FinishPoem> {
               ),
               backgroundColor: widget.accentColor,
               onTap: () async {
+                successful();
                 copyTextToClipboard();
               },
             ),
@@ -239,6 +250,7 @@ class _FinishPoemState extends State<FinishPoem> {
               ),
               backgroundColor: widget.accentColor,
               onTap: () async {
+                successful();
                 final image = await screenshotController.capture();
                 if (image == null) return;
                 await saveImage(image);
@@ -260,6 +272,7 @@ class _FinishPoemState extends State<FinishPoem> {
               ),
               backgroundColor: widget.accentColor,
               onTap: () async {
+                successful();
                 final image = await screenshotController.capture();
                 if (image == null) return;
                 await saveAndShare(image);
