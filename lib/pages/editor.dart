@@ -304,7 +304,7 @@ class _PoetryEditorState extends State<PoetryEditor>
   bool _isLoaded = false;
   AdSize? _adSize;
   late Orientation _currentOrientation = MediaQuery.of(context).orientation;
-
+  FocusNode textfieldFocus = FocusNode();
   double get _adWidth => MediaQuery.of(context).size.width - (2 * _insets);
 
   @override
@@ -964,6 +964,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextField(
+                      focusNode: textfieldFocus,
                       onChanged: (value) {
                         selectedRhymeScheme = value;
                         print(selectedRhymeScheme);
@@ -1005,6 +1006,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                                   ColorTheme.accent(themeValue))),
                           onPressed: () {
                             // Cancel button logic
+                            textfieldFocus.unfocus();
                             setState(() {
                               context.read<AuthService>().isCustomInstruct =
                                   false;
@@ -1024,6 +1026,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                             backgroundColor: MaterialStatePropertyAll(
                                 ColorTheme.accent(themeValue))),
                         onPressed: () async {
+                          textfieldFocus.unfocus();
                           setState(() {
                             context.read<AuthService>().isCustomInstruct =
                                 false;
