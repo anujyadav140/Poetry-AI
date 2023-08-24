@@ -55,6 +55,6 @@ class MyNotification {
     var notif = NotificationDetails(
         android: androidPlatformChannelSpecifics,
         iOS: const DarwinNotificationDetails());
-    await fln.periodicallyShow(id, title, body, RepeatInterval.everyMinute, notif);
+    await fln.periodicallyShow(id, title, body, RepeatInterval.daily, notif);
   }
 }
