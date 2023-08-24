@@ -200,7 +200,7 @@ class _TemplateFormState extends State<TemplateForm> {
                                                   isCouplet = false;
                                                 });
                                               }
-                                              if (index == 3) {
+                                              if (index == 2) {
                                                 setState(() {
                                                   isFreeVerse = true;
                                                 });

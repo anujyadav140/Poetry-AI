@@ -76,10 +76,14 @@ class _HomePageState extends State<HomePage>
   List<String> customPoetryTemplateSelection = ["Quartrain", "10", "ABAB"];
   @override
   void initState() {
-    // MyNotification.showScheduledNotif(
+    MyNotification.showScheduledNotif(
+        id: 0,
+        title: "Poetry AI",
+        body: '''Be Creative, Write!~''',
+        fln: flutterLocalNotificationsPlugin);
+    // MyNotification.showBigTextNotification(
     //     title: "Poetry AI",
     //     body: "You just added a new poem!\nKeep Writing!",
-    //     seconds: 4,
     //     fln: flutterLocalNotificationsPlugin,
     //     id: 0);
     currentPoemIndex = poemListIndexBox.get('poemIndex') ?? -1;
@@ -904,6 +908,12 @@ class _HomePageState extends State<HomePage>
           // MyNotification.showBigTextNotification(
           //     title: "Poetry AI",
           //     body: "You just added a new poem!\nKeep Writing!",
+          //     fln: flutterLocalNotificationsPlugin);
+          // MyNotification.showScheduledNotif(
+          //     id: 0,
+          //     title: "pOETRY AI",
+          //     body: "U R FODN",
+          //     scheduledDate: DateTime.now().add(const Duration(seconds: 12)),
           //     fln: flutterLocalNotificationsPlugin);
           if (isTemplateClicked) {
             int newPoemIndex = currentPoemIndex + 1;

@@ -34,7 +34,6 @@ void main() async {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
   MyNotification.initialize(flutterLocalNotificationsPlugin);
-  MyNotification.scheduleRepeatedNotifications(flutterLocalNotificationsPlugin);
   // await FirebaseApi().initNotifications();
   runApp(ChangeNotifierProvider(
     create: (context) => AuthService(),

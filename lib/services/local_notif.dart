@@ -1,6 +1,7 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
+import 'dart:async';
 
 class MyNotification {
   static Future initialize(
@@ -40,7 +41,6 @@ class MyNotification {
       {required int id,
       required String title,
       required String body,
-      required int seconds,
       required FlutterLocalNotificationsPlugin fln}) async {
     AndroidNotificationDetails androidPlatformChannelSpecifics =
         const AndroidNotificationDetails(
@@ -55,37 +55,6 @@ class MyNotification {
     var notif = NotificationDetails(
         android: androidPlatformChannelSpecifics,
         iOS: const DarwinNotificationDetails());
-    await fln.zonedSchedule(
-        id,
-        title,
-        body,
-        tz.TZDateTime.from(
-            DateTime.now().add(Duration(seconds: seconds)), tz.local),
-        notif,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime);
-  }
-
-  static Future<void> scheduleRepeatedNotifications(
-      FlutterLocalNotificationsPlugin fln) async {
-    // Schedule the first notification
-    await showScheduledNotif(
-      id: 1,
-      title: 'Scheduled Notification',
-      body: 'This is a scheduled notification.',
-      seconds: 0, // Show immediately
-      fln: fln,
-    );
-
-    // Schedule the subsequent notifications every 12 hours
-    // for (int i = 1; i <= 100; i++) {
-    //   await showScheduledNotif(
-    //     id: i + 1,
-    //     title: 'Scheduled Notification',
-    //     body: 'This is a scheduled notification.',
-    //     seconds: 12 * 60 * 60 * i, // 12 hours interval
-    //     fln: fln,
-    //   );
-    // }
+    await fln.periodicallyShow(id, title, body, RepeatInterval.everyMinute, notif);
   }
 }

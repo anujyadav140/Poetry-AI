@@ -270,7 +270,7 @@ class _CustomFormState extends State<CustomForm> {
                                                   isCustom = false;
                                                 });
                                               }
-                                              if (index == 1) {
+                                              if (index == 2) {
                                                 setState(() {
                                                   isCouplet = true;
                                                 });
