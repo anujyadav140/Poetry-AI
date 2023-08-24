@@ -60,7 +60,7 @@ class _FinishPoemState extends State<FinishPoem> {
         style: TextStyle(
             color: widget.textColor,
             letterSpacing: .5,
-            fontSize: !isWideScreen ? 18 : 28,
+            fontSize: !isWideScreen ? 22 : 28,
             fontFamily: GoogleFonts.ebGaramond().fontFamily),
       ),
       duration: const Duration(seconds: 2),
@@ -74,12 +74,13 @@ class _FinishPoemState extends State<FinishPoem> {
     }
     Clipboard.setData(ClipboardData(text: widget.poem));
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      backgroundColor: widget.accentColor,
       content: Text(
         'Text copied to clipboard',
         style: TextStyle(
             color: widget.textColor,
             letterSpacing: .5,
-            fontSize: !isWideScreen ? 18 : 28,
+            fontSize: !isWideScreen ? 22 : 28,
             fontFamily: GoogleFonts.ebGaramond().fontFamily),
       ),
       duration: const Duration(seconds: 2),
