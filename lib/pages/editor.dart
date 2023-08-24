@@ -194,7 +194,7 @@ class _PoetryEditorState extends State<PoetryEditor>
         "Find Inspiration, Recommendation, Trivia, Anecdote or Advice based on your poetry to unleash your creativity."
       ],
       [
-        12,
+        9,
         "images/book.png",
         "Recommendations",
         "Get poetry recommendations depending your poetry writing style to enhance your poetry writing skills."
@@ -1447,7 +1447,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                               currentAdsCounter = toAdsCount;
                               adsCounterStore.put('adsCounter', toAdsCount);
 
-                              if (currentAdsCounter >= 3) {
+                              if (currentAdsCounter >= 4) {
                                 final reset = context.read<AuthService>();
                                 reset.resetAdsCounter();
                                 currentAdsCounter = toAdsCount;
@@ -2203,7 +2203,7 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
                                       adsCounterStore.put(
                                           'adsCounter', toAdsCount);
 
-                                      if (currentAdsCounter >= 3) {
+                                      if (currentAdsCounter >= 4) {
                                         final reset =
                                             context.read<AuthService>();
                                         reset.resetAdsCounter();
