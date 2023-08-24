@@ -146,16 +146,28 @@ class _PoetryEditorState extends State<PoetryEditor>
     bookmarks = poemData['bookmarks'] as List<String>;
     _aiTools = [
       [
-        1,
-        "images/dante.png",
-        "Review The Whole Poem",
-        "See whether your poetical work follows all the features to be called a work of $poetryType.",
+        6,
+        "images/lines.png",
+        "Custom Instructions",
+        "Type your own special instructions to the Poetry AI assistant.\nEg: Can you add emojis to my poem?"
       ],
       [
         2,
         "images/rhyme.png",
         "Rhyme Selected Lines",
         "Select two lines from the editor and make both of them rhyme without changing the general meaning."
+      ],
+      [
+        5,
+        "images/meter.png",
+        "Convert Your Lines Into $poetryMetre",
+        "Generate lines that adhere to the proper poetry metre form."
+      ],
+      [
+        1,
+        "images/dante.png",
+        "Review The Whole Poem",
+        "See whether your poetical work follows all the features to be called a work of $poetryType.",
       ],
       [
         3,
@@ -168,18 +180,6 @@ class _PoetryEditorState extends State<PoetryEditor>
         "images/rhyme.png",
         "Rhyme Scheme Pattern",
         "Find the rhyming scheme pattern for the whole poem."
-      ],
-      [
-        5,
-        "images/meter.png",
-        "Convert Your Lines Into $poetryMetre",
-        "Generate lines that adhere to the proper poetry metre form."
-      ],
-      [
-        6,
-        "images/rhyme.png",
-        "Rhyme Whole Poem",
-        "Rhyme the whole poem with any rhyme scheme you want."
       ],
       [
         7,
@@ -199,8 +199,6 @@ class _PoetryEditorState extends State<PoetryEditor>
         "Recommendations",
         "Get poetry recommendations depending your poetry writing style to enhance your poetry writing skills."
       ],
-      // [9, "images/lines.png", "Generate Theme Ideas", "Placeholder text"],
-      // [10, "images/book.png", "What To Write About Next?", "Placeholder text"],
     ];
     var myJSON = poetryContent != null ? jsonDecode(poetryContent) : null;
     controller = quill.QuillController(
@@ -413,7 +411,7 @@ class _PoetryEditorState extends State<PoetryEditor>
     final isRhymeSelectedLines =
         context.watch<AuthService>().isRhymeSelectedLines;
     final isConvertToMetre = context.watch<AuthService>().isConvertToMetre;
-    final isConvertToRhyme = context.watch<AuthService>().isConvertToRhyme;
+    final isCustomInstruct = context.watch<AuthService>().isCustomInstruct;
     return WillPopScope(
       onWillPop: () async {
         if (isOpenDial.value) {
@@ -885,7 +883,7 @@ class _PoetryEditorState extends State<PoetryEditor>
         body: SafeArea(
           child: Column(children: [
             Visibility(
-              visible: !isConvertToRhyme,
+              visible: !isCustomInstruct,
               child: quill.QuillToolbar.basic(
                 controller: controller,
                 toolbarIconSize: !isWideScreen ? 20 : 30,
@@ -922,46 +920,81 @@ class _PoetryEditorState extends State<PoetryEditor>
               ),
             ),
             Visibility(
-              visible: isConvertToRhyme,
+              visible: isCustomInstruct,
               child: Column(
                 children: [
                   const SizedBox(
                     height: 10,
                   ),
                   Text(
-                    "Select a rhyme scheme:",
+                    "Write your own instruction:",
                     style: TextStyle(
                         fontSize: !isWideScreen ? 20 : 28,
                         color: Colors.black,
                         fontFamily: GoogleFonts.ebGaramond().fontFamily),
                   ),
-                  DropdownButton(
-                    menuMaxHeight: 300.0,
-                    items: availableRhymeSchemes.map<DropdownMenuItem<String>>(
-                      (String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(
-                            value,
-                            style: TextStyle(
-                              fontSize: !isWideScreen ? 18 : 26,
-                              color: Colors.black,
-                              fontFamily: GoogleFonts.ebGaramond().fontFamily,
-                              fontWeight: value == selectedRhymeScheme
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
-                            ),
-                          ),
-                        );
-                      },
-                    ).toList(),
-                    value: selectedRhymeScheme,
-                    onChanged: (String? value) {
-                      setState(() {
-                        selectedRhymeScheme = value!;
+                  // DropdownButton(
+                  //   menuMaxHeight: 300.0,
+                  //   items: availableRhymeSchemes.map<DropdownMenuItem<String>>(
+                  //     (String value) {
+                  //       return DropdownMenuItem<String>(
+                  //         value: value,
+                  //         child: Text(
+                  //           value,
+                  //           style: TextStyle(
+                  //             fontSize: !isWideScreen ? 18 : 26,
+                  //             color: Colors.black,
+                  //             fontFamily: GoogleFonts.ebGaramond().fontFamily,
+                  //             fontWeight: value == selectedRhymeScheme
+                  //                 ? FontWeight.bold
+                  //                 : FontWeight.normal,
+                  //           ),
+                  //         ),
+                  //       );
+                  //     },
+                  //   ).toList(),
+                  //   value: selectedRhymeScheme,
+                  //   onChanged: (String? value) {
+                  //     setState(() {
+                  //       selectedRhymeScheme = value!;
+                  //       print(selectedRhymeScheme);
+                  //     });
+                  //   },
+                  // ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextField(
+                      onChanged: (value) {
+                        selectedRhymeScheme = value;
                         print(selectedRhymeScheme);
-                      });
-                    },
+                      },
+                      maxLines: 3,
+                      cursorColor: ColorTheme.text(themeValue),
+                      decoration: InputDecoration(
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide: BorderSide(
+                              color: ColorTheme.text(
+                                  themeValue)), // Set the focused border color to black
+                        ),
+                        focusColor: ColorTheme.accent(themeValue),
+                        hintText: "Write an instruction",
+                        hintStyle: TextStyle(
+                            fontSize: !isWideScreen ? 20 : 26,
+                            color: Colors.black,
+                            fontFamily: GoogleFonts.ebGaramond().fontFamily),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                          borderSide: const BorderSide(color: Colors.grey),
+                        ),
+                        filled: true,
+                        fillColor: Colors.grey[200],
+                        contentPadding: const EdgeInsets.symmetric(
+                          vertical: 12.0,
+                          horizontal: 16.0,
+                        ),
+                      ),
+                    ),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -973,7 +1006,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                           onPressed: () {
                             // Cancel button logic
                             setState(() {
-                              context.read<AuthService>().isConvertToRhyme =
+                              context.read<AuthService>().isCustomInstruct =
                                   false;
                             });
                           },
@@ -992,11 +1025,10 @@ class _PoetryEditorState extends State<PoetryEditor>
                                 ColorTheme.accent(themeValue))),
                         onPressed: () async {
                           setState(() {
-                            context.read<AuthService>().isConvertToRhyme =
+                            context.read<AuthService>().isCustomInstruct =
                                 false;
                           });
-                          showToast(
-                              "Converting to rhyme scheme, please wait...",
+                          showToast("Wait for a reply to your instructions...",
                               false);
                           bool isBottomSheetOpen = false;
                           String convertedText = "";
@@ -1012,7 +1044,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                             builder: (context) {
                               isBottomSheetOpen = true; // Set the flag to true
                               return CustomModalBottomSheet(
-                                title: "Rhyme Whole Poem",
+                                title: "Custom Instructions",
                                 content: convertedText,
                                 animation: _animationController,
                                 poemIndex: widget.poemIndex,
@@ -1046,7 +1078,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                                 ),
                                 builder: (context) {
                                   return CustomModalBottomSheet(
-                                    title: "Rhyme Whole Poem",
+                                    title: "Custom Instructions",
                                     content: convertedText,
                                     animation: _animationController,
                                     poemIndex: widget.poemIndex,
@@ -1064,7 +1096,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                           }
                         },
                         child: Text(
-                          "Rhyme!",
+                          "Instruct!",
                           style: TextStyle(
                               fontSize: 20,
                               color: Colors.black,
@@ -1395,7 +1427,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                     },
                   )
                 : Container()
-            : !isRhymeSelectedLines && !isConvertToMetre && !isConvertToRhyme
+            : !isRhymeSelectedLines && !isConvertToMetre && !isCustomInstruct
                 ? Padding(
                     padding: EdgeInsets.only(
                         top: MediaQuery.of(context).size.height * 0.15),
@@ -1419,7 +1451,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                       children: [
                         SpeedDialChild(
                             child: const Icon(Icons.smart_button_sharp),
-                            label: 'AI Poetry Tool',
+                            label: 'Poetry AI Assistant',
                             labelStyle: GoogleFonts.ebGaramond(
                               textStyle: TextStyle(
                                 color: Colors.black,
@@ -1728,7 +1760,7 @@ class _AiToolsListState extends State<AiToolsList> {
     final isRhymeSelectedLines =
         context.watch<AuthService>().isRhymeSelectedLines;
     final isConvertToMetre = context.watch<AuthService>().isConvertToMetre;
-    final isConvertToRhyme = context.watch<AuthService>().isConvertToRhyme;
+    final isCustomInstruct = context.watch<AuthService>().isCustomInstruct;
     return Expanded(
       child: Scrollbar(
         thumbVisibility: true,
@@ -1753,13 +1785,13 @@ class _AiToolsListState extends State<AiToolsList> {
                       !isRhymeSelectedLines;
                   Navigator.of(context).pop();
                 } else if (widget._aiTools[index][0] == 6) {
-                  context.read<AuthService>().isConvertToRhyme =
-                      !isConvertToRhyme;
+                  context.read<AuthService>().isCustomInstruct =
+                      !isCustomInstruct;
                   Navigator.of(context).pop();
                 } else {
                   !context.read<AuthService>().isRhymeSelectedLines &&
                           !context.read<AuthService>().isConvertToMetre &&
-                          !context.read<AuthService>().isConvertToRhyme
+                          !context.read<AuthService>().isCustomInstruct
                       ? showModalBottomSheet(
                           context: context,
                           shape: const RoundedRectangleBorder(

@@ -111,12 +111,12 @@ class AuthService extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool _isConvertToRhyme = false;
+  bool _isCustomInstruct = false;
 
-  bool get isConvertToRhyme => _isConvertToRhyme;
+  bool get isCustomInstruct => _isCustomInstruct;
 
-  set isConvertToRhyme(bool value) {
-    _isConvertToRhyme = value;
+  set isCustomInstruct(bool value) {
+    _isCustomInstruct = value;
     notifyListeners();
   }
 

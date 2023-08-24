@@ -48,6 +48,9 @@ class PoetryAiTools {
 
   Future<String> callRhymeWholePoemFunction(
       String lines, String rhymeScheme) async {
+    print("-------------------------");
+    print(rhymeScheme);
+    print("-------------------------");
     try {
       final result = await _rhymeWholePoem.call({
         'lines': lines,
