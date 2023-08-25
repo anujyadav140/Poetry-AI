@@ -800,7 +800,7 @@ class _HomePageState extends State<HomePage>
                                                     poemTitle,
                                                     style: TextStyle(
                                                         fontSize: !isWideScreen
-                                                            ? 22
+                                                            ? 20
                                                             : 28,
                                                         color: Colors.black,
                                                         fontFamily: GoogleFonts
