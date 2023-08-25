@@ -1539,7 +1539,7 @@ class _PoetryEditorState extends State<PoetryEditor>
                                                     Text(
                                                       _isInfoClicked
                                                           ? 'How To Get Started'
-                                                          : 'AI Tools:',
+                                                          : 'AI Assistant Commands:',
                                                       style: GoogleFonts
                                                           .ebGaramond(
                                                         textStyle: TextStyle(
