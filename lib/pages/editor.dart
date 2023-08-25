@@ -541,28 +541,23 @@ class _PoetryEditorState extends State<PoetryEditor>
                   tooltip: "Click on this if you want to cancel the selection",
                 ),
           title: !isConvertToMetre
-              ? Text(
-                  !isRhymeSelectedLines
-                      ? "Editor - $poemTitle"
-                      : !isFirstLineSelected
-                          ? "Select Line 1 To Rhyme"
-                          : !isSecondLineSelected
-                              ? "Select Line 2 To Rhyme"
-                              : "",
-                  style: GoogleFonts.ebGaramond(
-                    textStyle: !isWideScreen
-                        ? TextStyle(
-                            fontSize: 18,
-                            color: widget.editorFontColor,
-                            letterSpacing: .5,
-                            // fontSize: 18,
-                          )
-                        : TextStyle(
-                            fontSize: 26,
-                            color: widget.editorFontColor,
-                            letterSpacing: .5,
-                            // fontSize: 18,
-                          ),
+              ? FittedBox(
+                  fit: BoxFit.fitWidth,
+                  child: Text(
+                    !isRhymeSelectedLines
+                        ? "Editor - $poemTitle"
+                        : !isFirstLineSelected
+                            ? "Select Line 1 To Rhyme"
+                            : !isSecondLineSelected
+                                ? "Select Line 2 To Rhyme"
+                                : "",
+                    style: GoogleFonts.ebGaramond(
+                      textStyle: TextStyle(
+                        // fontSize: !isWideScreen ? 22 : 30,
+                        color: widget.editorFontColor,
+                        letterSpacing: .5,
+                      ),
+                    ),
                   ),
                 )
               : Text(

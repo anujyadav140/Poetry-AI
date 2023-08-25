@@ -303,15 +303,18 @@ class _HomePageState extends State<HomePage>
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text(
-          //FIREBBASE FUNCTIONALITY CODE
-          // "Welcome, $user!",
-          "Welcome, Dear Poet",
-          maxLines: 4,
-          style: TextStyle(
-              fontSize: !isWideScreen ? 20 : 26,
-              color: Colors.black,
-              fontFamily: GoogleFonts.ebGaramond().fontFamily),
+        title: FittedBox(
+          fit: BoxFit.fitWidth,
+          child: Text(
+            //FIREBBASE FUNCTIONALITY CODE
+            // "Welcome, $user!",
+            "Welcome, Dear Poet",
+            maxLines: 4,
+            style: TextStyle(
+                fontSize: !isWideScreen ? 24 : 30,
+                color: Colors.black,
+                fontFamily: GoogleFonts.ebGaramond().fontFamily),
+          ),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0.0,
@@ -508,19 +511,14 @@ class _HomePageState extends State<HomePage>
                                                   ),
                                                   title: Text(
                                                     features[index],
-                                                    style: !isWideScreen
-                                                        ? TextStyle(
-                                                            fontSize: 19,
-                                                            color: Colors.black,
-                                                            fontFamily: GoogleFonts
-                                                                    .ebGaramond()
-                                                                .fontFamily)
-                                                        : TextStyle(
-                                                            fontSize: 25,
-                                                            color: Colors.black,
-                                                            fontFamily: GoogleFonts
-                                                                    .ebGaramond()
-                                                                .fontFamily),
+                                                    style: TextStyle(
+                                                        fontSize: !isWideScreen
+                                                            ? 19
+                                                            : 25,
+                                                        color: Colors.black,
+                                                        fontFamily: GoogleFonts
+                                                                .ebGaramond()
+                                                            .fontFamily),
                                                   ),
                                                 ),
                                                 if (index !=
@@ -656,28 +654,28 @@ class _HomePageState extends State<HomePage>
                                                               backgroundColor:
                                                                   ColorTheme.accent(
                                                                       themeValue),
-                                                              title:
-                                                                  !isWideScreen
-                                                                      ? Text(
-                                                                          "Edit the poem title:",
-                                                                          style: TextStyle(
-                                                                              fontSize: 20,
-                                                                              color: ColorTheme.text(themeValue),
-                                                                              fontFamily: GoogleFonts.ebGaramond().fontFamily),
-                                                                        )
-                                                                      : Text(
-                                                                          "Edit the poem title:",
-                                                                          style: TextStyle(
-                                                                              fontSize: 26,
-                                                                              color: ColorTheme.text(themeValue),
-                                                                              fontFamily: GoogleFonts.ebGaramond().fontFamily),
-                                                                        ),
+                                                              title: Text(
+                                                                "Edit the poem title:",
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        !isWideScreen
+                                                                            ? 20
+                                                                            : 26,
+                                                                    color: ColorTheme
+                                                                        .text(
+                                                                            themeValue),
+                                                                    fontFamily:
+                                                                        GoogleFonts.ebGaramond()
+                                                                            .fontFamily),
+                                                              ),
                                                               content: Column(
                                                                 mainAxisSize:
                                                                     MainAxisSize
                                                                         .min,
                                                                 children: [
                                                                   TextField(
+                                                                    maxLength:
+                                                                        50,
                                                                     onChanged:
                                                                         (value) {
                                                                       editedTitle =
@@ -700,18 +698,14 @@ class _HomePageState extends State<HomePage>
                                                                               themeValue),
                                                                       hintText:
                                                                           "Poem Name",
-                                                                      hintStyle: !isWideScreen
-                                                                          ? TextStyle(
-                                                                              fontSize:
-                                                                                  20,
-                                                                              color: Colors
-                                                                                  .black,
-                                                                              fontFamily: GoogleFonts.ebGaramond()
-                                                                                  .fontFamily)
-                                                                          : TextStyle(
-                                                                              fontSize: 26,
-                                                                              color: Colors.black,
-                                                                              fontFamily: GoogleFonts.ebGaramond().fontFamily),
+                                                                      hintStyle: TextStyle(
+                                                                          fontSize: !isWideScreen
+                                                                              ? 20
+                                                                              : 26,
+                                                                          color: Colors
+                                                                              .black,
+                                                                          fontFamily:
+                                                                              GoogleFonts.ebGaramond().fontFamily),
                                                                       border:
                                                                           OutlineInputBorder(
                                                                         borderRadius:
@@ -804,19 +798,14 @@ class _HomePageState extends State<HomePage>
                                                   ),
                                                   title: Text(
                                                     poemTitle,
-                                                    style: !isWideScreen
-                                                        ? TextStyle(
-                                                            fontSize: 19,
-                                                            color: Colors.black,
-                                                            fontFamily: GoogleFonts
-                                                                    .ebGaramond()
-                                                                .fontFamily)
-                                                        : TextStyle(
-                                                            fontSize: 26,
-                                                            color: Colors.black,
-                                                            fontFamily: GoogleFonts
-                                                                    .ebGaramond()
-                                                                .fontFamily),
+                                                    style: TextStyle(
+                                                        fontSize: !isWideScreen
+                                                            ? 22
+                                                            : 28,
+                                                        color: Colors.black,
+                                                        fontFamily: GoogleFonts
+                                                                .ebGaramond()
+                                                            .fontFamily),
                                                   ),
                                                   tileColor:
                                                       ColorTheme.secondary(
