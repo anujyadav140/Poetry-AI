@@ -106,7 +106,8 @@ class _FinishPoemState extends State<FinishPoem> {
     final imageFile = File('${directory.path}/poetry.png');
     await imageFile.writeAsBytes(bytes);
     final xfile = XFile(imageFile.path);
-    const String shareText = "Poem written on Poetry AI";
+    const String shareText =
+        "Poem written on Poetry AI\n Get it here: https://play.google.com/store/apps/details?id=com.anujyadav.poetryai&pcampaignid=web_share";
     await Share.shareXFiles([xfile], text: shareText);
   }
 
