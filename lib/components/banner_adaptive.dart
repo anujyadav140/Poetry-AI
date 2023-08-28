@@ -33,8 +33,8 @@ class _BannerAdaptiveState extends State<BannerAdaptive> {
     _anchoredAdaptiveAd = BannerAd(
       // TODO: replace these test ad units with your own ad unit.
       adUnitId: Platform.isAndroid
-          ? 'ca-app-pub-3940256099942544/6300978111'
-          : 'ca-app-pub-3940256099942544/2934735716',
+          ? 'ca-app-pub-6492537624854863/9390716035'
+          : 'ca-app-pub-6492537624854863/9390716035',
       size: size,
       request: const AdRequest(),
       listener: BannerAdListener(

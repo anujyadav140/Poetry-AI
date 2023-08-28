@@ -76,8 +76,8 @@ class _PoetryEditorState extends State<PoetryEditor>
   RewardedAd? rewardedAd;
   // TODO: replace this test ad unit with your own ad unit.
   final adUnitId = Platform.isAndroid
-      ? 'ca-app-pub-3940256099942544/5224354917'
-      : 'ca-app-pub-3940256099942544/1712485313';
+      ? 'ca-app-pub-6492537624854863/8085373221'
+      : 'ca-app-pub-6492537624854863/8085373221';
 
   /// Loads a rewarded ad.
   void loadRewardAd() {
@@ -102,8 +102,8 @@ class _PoetryEditorState extends State<PoetryEditor>
   InterstitialAd? _interstitialAd;
   // TODO: replace this test ad unit with your own ad unit.
   final adInterUnitId = Platform.isAndroid
-      ? 'ca-app-pub-3940256099942544/1033173712'
-      : 'ca-app-pub-3940256099942544/4411468910';
+      ? 'ca-app-pub-6492537624854863/5064458215'
+      : 'ca-app-pub-6492537624854863/5064458215';
 
   void loadInterAd() {
     InterstitialAd.load(
@@ -327,7 +327,7 @@ class _PoetryEditorState extends State<PoetryEditor>
 
     _inlineAdaptiveAd = BannerAd(
       // TODO: replace this test ad unit with your own ad unit.
-      adUnitId: 'ca-app-pub-3940256099942544/9214589741',
+      adUnitId: 'ca-app-pub-6492537624854863/9390716035',
       size: size,
       request: const AdRequest(),
       listener: BannerAdListener(
@@ -2013,8 +2013,8 @@ class _CustomModalBottomSheetState extends State<CustomModalBottomSheet> {
   bool isRewardAdWatched = false;
   // TODO: replace this test ad unit with your own ad unit.
   final adUnitId = Platform.isAndroid
-      ? 'ca-app-pub-3940256099942544/5224354917'
-      : 'ca-app-pub-3940256099942544/1712485313';
+      ? 'ca-app-pub-6492537624854863/8085373221'
+      : 'ca-app-pub-6492537624854863/8085373221';
 
   /// Loads a rewarded ad.
   void loadRewardAd() {

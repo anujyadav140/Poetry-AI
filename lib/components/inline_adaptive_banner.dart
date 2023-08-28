@@ -40,7 +40,7 @@ class _InlineAdaptiveBannerAdState extends State<InlineAdaptiveBannerAd> {
 
     _inlineAdaptiveAd = BannerAd(
       // TODO: replace this test ad unit with your own ad unit.
-      adUnitId: 'ca-app-pub-3940256099942544/9214589741',
+      adUnitId: 'ca-app-pub-6492537624854863/9390716035',
       size: size,
       request: const AdRequest(),
       listener: BannerAdListener(

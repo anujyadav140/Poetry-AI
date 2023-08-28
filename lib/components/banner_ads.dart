@@ -14,8 +14,8 @@ class _PoetryAiAdsState extends State<PoetryAiAds> {
   bool _isLoaded = false;
 
   final adUnitId = Platform.isAndroid
-      ? 'ca-app-pub-3940256099942544/6300978111'
-      : 'ca-app-pub-3940256099942544/2934735716';
+      ? 'ca-app-pub-6492537624854863/9390716035'
+      : 'ca-app-pub-6492537624854863/9390716035';
 
   @override
   void initState() {

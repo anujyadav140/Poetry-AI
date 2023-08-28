@@ -64,8 +64,8 @@ class _QuickModeState extends State<QuickMode> {
   InterstitialAd? _interstitialAd;
   // TODO: replace this test ad unit with your own ad unit.
   final adInterUnitId = Platform.isAndroid
-      ? 'ca-app-pub-3940256099942544/1033173712'
-      : 'ca-app-pub-3940256099942544/4411468910';
+      ? 'ca-app-pub-6492537624854863/5064458215'
+      : 'ca-app-pub-6492537624854863/5064458215';
 
   void loadInterAd() {
     InterstitialAd.load(
