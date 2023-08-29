@@ -17,8 +17,8 @@ class RateAppInitWidget extends StatefulWidget {
 class _RateAppInitWidgetState extends State<RateAppInitWidget> {
   RateMyApp? rateMyApp;
 
-  static const playStoreId = 'com.android.chrome';
-  static const appstoreId = 'com.apple.mobilesafari';
+  static const playStoreId = 'com.anujyadav.poetryai';
+  static const appstoreId = 'com.anujyadav.poetryai';
 
   @override
   Widget build(BuildContext context) => RateMyAppBuilder(

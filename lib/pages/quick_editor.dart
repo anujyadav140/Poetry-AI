@@ -11,8 +11,10 @@ import 'package:poetry_ai/components/inline_adaptive_banner.dart';
 import 'package:poetry_ai/pages/give_title.dart';
 import 'package:poetry_ai/components/parallax_bg.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:poetry_ai/pages/home_page.dart';
 import 'package:poetry_ai/services/authentication/auth_service.dart';
 import 'package:provider/provider.dart';
+import 'package:rate_my_app/rate_my_app.dart';
 
 class QuickMode extends StatefulWidget {
   const QuickMode({super.key, required this.features});
@@ -860,10 +862,13 @@ class _QuickModeState extends State<QuickMode> {
                       size: 30, color: Colors.white),
                   onPressed: () {
                     Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const InlineAdaptiveBannerAd(),
-                        ));
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HomePage(
+                            rateMyApp: RateMyApp.customConditions(
+                                conditions: List.empty())),
+                      ),
+                    );
                   },
                 ),
               ),

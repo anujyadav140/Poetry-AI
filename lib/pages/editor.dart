@@ -12,7 +12,9 @@ import 'package:poetry_ai/api/poetry_ai.dart';
 import 'package:poetry_ai/components/color_palette.dart';
 import 'package:poetry_ai/components/inline_adaptive_banner.dart';
 import 'package:poetry_ai/pages/give_title.dart';
+import 'package:poetry_ai/pages/home_page.dart';
 import 'package:poetry_ai/services/authentication/auth_service.dart';
+import 'package:rate_my_app/rate_my_app.dart';
 import 'package:rive/rive.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
@@ -451,11 +453,15 @@ class _PoetryEditorState extends State<PoetryEditor>
                                                     themeValue))),
                                     onPressed: () {
                                       Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                const InlineAdaptiveBannerAd(),
-                                          ));
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => HomePage(
+                                              rateMyApp:
+                                                  RateMyApp.customConditions(
+                                                      conditions:
+                                                          List.empty())),
+                                        ),
+                                      );
                                     },
                                     child: Text(
                                       "Cancel",
@@ -485,11 +491,15 @@ class _PoetryEditorState extends State<PoetryEditor>
                                             widget.poemIndex, poemData);
                                         showToast("Poem Saved!", true);
                                         Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const InlineAdaptiveBannerAd(),
-                                            ));
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => HomePage(
+                                                rateMyApp:
+                                                    RateMyApp.customConditions(
+                                                        conditions:
+                                                            List.empty())),
+                                          ),
+                                        );
                                       });
                                     },
                                     child: Text(
@@ -504,17 +514,14 @@ class _PoetryEditorState extends State<PoetryEditor>
                             );
                           });
                     } else {
-                      // Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //       builder: (context) => const HomePage(),
-                      //     ));
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                const InlineAdaptiveBannerAd(),
-                          ));
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HomePage(
+                              rateMyApp: RateMyApp.customConditions(
+                                  conditions: List.empty())),
+                        ),
+                      );
                     }
                   },
                   icon: const Icon(

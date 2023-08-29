@@ -14,7 +14,7 @@ class InlineAdaptiveBannerAd extends StatefulWidget {
 class _InlineAdaptiveBannerAdState extends State<InlineAdaptiveBannerAd> {
   static const _insets = 16.0;
   BannerAd? _inlineAdaptiveAd;
-  bool _isLoaded = false;
+  bool _isLoaded = true;
   AdSize? _adSize;
   late Orientation _currentOrientation;
   bool isWideScreen = false;
@@ -31,7 +31,7 @@ class _InlineAdaptiveBannerAdState extends State<InlineAdaptiveBannerAd> {
     await _inlineAdaptiveAd?.dispose();
     setState(() {
       _inlineAdaptiveAd = null;
-      _isLoaded = false;
+      _isLoaded = true;
     });
 
     // Get an inline adaptive size for the current orientation.
